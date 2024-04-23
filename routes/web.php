@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Members\ListMembers;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,10 +17,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/register-member', function () {
-    return view('livewire.members.register-member');
-});
+Route::get('/members', function() {
+    return view('admin.members.index');
+})->name('members');
 Route::get('/login', function () {
     // return view('livewire.auth.login');
     return "Login here!!!";
 })->name('login');
+
+Route::get('/members/{member_id}', [ListMembers::class,'editMember'])->name('getById');
