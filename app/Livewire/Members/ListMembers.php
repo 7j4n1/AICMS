@@ -40,14 +40,15 @@ class ListMembers extends Component
     {
         $this->isModalOpen = true;
         $this->editingMemberId = null;
-        $this->dispatch('on-openModal');
+        $this->resetForm();
+        $this->sendDispatchEvent();
     }
 
     public function toggleModalClose()
     {
         $this->isModalOpen = false;
         $this->editingMemberId = null;
-        $this->dispatch('on-openModal');
+        $this->sendDispatchEvent();
     }
 
     public function saveMember()
@@ -67,7 +68,10 @@ class ListMembers extends Component
 
             $this->memberForm->resetForm();
             $this->isModalOpen = false;
+
+            $this->sendDispatchEvent();
         }
+
     }
 
     public function editOldMember($id)
@@ -101,12 +105,19 @@ class ListMembers extends Component
         $this->memberForm->resetForm();
 
         $this->isModalOpen = false;
+
+        $this->sendDispatchEvent();
     }
 
     public function deleteOldMember($id) {
         Member::find($id)->delete();
 
         session()->flash('message','Member details deleted successfully.');
+    }
+
+    private function sendDispatchEvent()
+    {
+        $this->dispatch('on-openModal');
     }
 
 }
