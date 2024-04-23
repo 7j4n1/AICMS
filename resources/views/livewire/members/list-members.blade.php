@@ -61,7 +61,7 @@
                                             <select class="form-select" wire:model="memberForm.gender">
                                                 <option value="">--Select--</option>
                                                 <option value="Male">Male</option>
-                                                <option value="Male">Female</option>
+                                                <option value="Female">Female</option>
                                             </select>
                                         </div>
 
@@ -70,8 +70,8 @@
                                             <label for="religion" class="form-label">Religion </label>
                                             <select class="form-select" wire:model="memberForm.religion">
                                                 <option value="">--Select--</option>
-                                                <option value="Male">Islam</option>
-                                                <option value="Male">Christianity</option>
+                                                <option value="Islam">Islam</option>
+                                                <option value="Christianity">Christianity</option>
                                             </select>
                                         </div>
 
