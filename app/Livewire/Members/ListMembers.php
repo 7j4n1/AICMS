@@ -5,13 +5,20 @@ namespace App\Livewire\Members;
 use App\Livewire\Forms\MemberForm;
 use App\Models\Member;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ListMembers extends Component
 {
-    public $members;
+    use WithPagination;
+
+    protected $paginationTheme = "bootstrap";
+
+    protected $members;
     public MemberForm $memberForm;
     public $isModalOpen = false;
     public $editingMemberId = null;
+
+    private $paginate = 10;
 
 
     /**
@@ -22,8 +29,15 @@ class ListMembers extends Component
   
     public function render()
     {
-        $this->members = Member::orderBy('coopId','asc')->get();
-        return view('livewire.members.list-members');
+        $this->members = Member::query()
+            ->orderBy('coopId', 'asc')
+            ->paginate($this->paginate);
+
+        $this->memberForm->coopId = Member::max('coopId') + 1;
+
+        return view('livewire.members.list-members', [
+            'members' => $this->members,
+        ]);
     }
 
     public function mount()
@@ -63,14 +77,12 @@ class ListMembers extends Component
 
         $saved = $this->memberForm->save();
 
-        if($saved){
-            session()->flash('success','Member details added successfully');
+        
+        session()->flash('success','Member details added successfully');
 
-            $this->memberForm->resetForm();
-            $this->isModalOpen = false;
-
-            $this->sendDispatchEvent();
-        }
+        $this->memberForm->resetForm();
+        $this->isModalOpen = false;
+        
 
     }
 
@@ -115,7 +127,7 @@ class ListMembers extends Component
         session()->flash('message','Member details deleted successfully.');
     }
 
-    private function sendDispatchEvent()
+    public function sendDispatchEvent()
     {
         $this->dispatch('on-openModal');
     }

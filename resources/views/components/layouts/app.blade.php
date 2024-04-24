@@ -56,7 +56,7 @@
 		<script src="{{ asset('js/theme.init.js') }}"></script>
 
 		<!-- Theme Custom -->
-		<script src="{{ asset('js/custom.js') }}"></script>
+		<!-- <script src="{{ asset('js/custom.js') }}"></script> -->
 
 	</body>
 </html>
