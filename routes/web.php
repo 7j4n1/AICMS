@@ -33,7 +33,13 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/payments', function() {
             return view('admin.accounts.payment');
         })->name('payments');
+
+        Route::get('/logout', function () {
+            auth('admin')->logout();
+            return redirect()->route('login');
+        })->name('logout');
     });
+
     
 });
 

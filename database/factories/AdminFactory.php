@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,4 +26,5 @@ class AdminFactory extends Factory
             'password' => Hash::make('password'),
         ];
     }
+
 }

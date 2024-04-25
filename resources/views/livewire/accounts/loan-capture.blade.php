@@ -138,7 +138,9 @@
                                     <th>Guarantor3</th>
                                     <th>Guarantor4</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    @canAny(['can edit', 'can delete'], 'admin')
+                                        <th>Actions</th>
+                                    @endcanAny
                                 </tr>
                             </thead>
                             <tbody>
@@ -155,12 +157,17 @@
                                         <td>{{ $loan->guarantor3 }}</td>
                                         <td>{{ $loan->guarantor4 }}</td>
                                         <td>{{ $loan->status }}</td>
-                                        <td class="">
-                                        
-                                            <button onclick="sendLoanEvent('{{$loan->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
-                                            <button wire:click="deleteOldLoan('{{ $loan->id }}')" 
-                                                class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
-                                        </td>
+                                        @canAny(['can edit', 'can delete'], 'admin')
+                                            <td class="">
+                                                @can('can edit', 'admin')
+                                                    <button onclick="sendLoanEvent('{{$loan->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                                @endcan
+                                                @can('can delete', 'admin')
+                                                    <button wire:click="deleteOldLoan('{{ $loan->id }}')" 
+                                                    class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
+                                                @endcan
+                                            </td>
+                                        @endcanany
                                     </tr>
                                 @endforeach
                                 

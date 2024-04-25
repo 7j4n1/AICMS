@@ -187,7 +187,9 @@
                                     <th>Gender</th>
                                     <th>Religion</th>
                                     <th>Phone</th>
+                                    @canAny(['can edit', 'can delete'], 'admin')
                                     <th>Actions</th>
+                                    @endcanany
                                 </tr>
                             </thead>
                             <tbody>
@@ -201,12 +203,17 @@
                                         <td>{{ $mem->gender }}</td>
                                         <td>{{ $mem->religion }}</td>
                                         <td>{{ $mem->phoneNumber }}</td>
+                                        @canAny(['can edit', 'can delete'], 'admin')
                                         <td class="">
-                                        
-                                            <button onclick="sendMemEvent('{{$mem->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
-                                            <button wire:click="deleteOldMember('{{ $mem->id }}')" 
+                                            @can('can edit', 'admin')
+                                                <button onclick="sendMemEvent('{{$mem->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                            @endcan
+                                            @can('can delete', 'admin')
+                                                <button wire:click="deleteOldMember('{{ $mem->id }}')" 
                                                 class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
+                                            @endcan
                                         </td>
+                                        @endcanany
                                     </tr>
                                 @endforeach
                                 

@@ -197,7 +197,12 @@
                 </figure>
                 <div class="profile-info" data-lock-name="John Doe" data-lock-email="johndoe@okler.com">
                     <span class="name">{{ auth('admin')->user()->name }}</span>
-                    <span class="role">Administrator</span>
+                    {{-- check if the authenticated user has role of super-admin or manager --}}
+                    @if(auth('admin')->user()->hasRole('super-admin'))
+                        <span class="role">Administrator</span>
+                    @elseif(auth('admin')->user()->hasRole('manager'))
+                        <span class="role">Manager</span>
+                    @endif
                 </div>
 
                 <i class="fa custom-caret"></i>
@@ -213,7 +218,7 @@
                         <a role="menuitem" tabindex="-1" href="#" data-lock-screen="true"><i class="bx bx-lock"></i> Lock Screen</a>
                     </li>
                     <li>
-                        <a role="menuitem" tabindex="-1" href="pages-signin.html"><i class="bx bx-power-off"></i> Logout</a>
+                        <a role="menuitem" tabindex="-1" href="{{ route('logout') }}"><i class="bx bx-power-off"></i> Logout</a>
                     </li>
                 </ul>
             </div>

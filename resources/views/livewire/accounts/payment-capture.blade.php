@@ -58,13 +58,13 @@
                                         {{-- CoopId --}}
                                         <div class="col-md-12">
                                             <label for="title">Coop ID <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
+                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model.live="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
                                             @error('paymentForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="splitOption" class="form-label">Split Option</label>
-                                            <select class="form-select" wire:model="paymentForm.splitOption.live">
+                                            <select class="form-select" wire:model.live="paymentForm.splitOption">
                                                 <option value="0">--Select--</option>
                                                 @foreach(range(1, 10) as $perc)
                                                     <option value="{{ $perc*10 }}">{{ $perc*10 }}</option>
@@ -75,14 +75,14 @@
                                             {{-- Amount --}}
                                         <div class="col-md-6">
                                             <label for="totalAmount">Total Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Total Amount" wire:model="paymentForm.totalAmount" />
+                                            <input type="text"  class="form-control" placeholder="Total Amount" wire:model.live="paymentForm.totalAmount" />
                                             @error('paymentForm.totalAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
                                             {{-- Total Amount --}}
                                         <div class="col-md-6">
                                             <label for="loanAmount">Loan Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Loan Amount" wire:model="paymentForm.loanAmount" />
+                                            <input type="text"  class="form-control" placeholder="Loan Amount" wire:model.live="paymentForm.loanAmount" />
                                             @error('paymentForm.loanAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
@@ -97,13 +97,13 @@
                                             {{-- Amount --}}
                                         <div class="col-md-6">
                                             <label for="shareAmount">Shares Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Shares Amount" wire:model="paymentForm.shareAmount" />
+                                            <input type="text"  class="form-control" placeholder="Shares Amount" wire:model.live="paymentForm.shareAmount" />
                                             @error('paymentForm.shareAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="others">Others <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Others Amount" wire:model="paymentForm.others" />
+                                            <input type="text"  class="form-control" placeholder="Others Amount" wire:model.live="paymentForm.others" />
                                             @error('paymentForm.others') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
@@ -147,7 +147,9 @@
                                     <th>Others</th>
                                     <th>Split</th>
                                     <th>Capture Date</th>
-                                    <th>Actions</th>
+                                    @canAny(['can edit', 'can delete'], 'admin')
+                                        <th>Actions</th>
+                                    @endcanany
                                 </tr>
                             </thead>
                             <tbody>
@@ -164,12 +166,17 @@
                                         <td>{{ $payment->others }}</td>
                                         <td>{{ $payment->splitOption }}</td>
                                         <td>{{ $payment->paymentDate }}</td>
-                                        <td class="">
-                                        
-                                            <button onclick="sendMsg('{{ $payment->id }}')" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
-                                            <button wire:click="deletePayment('{{ $payment->id }}')" 
-                                                class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
-                                        </td>
+                                        @canany(['can edit', 'can delete'], 'admin')
+                                            <td class="">
+                                                @can('can edit', 'admin')
+                                                    <button onclick="sendMsg('{{ $payment->id }}')" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                                @endcan
+                                                @can('can delete', 'admin')
+                                                    <button wire:click="deletePayment('{{ $payment->id }}')" 
+                                                        class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
+                                                @endcan
+                                            </td>
+                                        @endcanany
                                     </tr>
                                 @endforeach
                                 
