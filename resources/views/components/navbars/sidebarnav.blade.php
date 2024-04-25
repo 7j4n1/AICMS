@@ -16,7 +16,7 @@
 
                 <ul class="nav nav-main">
                     <li>
-                        <a class="nav-link" href="layouts-default.html">
+                        <a class="nav-link" href="{{route('dashboard')}}">
                             <i class="bx bx-home-alt" aria-hidden="true"></i>
                             <span>Dashboard</span>
                         </a>                        
