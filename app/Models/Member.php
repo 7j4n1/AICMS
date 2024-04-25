@@ -25,6 +25,7 @@ class Member extends Model
         'accountNumber',
         'nextOfKinName',
         'nextOfKinPhoneNumber',
-        'yearJoined'
+        'yearJoined',
+        'userId'
     ]; 
 }

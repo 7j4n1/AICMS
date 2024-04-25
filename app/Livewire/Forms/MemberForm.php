@@ -54,6 +54,7 @@ class MemberForm extends Form
             'nextOfKinName'=> $this->nextOfKinName,
             'nextOfKinPhoneNumber'=> $this->nextOfKinPhoneNumber,
             'yearJoined'=> $this->yearJoined,
+            'userId' => auth('admin')->user()->name,
         ]);
 
         if($member)
