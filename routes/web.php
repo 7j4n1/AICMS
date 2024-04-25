@@ -13,16 +13,36 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::middleware('guest:admin')->group(function () {
+    Route::get('/login', function () {
+        return view('admin.authentication.login');
+    })->name('login');
+});
+
+Route::middleware('auth:admin')->group(function () {
+    Route::group(['prefix' => 'admin'], function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard.index');
+        })->name('dashboard');
+        Route::get('/members', function() {
+            return view('admin.members.index');
+        })->name('members');
+        Route::get('/loans', function() {
+            return view('admin.accounts.loan');
+        })->name('loans');
+        Route::get('/payments', function() {
+            return view('admin.accounts.payment');
+        })->name('payments');
+    });
+    
+});
 
 Route::get('/', function () {
-    return view('welcome');
+    return route('login');
 });
-Route::get('/members', function() {
-    return view('admin.members.index');
-})->name('members');
-Route::get('/login', function () {
-    // return view('livewire.auth.login');
-    return "Login here!!!";
-})->name('login');
 
-Route::get('/members/{member_id}', [ListMembers::class,'editMember'])->name('getById');
+// Route::get('/login', function () {
+//     return view('admin.authentication.login');
+// })->name('login');
+
+// Route::get('/members/{member_id}', [ListMembers::class,'editMember'])->name('getById');

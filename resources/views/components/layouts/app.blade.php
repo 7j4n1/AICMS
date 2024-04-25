@@ -5,11 +5,11 @@
 		<!-- Basic -->
 		<meta charset="UTF-8">
 
-		<title>{{ $pageTitle ?? "Admin Dashboard" }} | Al-Birru</title>
+		<title>{{ $title ?? "Admin Dashboard" }} | Al-Birru</title>
 
-		<meta name="keywords" content="HTML5 Admin Template" />
-		<meta name="description" content="Porto Admin - Responsive HTML5 Template">
-		<meta name="author" content="okler.net">
+		<meta name="keywords" content="cooperative, islamic, society, Al-birru" />
+		<meta name="description" content="Al-Birr Islamic Cooperative Multipurpose society">
+		<meta name="author" content="albirr">
 
 		<!-- Mobile Metas -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -56,7 +56,8 @@
 		<script src="{{ asset('js/theme.init.js') }}"></script>
 
 		<!-- Theme Custom -->
-		<!-- <script src="{{ asset('js/custom.js') }}"></script> -->
+		<script src="{{ asset('js/custom.js') }}"></script>
+
 
 	</body>
 </html>
