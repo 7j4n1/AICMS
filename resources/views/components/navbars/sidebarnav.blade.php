@@ -28,15 +28,30 @@
                         </a>
                         <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="ecommerce-dashboard.html">
+                                <a class="nav-link" href="{{route('members')}}">
                                     List Members
                                 </a>
                             </li>
+                            
+                        </ul>
+                    </li>
+                    <li class="nav-parent">
+                        <a class="nav-link" href="#">
+                            <i class="bx bx-cart-alt" aria-hidden="true"></i>
+                            <span>Accounts Management</span>
+                        </a>
+                        <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="ecommerce-products-list.html">
-                                    Register New Member
+                                <a class="nav-link" href="{{route('loans')}}">
+                                    Loan records
                                 </a>
                             </li>
+                            <li>
+                                <a class="nav-link" href="{{route('payments')}}">
+                                    Payment capture
+                                </a>
+                            </li>
+                            
                         </ul>
                     </li>
                     <!-- <li class="nav-parent">

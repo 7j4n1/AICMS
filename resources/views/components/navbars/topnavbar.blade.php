@@ -6,7 +6,7 @@
 <header class="header">
     <div class="logo-container">
         <a href="{{ $homeUrl }}" class="logo">
-            <img src="{{ $dashLogoUrl }}" width="55" height="35" alt="Al-Birru" />
+            <img src="{{ asset($dashLogoUrl) }}" width="55" height="35" alt="Al-Birru" />
         </a>
 
         <div class="d-md-none toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html" data-fire-event="sidebar-left-opened">
@@ -196,7 +196,7 @@
                     <img src="img/!logged-user.jpg" alt="Joseph Doe" class="rounded-circle" data-lock-picture="img/!logged-user.jpg" />
                 </figure>
                 <div class="profile-info" data-lock-name="John Doe" data-lock-email="johndoe@okler.com">
-                    <span class="name">John Doe Junior</span>
+                    <span class="name">{{ auth('admin')->user()->name }}</span>
                     <span class="role">Administrator</span>
                 </div>
 
