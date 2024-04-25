@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('nextOfKinName')->nullable();
             $table->string('nextOfKinPhoneNumber')->nullable();
             $table->year('yearJoined')->nullable();
+            $table->string('userId')->nullable();
             $table->timestamps();
         });
     }
