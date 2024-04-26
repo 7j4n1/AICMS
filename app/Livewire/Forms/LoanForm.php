@@ -4,8 +4,6 @@ namespace App\Livewire\Forms;
 
 use Livewire\Form;
 use App\Models\LoanCapture;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
 
 class LoanForm extends Form

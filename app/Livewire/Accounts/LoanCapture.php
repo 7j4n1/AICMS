@@ -28,6 +28,7 @@ class LoanCapture extends Component
         $memberIds = Member::query()
             ->orderBy('coopId', 'asc')
             ->get(['coopId']);
+
         $this->loans = ModelsLoanCapture::query()
             ->orderBy('coopId', 'asc')
             ->get();
@@ -114,10 +115,13 @@ class LoanCapture extends Component
         $this->sendDispatchEvent();
     }
 
+    #[On('delete-loans')]
     public function deleteOldLoan($id) {
         ModelsLoanCapture::find($id)->delete();
 
         session()->flash('message','Loan details deleted successfully.');
+
+        $this->sendDispatchEvent();
     }
 
     public function toggleModalOpen()

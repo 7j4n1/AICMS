@@ -192,7 +192,7 @@
                                                     <button onclick="sendLoanEvent('{{$loan->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
                                                 @endcan
                                                 @can('can delete', 'admin')
-                                                    <button wire:click="deleteOldLoan('{{ $loan->id }}')" 
+                                                    <button onclick="sendDeleteEvent('{{ $loan->id }}')" 
                                                     class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
                                                 @endcan
                                             </td>
@@ -229,9 +229,20 @@
     <script src="{{ asset('vendor/datatables/extras/TableTools/pdfmake-0.1.32/pdfmake.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/extras/TableTools/pdfmake-0.1.32/vfs_fonts.js') }}"></script>
 
+    <!-- Theme Custom -->
+	<!-- <script src="{{ asset('js/custom.js') }}"></script> -->
+
     <script>
         function sendLoanEvent(value) {
             Livewire.dispatch('edit-loans', { id: value });
+        }
+
+        function sendDeleteEvent(value) {
+            var result = confirm("Are you sure you want to delete this loan details?");
+            if (result) {
+                // User clicked 'OK', dispatch delete event
+                Livewire.dispatch('delete-loans', { id: value });
+            }
         }
     </script>
     
