@@ -209,7 +209,7 @@
                                                 <button onclick="sendMemEvent('{{$mem->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
                                             @endcan
                                             @can('can delete', 'admin')
-                                                <button wire:click="deleteOldMember('{{ $mem->id }}')" 
+                                                <button onclick="sendDeleteEvent('{{ $mem->id }}')" 
                                                 class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
                                             @endcan
                                         </td>
@@ -237,7 +237,7 @@
                     <h2 class="card-title">Other Details</h2>
                 </header>
                 <div class="card-body">
-                    <div  class="table-responsive">
+                    <!-- <div  class="table-responsive"> -->
                         <table class="table table-bordered table-striped mb-0" id="datatable-tabletools2">
 
                             <thead>
@@ -265,7 +265,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    </div>
+                    <!-- </div> -->
                     <div class="row mt-4">
                         <div class="col-sm-6 offset-5">
                             {{-- $members->links() --}}
@@ -294,6 +294,16 @@
         function sendMemEvent(value) {
             Livewire.dispatch('edit-members', { id: value });
         }
+
+        
+        function sendDeleteEvent(value) {
+            var result = confirm("Are you sure you want to delete this member?");
+            if (result) {
+                // User clicked 'OK', dispatch delete event
+                Livewire.dispatch('delete-members', { id: value });
+            }
+        }
+       
     </script>
 
     

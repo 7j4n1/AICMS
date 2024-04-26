@@ -94,9 +94,7 @@ class ListMembers extends Component
     public function editOldMember($id)
     {
         // $this->resetForm();
-        $member = Member::where('coopId', '=', $id)
-            ->orWhere('id', '=', $id)
-            ->first();
+        $member = Member::find($id);
 
         if(!$member){
 
@@ -142,10 +140,13 @@ class ListMembers extends Component
         $this->sendDispatchEvent();
     }
 
+    #[On('delete-members')]
     public function deleteOldMember($id) {
         Member::find($id)->delete();
 
         session()->flash('message','Member details deleted successfully.');
+
+        $this->sendDispatchEvent();
     }
 
     public function sendDispatchEvent()
