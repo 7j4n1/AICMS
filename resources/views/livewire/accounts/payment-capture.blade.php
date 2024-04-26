@@ -58,13 +58,13 @@
                                         {{-- CoopId --}}
                                         <div class="col-md-12">
                                             <label for="title">Coop ID <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model.live="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
+                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
                                             @error('paymentForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="splitOption" class="form-label">Split Option</label>
-                                            <select class="form-select" wire:model.live="paymentForm.splitOption">
+                                            <select class="form-select" wire:model="paymentForm.splitOption" id="splitOption" onchange="calculatePercent()">
                                                 <option value="0">--Select--</option>
                                                 @foreach(range(1, 10) as $perc)
                                                     <option value="{{ $perc*10 }}">{{ $perc*10 }}</option>
@@ -75,35 +75,35 @@
                                             {{-- Amount --}}
                                         <div class="col-md-6">
                                             <label for="totalAmount">Total Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Total Amount" wire:model.live="paymentForm.totalAmount" />
+                                            <input type="text" id="totalAmount" class="form-control" placeholder="Total Amount" wire:model="paymentForm.totalAmount" oninput="calculatePercent()" />
                                             @error('paymentForm.totalAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
-                                            {{-- Total Amount --}}
+                                            {{-- Loan Amount --}}
                                         <div class="col-md-6">
                                             <label for="loanAmount">Loan Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Loan Amount" wire:model.live="paymentForm.loanAmount" />
+                                            <input type="text" id="loanAmount" class="form-control" placeholder="Loan Amount" wire:model="paymentForm.loanAmount" oninput="calculatePercent()" />
                                             @error('paymentForm.loanAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
 
-                                            {{-- Amount --}}
+                                            {{-- Savings Amount --}}
                                         <div class="col-md-6">
                                             <label for="savingAmount">Savings Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Savings Amount" wire:model="paymentForm.savingAmount" />
+                                            <input type="text" id="savingAmount" class="form-control" oninput="calculatePercent()" placeholder="Savings Amount" wire:model="paymentForm.savingAmount" />
                                             @error('paymentForm.savingAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
-                                            {{-- Amount --}}
+                                            {{-- Shares Amount --}}
                                         <div class="col-md-6">
                                             <label for="shareAmount">Shares Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Shares Amount" wire:model.live="paymentForm.shareAmount" />
+                                            <input type="text" id="shareAmount" class="form-control" placeholder="Shares Amount" wire:model="paymentForm.shareAmount" oninput="calculatePercent()" />
                                             @error('paymentForm.shareAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="others">Others <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Others Amount" wire:model.live="paymentForm.others" />
+                                            <input type="text" id="otherAmount" class="form-control" placeholder="Others Amount" wire:model="paymentForm.others" oninput="calculatePercent()" />
                                             @error('paymentForm.others') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
@@ -213,6 +213,39 @@
         function sendMsg(value) {
             Livewire.dispatch('edit-payments', { id: value });
         }
+
+        function calculatePercent() {
+            let totalAmount = document.getElementById('totalAmount');
+            let loanAmount = document.getElementById('loanAmount');
+            let splitOption = document.getElementById('splitOption').value;
+            let savingAmount = document.getElementById('savingAmount');
+            let shareAmount = document.getElementById('shareAmount');
+            let others = document.getElementById('otherAmount');
+            let total = parseFloat(totalAmount.value);
+            let loan = parseFloat(loanAmount.value);
+            let split = parseFloat(splitOption);
+            
+            let saving = total - loan;
+            let share = total - loan;
+            if (split > 0) {
+                let remainBalance = total - loan;
+                if(others.value > 0)
+                    remainBalance = remainBalance - parseFloat(others.value);
+                share = (split / 100) * remainBalance;
+                saving = remainBalance - share;
+                
+            }
+            savingAmount.value = saving;
+            shareAmount.value = share;
+        }
+
+        // subtract the loan amount from the total amount to get the saving amount and shares amount based on the split option changes
+        // and each value changes events
+        // document.getElementById('splitOption').addEventListener('change', function() {
+        //     calculatePercent();
+        // });
+
+
     </script>
     
 

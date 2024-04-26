@@ -13,7 +13,7 @@ class PaymentForm extends Form
     #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $coopId;
     #[Validate('required|numeric')]
-    public $splitOption;
+    public $splitOption = 10;
     #[Validate('required|numeric')]
     public $loanAmount = 0;
     #[Validate('required|numeric')]

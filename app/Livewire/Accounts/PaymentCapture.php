@@ -24,6 +24,14 @@ class PaymentCapture extends Component
     
     public function render()
     {
+        // if($this->paymentForm->splitOption >= 0 && $this->paymentForm->totalAmount > 0) {
+        //     // subtract the loan amount from the total amount to get the saving amount and shares amount
+        //     $remainBal = $this->paymentForm->totalAmount - $this->paymentForm->loanAmount;
+        //     // calculate the percentage of the share amount and saving amount based on the splitOption which is a percentage
+        //     $this->paymentForm->shareAmount = ($this->paymentForm->splitOption / 100) * $remainBal;
+        //     $this->paymentForm->savingAmount = $remainBal - $this->paymentForm->shareAmount;
+            
+        // }
 
         $this->payments = ModelsPaymentCapture::query()
             ->orderBy('paymentDate', 'asc')
@@ -37,6 +45,8 @@ class PaymentCapture extends Component
     public function mount()
     {
         $this->paymentForm = new PaymentForm($this, 'paymentForm');
+
+        
     }
 
     public function resetForm()
@@ -48,9 +58,19 @@ class PaymentCapture extends Component
     {
         $this->validate();
 
+        $totalAmount = $this->paymentForm->loanAmount + $this->paymentForm->savingAmount + $this->paymentForm->others + $this->paymentForm->shareAmount;
+        if($totalAmount != $this->paymentForm->totalAmount) {
+
+            $this->addError('totalAmount', 'The total amount must be equal to the sum of loan amount, saving amount, others and share amount.');
+            $this->isModalOpen = true;
+            session()->flash('error','The total amount must be equal to the sum of loan amount, saving amount, others and share amount.');
+            return;
+        }
+
         if(!$this->getErrorBag()->isEmpty())
         {
             $this->isModalOpen = true;
+            
             return;
         }
 
