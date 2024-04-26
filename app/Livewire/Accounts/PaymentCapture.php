@@ -58,7 +58,7 @@ class PaymentCapture extends Component
     {
         $this->validate();
 
-        $totalAmount = $this->paymentForm->loanAmount + $this->paymentForm->savingAmount + $this->paymentForm->others + $this->paymentForm->shareAmount;
+        $totalAmount = $this->paymentForm->loanAmount + $this->paymentForm->savingAmount + $this->paymentForm->others + $this->paymentForm->shareAmount + $this->paymentForm->adminCharge;
         if($totalAmount != $this->paymentForm->totalAmount) {
 
             $this->addError('totalAmount', 'The total amount must be equal to the sum of loan amount, saving amount, others and share amount.');
@@ -70,7 +70,7 @@ class PaymentCapture extends Component
         if(!$this->getErrorBag()->isEmpty())
         {
             $this->isModalOpen = true;
-            
+
             return;
         }
 
@@ -88,9 +88,7 @@ class PaymentCapture extends Component
     #[On('edit-payments')]
     public function editOldPayment($id)
     {
-        $payment = ModelsPaymentCapture::where('coopId', '=', $id)
-        ->orWhere('id', '=', $id)
-        ->first();
+        $payment = ModelsPaymentCapture::find($id);
 
         if(!$payment){
 
@@ -133,10 +131,13 @@ class PaymentCapture extends Component
         $this->sendDispatchEvent();
     }
 
+    #[On('delete-payments')]
     public function deletePayment($id) {
         ModelsPaymentCapture::find($id)->delete();
 
         session()->flash('message','Payment details deleted successfully.');
+        
+        $this->sendDispatchEvent();
     }
 
     public function toggleModalOpen()

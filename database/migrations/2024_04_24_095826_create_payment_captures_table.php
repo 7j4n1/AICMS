@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('paymentDate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->unsignedDouble('others', null, 2)->default(0.00);
             $table->unsignedDouble('shareAmount', null, 2)->default(0.00);
+            $table->unsignedBigInteger('adminCharge')->default(0);
             $table->string('userId')->nullable();
 
             $table->foreign('coopId')->references('coopId')->on('members');

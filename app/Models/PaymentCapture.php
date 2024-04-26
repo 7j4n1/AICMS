@@ -22,6 +22,7 @@ class PaymentCapture extends Model
         'paymentDate',
         'others',
         'shareAmount',
-        'userId'
+        'userId',
+        'adminCharge'
     ];
 }

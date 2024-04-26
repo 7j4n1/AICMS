@@ -107,6 +107,12 @@
                                             @error('paymentForm.others') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
+                                        <div class="col-md-6">
+                                            <label for="adminCharge">Admin Charge <span class="text-danger">*</span></label>
+                                            <input type="text" id="adminCharge" class="form-control" placeholder="admin Charge" wire:model="paymentForm.adminCharge" oninput="calculatePercent()" />
+                                            @error('paymentForm.adminCharge') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
                                         {{-- Payment Date --}}
                                         <div class="col-md-6">
                                             <label for="otherNames">Payment Date </label>
@@ -172,7 +178,7 @@
                                                     <button onclick="sendMsg('{{ $payment->id }}')" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
                                                 @endcan
                                                 @can('can delete', 'admin')
-                                                    <button wire:click="deletePayment('{{ $payment->id }}')" 
+                                                    <button onclick="sendDeleteEvent('{{ $payment->id }}')" 
                                                         class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
                                                 @endcan
                                             </td>
@@ -214,6 +220,14 @@
             Livewire.dispatch('edit-payments', { id: value });
         }
 
+        function sendDeleteEvent(value) {
+            var result = confirm("Are you sure you want to delete this Payment details?");
+            if (result) {
+                // User clicked 'OK', dispatch delete event
+                Livewire.dispatch('delete-payments', { id: value });
+            }
+        }
+
         function calculatePercent() {
             let totalAmount = document.getElementById('totalAmount');
             let loanAmount = document.getElementById('loanAmount');
@@ -221,14 +235,19 @@
             let savingAmount = document.getElementById('savingAmount');
             let shareAmount = document.getElementById('shareAmount');
             let others = document.getElementById('otherAmount');
+            let adminCharge = document.getElementById('adminCharge');
+
             let total = parseFloat(totalAmount.value);
             let loan = parseFloat(loanAmount.value);
             let split = parseFloat(splitOption);
+            let charge = parseFloat(adminCharge.value);
             
             let saving = total - loan;
             let share = total - loan;
             if (split > 0) {
                 let remainBalance = total - loan;
+                if(charge > 0)
+                    remainBalance = remainBalance - charge;
                 if(others.value > 0)
                     remainBalance = remainBalance - parseFloat(others.value);
                 share = (split / 100) * remainBalance;

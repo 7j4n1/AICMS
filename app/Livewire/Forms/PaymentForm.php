@@ -26,6 +26,7 @@ class PaymentForm extends Form
     public $others = 0;
     #[Validate('required|numeric')]
     public $shareAmount = 0;
+    public $adminCharge = 200;
 
 
     protected $messages = [
@@ -62,6 +63,7 @@ class PaymentForm extends Form
             'others' => $this->others,
             'shareAmount' => $this->shareAmount,
             'userId' => auth('admin')->user()->name,
+            'adminCharge' => $this->adminCharge,
         ]);
 
         if(!$payment)
