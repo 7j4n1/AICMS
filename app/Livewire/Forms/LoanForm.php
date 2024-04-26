@@ -17,6 +17,7 @@ class LoanForm extends Form
     public $loanAmount;
     #[Validate('required|date')]
     public $loanDate;
+    #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $guarantor1;
     public $guarantor2;
     public $guarantor3;

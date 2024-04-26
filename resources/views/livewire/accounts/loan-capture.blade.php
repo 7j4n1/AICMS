@@ -58,7 +58,13 @@
                                         {{-- CoopId --}}
                                         <div class="col-md-12">
                                             <label for="title">Coop ID <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model="loanForm.coopId" {{ $editingLoanId ? 'disabled' : '' }}/>
+                                            <!-- <input type="text"  class="form-control" placeholder="Coop ID" wire:model.live="loanForm.coopId" {{ $editingLoanId ? 'disabled' : '' }}/> -->
+                                            <select class="form-select" wire:model.live="loanForm.coopId" {{ $editingLoanId ? 'disabled' : '' }}>
+                                                <option value=""></option>
+                                                @foreach($memberIds as $memberId)
+                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @endforeach
+                                            </select>
                                             @error('loanForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
@@ -72,36 +78,59 @@
                                         {{-- Loan Date --}}
                                         <div class="col-md-6">
                                             <label for="otherNames">Loan Date </label>
-                                            <input type="date"  class="form-control" placeholder="Loan Date (mm-dd-yyyy)" wire:model="loanForm.loanDate" />
+                                            <input type="date"  class="form-control" placeholder="Loan Date (mm-dd-yyyy)" wire:model.live="loanForm.loanDate" />
                                             @error('loanForm.loanDate') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         {{-- Guarantor 1 --}}
                                         <div class="col-md-6">
                                             <label for="guarantor1" class="form-label">Guarantor 1 </label>
-                                            <input type="text"  class="form-control" placeholder="Guarantor 1" wire:model="loanForm.guarantor1" />
+                                            
+                                            <select class="form-select" wire:model.live="loanForm.guarantor1">
+                                                <option value=""></option>
+                                                @foreach($memberIds as $memberId)
+                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('loanForm.guarantor1') <span class="text-danger">{{ $message }}</span> @enderror
+                                            
                                         </div>
                                         {{-- Guarantor 2 --}}
                                         <div class="col-md-6">
                                             <label for="guarantor2" class="form-label">Guarantor 2 </label>
-                                            <input type="text"  class="form-control" placeholder="Guarantor 2" wire:model="loanForm.guarantor2" />
+                                            <select class="form-select" wire:model="loanForm.guarantor2">
+                                                <option value=""></option>
+                                                @foreach($memberIds as $memberId)
+                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         {{-- Guarantor 3 --}}
                                         <div class="col-md-6">
                                             <label for="guarantor3" class="form-label">Guarantor 3 </label>
-                                            <input type="text"  class="form-control" placeholder="Guarantor 3" wire:model="loanForm.guarantor3" />
+                                            <select class="form-select" wire:model="loanForm.guarantor3">
+                                                <option value=""></option>
+                                                @foreach($memberIds as $memberId)
+                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         {{-- Guarantor 4 --}}
                                         <div class="col-md-6">
                                             <label for="guarantor4" class="form-label">Guarantor 4 </label>
-                                            <input type="text"  class="form-control" placeholder="Guarantor 4" wire:model="loanForm.guarantor4" />
+                                            <select class="form-select" wire:model="loanForm.guarantor4">
+                                                <option value=""></option>
+                                                @foreach($memberIds as $memberId)
+                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="status" class="form-label">Status </label>
-                                            <select class="form-select" wire:model="loanForm.status.live">
+                                            <select class="form-select" wire:model="loanForm.status">
                                                 <option value="0">0</option>
                                                 <option value="1">1</option>
                                             </select>

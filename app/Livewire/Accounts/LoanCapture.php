@@ -7,6 +7,7 @@ use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Livewire\Forms\LoanForm;
 use App\Models\LoanCapture as ModelsLoanCapture;
+use App\Models\Member;
 
 class LoanCapture extends Component
 {
@@ -24,12 +25,16 @@ class LoanCapture extends Component
 
     public function render()
     {
+        $memberIds = Member::query()
+            ->orderBy('coopId', 'asc')
+            ->get(['coopId']);
         $this->loans = ModelsLoanCapture::query()
             ->orderBy('coopId', 'asc')
             ->get();
 
         return view('livewire.accounts.loan-capture',[
-            'loans' => $this->loans
+            'loans' => $this->loans,
+            'memberIds' => $memberIds,
         ])->with(['session' => session()]);
     }
 
