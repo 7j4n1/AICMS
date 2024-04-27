@@ -1,0 +1,33 @@
+{
+    "poppins": {
+        "300": "C:\\Users\\ahmah\\AICMS\\storage\\fonts\/poppins_300_56a45aadd6f4717d0b29e006a9a82359",
+        "normal": "C:\\Users\\ahmah\\AICMS\\storage\\fonts\/poppins_normal_76df55b5114b1626b7db1a4cd816c320",
+        "500": "C:\\Users\\ahmah\\AICMS\\storage\\fonts\/poppins_500_90dcab88268cf6d3f77b33841917903c",
+        "600": "C:\\Users\\ahmah\\AICMS\\storage\\fonts\/poppins_600_ab2317e82e93420e320bf10d17d6c75b",
+        "bold": "C:\\Users\\ahmah\\AICMS\\storage\\fonts\/poppins_bold_cc53e8e8659afa950c49e4494cbb2708",
+        "800": "poppins_800_e36b15aa8fae738b721cafc53868de52"
+    },
+    "shadows into light": {
+        "normal": "shadows_into_light_normal_6158e952eff5452364258250413e3779"
+    },
+    "font awesome 6 brands": {
+        "normal": "font_awesome_6_brands_normal_665f6213c40e22dcf4e5640f144601db"
+    },
+    "font awesome 6 free": {
+        "normal": "C:\\Users\\ahmah\\AICMS\\storage\\fonts\/font_awesome_6_free_normal_ebb7706f9a1d2efcd149fe1fb73d387a",
+        "900": "font_awesome_6_free_900_a56aed6f6c3872674b84d1aeba2f332f"
+    },
+    "font awesome 5 brands": {
+        "normal": "font_awesome_5_brands_normal_665f6213c40e22dcf4e5640f144601db"
+    },
+    "font awesome 5 free": {
+        "900": "C:\\Users\\ahmah\\AICMS\\storage\\fonts\/font_awesome_5_free_900_a56aed6f6c3872674b84d1aeba2f332f",
+        "normal": "font_awesome_5_free_normal_ebb7706f9a1d2efcd149fe1fb73d387a"
+    },
+    "fontawesome": {
+        "normal": "fontawesome_normal_bf7d7993c1db593db8e28b5517514d51"
+    },
+    "boxicons": {
+        "normal": "boxicons_normal_8aa4dc14b1f89ad826defb31b499c065"
+    }
+}

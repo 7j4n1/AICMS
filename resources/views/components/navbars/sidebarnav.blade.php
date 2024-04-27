@@ -42,11 +42,6 @@
                         </a>
                         <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="{{route('loans')}}">
-                                    Loan records
-                                </a>
-                            </li>
-                            <li>
                                 <a class="nav-link" href="{{route('payments')}}">
                                     Payment capture
                                 </a>
@@ -54,64 +49,69 @@
                             
                         </ul>
                     </li>
-                    <!-- <li class="nav-parent">
+                    <li class="nav-parent">
                         <a class="nav-link" href="#">
-                            <i class="bx bx-file" aria-hidden="true"></i>
-                            <span>Pages</span>
+                            <i class="bx bx-cart-alt" aria-hidden="true"></i>
+                            <span>Loans Management</span>
                         </a>
                         <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="pages-signup.html">
-                                    Sign Up
+                                <a class="nav-link" href="#">
+                                    Check guarantors
+                                </a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="{{route('loans')}}">
+                                    Loan records
+                                </a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="#">
+                                    Defaulter's list
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li class="nav-parent">
+                        <a class="nav-link" href="#">
+                            <i class="bx bx-file" aria-hidden="true"></i>
+                            <span>Reports</span>
+                        </a>
+                        <ul class="nav nav-children">
+                            <li>
+                                <a class="nav-link" href="{{ route('individualReport') }}">
+                                    Individual Reports
                                 </a>
                             </li>
                             <li>
                                 <a class="nav-link" href="pages-signin.html">
-                                    Sign In
+                                    General Reports
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="pages-user-profile.html">
-                                    User Profile
+                                <a class="nav-link" href="#">
+                                    Loan Reports
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="pages-timeline.html">
-                                    Timeline
+                                <a class="nav-link" href="#">
+                                    Defaulters Reports
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="pages-media-gallery.html">
-                                    Media Gallery
+                                <a class="nav-link" href="#">
+                                    Shares Reports(Yearly)
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="pages-invoice.html">
-                                    Invoice
+                                <a class="nav-link" href="#">
+                                    Summary Monthly Report
                                 </a>
                             </li>
-                            <li>
-                                <a class="nav-link" href="pages-404.html">
-                                    404
-                                </a>
-                            </li>
-                            <li>
-                                <a class="nav-link" href="pages-500.html">
-                                    500
-                                </a>
-                            </li>
-                            <li>
-                                <a class="nav-link" href="pages-log-viewer.html">
-                                    Log Viewer
-                                </a>
-                            </li>
-                            <li>
-                                <a class="nav-link" href="pages-search-results.html">
-                                    Search Results
-                                </a>
-                            </li>
+                            
                         </ul>
-                    </li> -->
+                    </li>
                 </ul>
             </nav>
         </div>

@@ -19,6 +19,13 @@ Route::middleware('guest:admin')->group(function () {
     })->name('login');
 });
 
+Route::get('/admin/individual-download', function() {
+    return view('admin.reports.report_view');
+})->name('individualReportDownload');
+Route::get('/admin/download', function() {
+    return view('livewire.admin.reports.individual-ledger-download');
+})->name('individualReport1');
+
 Route::middleware('auth:admin')->group(function () {
     Route::group(['prefix' => 'admin'], function () {
         Route::get('/dashboard', function () {
@@ -33,6 +40,14 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/payments', function() {
             return view('admin.accounts.payment');
         })->name('payments');
+
+        Route::get('/individual-report', function() {
+            return view('admin.reports.individual_report');
+        })->name('individualReport');
+
+        // Route::get('/individual-download', function() {
+        //     return view('admin.reports.report_view');
+        // })->name('individualReportDownload');
 
         Route::get('/logout', function () {
             auth('admin')->logout();

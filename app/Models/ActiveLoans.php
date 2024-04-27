@@ -14,7 +14,8 @@ class ActiveLoans extends Model
         'coopId',
         'loanAmount',
         'loanPaid',
-        'loanBalance'
+        'loanBalance',
+        'userId'
     ];
 
     public function setPayment($amount)

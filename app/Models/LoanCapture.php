@@ -34,8 +34,9 @@ class LoanCapture extends Model
             $activeLoan = ActiveLoans::create([
                 'coopId' => $this->coopId,
                 'loanAmount' => $this->loanAmount,
-                'loanPaid' => 0.0,
-                'loanBalance' => $this->loanAmount
+                'loanPaid' => 0,
+                'loanBalance' => $this->loanAmount,
+                'userId' => $this->userId
             ]);
 
             if(!$activeLoan)

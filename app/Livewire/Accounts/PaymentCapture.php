@@ -32,6 +32,28 @@ class PaymentCapture extends Component
         //     $this->paymentForm->savingAmount = $remainBal - $this->paymentForm->shareAmount;
             
         // }
+            
+            $total = $this->paymentForm->totalAmount;
+            if($total > 0){
+                $loan = $this->paymentForm->loanAmount;
+                $split = $this->paymentForm->splitOption;
+                $charge = $this->paymentForm->adminCharge;
+                
+                $saving = $total - $loan;
+                $share = $total - $loan;
+                if ($split > 0) {
+                    $remainBalance = $total - $loan;
+                    if($charge > 0)
+                        $remainBalance = $remainBalance - $charge;
+                    if($this->paymentForm->others > 0)
+                        $remainBalance = $remainBalance - $this->paymentForm->others;
+                    $share = ($split / 100) * $remainBalance;
+                    $saving = $remainBalance - $share;
+                    
+                }
+                $this->paymentForm->savingAmount = $saving;
+                $this->paymentForm->shareAmount = $share;
+            }
 
         $this->payments = ModelsPaymentCapture::query()
             ->orderBy('paymentDate', 'asc')
@@ -44,9 +66,7 @@ class PaymentCapture extends Component
 
     public function mount()
     {
-        $this->paymentForm = new PaymentForm($this, 'paymentForm');
-
-        
+        $this->paymentForm = new PaymentForm($this, 'paymentForm');        
     }
 
     public function resetForm()
@@ -57,15 +77,6 @@ class PaymentCapture extends Component
     public function savePayment()
     {
         $this->validate();
-
-        $totalAmount = $this->paymentForm->loanAmount + $this->paymentForm->savingAmount + $this->paymentForm->others + $this->paymentForm->shareAmount + $this->paymentForm->adminCharge;
-        if($totalAmount != $this->paymentForm->totalAmount) {
-
-            $this->addError('totalAmount', 'The total amount must be equal to the sum of loan amount, saving amount, others and share amount.');
-            $this->isModalOpen = true;
-            session()->flash('error','The total amount must be equal to the sum of loan amount, saving amount, others and share amount.');
-            return;
-        }
 
         if(!$this->getErrorBag()->isEmpty())
         {

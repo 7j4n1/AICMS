@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Forms;
 
+use Exception;
+use Livewire\Form;
 use App\Models\ActiveLoans;
 use App\Models\PaymentCapture;
 use Livewire\Attributes\Validate;
-use Livewire\Form;
 
 class PaymentForm extends Form
 {
@@ -62,14 +63,17 @@ class PaymentForm extends Form
             'paymentDate' => $this->paymentDate,
             'others' => $this->others,
             'shareAmount' => $this->shareAmount,
-            'userId' => auth('admin')->user()->name,
+            'userId' => auth('admin')->user()->id,
             'adminCharge' => $this->adminCharge,
         ]);
 
-        if(!$payment)
+        if(!$payment){
+            // throw new Exception("Failed to create a payment.");
             return false;
-
-        if(($this->loanAmount >= 1.0) || !is_null($this->loanAmount)){
+        }
+            
+        // throw new Exception("Create a payment successfully.");
+        if(($this->loanAmount >= 1) && !is_null($this->loanAmount)){
             $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
             if($activeLoan)
             {

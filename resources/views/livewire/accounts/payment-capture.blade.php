@@ -58,13 +58,13 @@
                                         {{-- CoopId --}}
                                         <div class="col-md-12">
                                             <label for="title">Coop ID <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
+                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model.live="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
                                             @error('paymentForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="splitOption" class="form-label">Split Option</label>
-                                            <select class="form-select" wire:model="paymentForm.splitOption" id="splitOption" onchange="calculatePercent()">
+                                            <select class="form-select" wire:model.live="paymentForm.splitOption" id="splitOption">
                                                 <option value="0">--Select--</option>
                                                 @foreach(range(1, 10) as $perc)
                                                     <option value="{{ $perc*10 }}">{{ $perc*10 }}</option>
@@ -75,14 +75,14 @@
                                             {{-- Amount --}}
                                         <div class="col-md-6">
                                             <label for="totalAmount">Total Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="totalAmount" class="form-control" placeholder="Total Amount" wire:model="paymentForm.totalAmount" oninput="calculatePercent()" />
+                                            <input type="text" id="totalAmount" class="form-control" placeholder="Total Amount" wire:model.live="paymentForm.totalAmount" />
                                             @error('paymentForm.totalAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
                                             {{-- Loan Amount --}}
                                         <div class="col-md-6">
                                             <label for="loanAmount">Loan Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="loanAmount" class="form-control" placeholder="Loan Amount" wire:model="paymentForm.loanAmount" oninput="calculatePercent()" />
+                                            <input type="text" id="loanAmount" class="form-control" placeholder="Loan Amount" wire:model.live="paymentForm.loanAmount"  />
                                             @error('paymentForm.loanAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
@@ -90,41 +90,41 @@
                                             {{-- Savings Amount --}}
                                         <div class="col-md-6">
                                             <label for="savingAmount">Savings Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="savingAmount" class="form-control" oninput="calculatePercent()" placeholder="Savings Amount" wire:model="paymentForm.savingAmount" />
+                                            <input type="text" id="savingAmount" class="form-control"  placeholder="Savings Amount" wire:model.live="paymentForm.savingAmount" />
                                             @error('paymentForm.savingAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                             {{-- Shares Amount --}}
                                         <div class="col-md-6">
                                             <label for="shareAmount">Shares Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="shareAmount" class="form-control" placeholder="Shares Amount" wire:model="paymentForm.shareAmount" oninput="calculatePercent()" />
+                                            <input type="text" id="shareAmount" class="form-control" placeholder="Shares Amount" wire:model.live="paymentForm.shareAmount"  />
                                             @error('paymentForm.shareAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="others">Others <span class="text-danger">*</span></label>
-                                            <input type="text" id="otherAmount" class="form-control" placeholder="Others Amount" wire:model="paymentForm.others" oninput="calculatePercent()" />
+                                            <input type="text" id="otherAmount" class="form-control" placeholder="Others Amount" wire:model.live="paymentForm.others"  />
                                             @error('paymentForm.others') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="adminCharge">Admin Charge <span class="text-danger">*</span></label>
-                                            <input type="text" id="adminCharge" class="form-control" placeholder="admin Charge" wire:model="paymentForm.adminCharge" oninput="calculatePercent()" />
+                                            <input type="text" id="adminCharge" class="form-control" placeholder="admin Charge" wire:model.live="paymentForm.adminCharge"  />
                                             @error('paymentForm.adminCharge') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         {{-- Payment Date --}}
                                         <div class="col-md-6">
                                             <label for="otherNames">Payment Date </label>
-                                            <input type="date"  class="form-control" placeholder="Payment Date (mm-dd-yyyy)" wire:model="paymentForm.PaymentDate" />
-                                            @error('paymentForm.PaymentDate') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <input type="date"  class="form-control" placeholder="Payment Date (mm-dd-yyyy)" wire:model="paymentForm.paymentDate" />
+                                            @error('paymentForm.paymentDate') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         
 
                                         <div class="text-end">
 
-                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingPaymentId ? 'Update' : 'Add' }} Member</button>
+                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingPaymentId ? 'Update' : 'Add' }} Payment</button>
                                         </div>
 
 

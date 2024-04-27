@@ -47,7 +47,7 @@ class LoanForm extends Form
             'guarantor3' => $this->guarantor3,
             'guarantor4' => $this->guarantor4,
             'status' => $this->status,
-            'userId' => auth('admin')->user()->name,
+            'userId' => auth('admin')->user()->id,
         ]);
 
         if(!$loan)

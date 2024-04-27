@@ -28,7 +28,7 @@
         <span class="separator"></span>
 
         <ul class="notifications">
-            <li>
+            <!-- <li>
                 <a href="#" class="dropdown-toggle notification-icon" data-bs-toggle="dropdown">
                     <i class="bx bx-list-ol"></i>
                     <span class="badge">3</span>
@@ -185,7 +185,7 @@
                         </div>
                     </div>
                 </div>
-            </li>
+            </li> -->
         </ul>
 
         <span class="separator"></span>
