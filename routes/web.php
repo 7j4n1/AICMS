@@ -51,6 +51,18 @@ Route::middleware('auth:admin')->group(function () {
             return view('admin.reports.general_report');
         })->name('generalReport');
 
+        Route::get('/report/monthly-shares-report', function() {
+            return view('admin.reports.shares_report');
+        })->name('sharesReport');
+
+        Route::get('/report/loan-repayment-report', function() {
+            return view('admin.reports.activeloans_report');
+        })->name('activeLoansReport');
+
+        Route::get('/report/loan-defaulter-report', function() {
+            return view('admin.reports.defaulterloans_report');
+        })->name('defaulterLoansReport');
+
         Route::get('/report/individual_download/{id}/{beginning_date}/{ending_date}', [IndividualLedger::class, 'downloadLedger'])->name('individualReportDownload');
         Route::get('/report/general_download/{beginning_date}/{ending_date}', [GeneralLedger::class, 'downloadLedger'])->name('generalReportDownload');
 

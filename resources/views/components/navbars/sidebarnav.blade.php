@@ -90,17 +90,17 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{ route('activeLoansReport') }}">
                                     Loan Reports
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{route('defaulterLoansReport')}}">
                                     Defaulters Reports
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{ Route('sharesReport') }}">
                                     Shares Reports(Yearly)
                                 </a>
                             </li>
