@@ -19,6 +19,14 @@ class GeneralLedger extends Component
                 ->selectRaw('coopId, sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
                 ->groupBy('coopId')->get();
 
+        // sum each of the columns in the $ledgers result collections
+        $total_loan = $ledgers->sum('loanAmount');
+        $total_saving = $ledgers->sum('savingAmount');
+        $total_total = $ledgers->sum('totalAmount');
+        $total_share = $ledgers->sum('shareAmount');
+        $total_admin = $ledgers->sum('adminCharge');
+        $total_others = $ledgers->sum('others');
+
         if($this->beginning_date == null)
             $this->beginning_date = date('Y-m-d');
         else
@@ -27,7 +35,9 @@ class GeneralLedger extends Component
         if($this->ending_date == null)
             $this->ending_date = date('Y-m-d');
 
-        return view('livewire.admin.reports.general-ledger')->with(['ledgers' => $ledgers]);
+        return view('livewire.admin.reports.general-ledger')->with(['ledgers' => $ledgers, 
+            'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
+            'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others]);
     }
 
     public function searchResult()

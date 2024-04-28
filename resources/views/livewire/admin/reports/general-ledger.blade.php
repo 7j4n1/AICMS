@@ -33,6 +33,105 @@
                     <h2 class="card-title">General Members Ledger</h2>
                 </header>
                 <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-xl-6">
+                        <section class="card card-featured-left card-featured-secondary">
+                                <div class="card-body">
+                                    <div class="widget-summary">
+                                        <div class="widget-summary-col widget-summary-col-icon">
+                                            <div class="summary-icon bg-secondary">
+                                                <i class="fas fa-naira-sign"></i>
+                                            </div>
+                                        </div>
+                                        <div class="widget-summary-col">
+                                            <div class="summary">
+                                                <h4 class="title">Total Amount</h4>
+                                                <div class="info">
+                                                    <strong class="amount">&#8358; {{number_format($total_total, 2)}}</strong>
+                                                </div>
+                                            </div>
+                                            <div class="summary-footer">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-xl-6">
+                            <section class="card card-featured-left card-featured-secondary">
+                                <div class="card-body">
+                                    <div class="widget-summary">
+                                        <div class="widget-summary-col widget-summary-col-icon">
+                                            <div class="summary-icon bg-secondary">
+                                                <i class="fas fa-naira-sign"></i>
+                                            </div>
+                                        </div>
+                                        <div class="widget-summary-col">
+                                            <div class="summary">
+                                                <h4 class="title">Total Savings</h4>
+                                                <div class="info">
+                                                    <strong class="amount">&#8358; {{number_format($total_saving, 2)}}</strong>
+                                                </div>
+                                            </div>
+                                            <div class="summary-footer">
+                                                <a class="text-muted text-uppercase" href="#">(savings)</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-xl-6">
+                        <section class="card card-featured-left card-featured-secondary">
+                                <div class="card-body">
+                                    <div class="widget-summary">
+                                        <div class="widget-summary-col widget-summary-col-icon">
+                                            <div class="summary-icon bg-secondary">
+                                                <i class="fas fa-naira-sign"></i>
+                                            </div>
+                                        </div>
+                                        <div class="widget-summary-col">
+                                            <div class="summary">
+                                                <h4 class="title">Total Shares</h4>
+                                                <div class="info">
+                                                    <strong class="amount">&#8358; {{number_format($total_share, 2)}}</strong>
+                                                </div>
+                                            </div>
+                                            <div class="summary-footer">
+                                                <a class="text-muted text-uppercase" href="#">(shares)</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-xl-6">
+                            <section class="card card-featured-left card-featured-secondary">
+                                <div class="card-body">
+                                    <div class="widget-summary">
+                                        <div class="widget-summary-col widget-summary-col-icon">
+                                            <div class="summary-icon bg-secondary">
+                                                <i class="fas fa-naira-sign"></i>
+                                            </div>
+                                        </div>
+                                        <div class="widget-summary-col">
+                                            <div class="summary">
+                                                <h4 class="title">Total Loans</h4>
+                                                <div class="info">
+                                                    <strong class="amount">&#8358; {{number_format($total_loan, 2)}}</strong>
+                                                </div>
+                                            </div>
+                                            <div class="summary-footer">
+                                                <a class="text-muted text-uppercase" href="#">(loans)</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
                     
                     {{-- Payment Records Table --}}
                     <!-- class="table-responsive"> -->
