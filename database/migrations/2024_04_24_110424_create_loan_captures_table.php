@@ -24,11 +24,13 @@ return new class extends Migration
             $table->unsignedBigInteger('guarantor4')->nullable();
             $table->boolean('status')->default(0);
             $table->string('userId')->nullable();
+            $table->date('repaymentDate')->nullable();
 
             $table->foreign('coopId')->references('coopId')->on('members');
-            // $table->foreign('guarantor1')->references('coopId')->on('members');
-            // $table->foreign('guarantor2')->references('coopId')->on('members');
-            // $table->foreign('guarantor3')->references('coopId')->on('members');
+            $table->foreign('guarantor1')->references('coopId')->on('members');
+            $table->foreign('guarantor2')->references('coopId')->on('members');
+            $table->foreign('guarantor3')->references('coopId')->on('members');
+            $table->foreign('guarantor4')->references('coopId')->on('members');
             
             $table->timestamps();
         });
