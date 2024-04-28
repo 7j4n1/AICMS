@@ -123,19 +123,19 @@
                             <div class="row row-no-gutters">
                                 <div class="col-md-4 col-sm-4 col-xs-4 col-no-gutters">
                                     <div class="rounded">
-                                        <div class="p-2 ">Date Printed</div>
+                                        <div class="p-2 ">Date printed</div>
                                         <div class="panel-title p-2"><span class="text-bold"> {{date('d-M-Y')}}</span></div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 mb-2 col-xs-4 col-no-gutters">
                                     <div class="rounded">
-                                        <div class="p-2 ">From Date</div>
+                                        <div class="p-2 ">From date</div>
                                         <div class="panel-title p-2"><span class="text-bold">{{ $beginning_date }}</span></div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 mb-2 col-xs-4 col-no-gutters">
                                     <div class="rounded">
-                                        <div class="p-2 ">To Date</div>
+                                        <div class="p-2 ">To date</div>
                                         <div class="panel-title p-2"><span class="text-bold">{{ $ending_date }}</span></div>
                                     </div>
                                 </div>
