@@ -86,7 +86,7 @@ class IndividualLedger extends Component
     ]);
         // dd($html->render());
         $pdf = new Dompdf();
-        $pdf->loadHtml($html);
+        $pdf->loadHtml($html, 'UTF-8');
         $pdf->setPaper('A4', 'portrait');
         $pdf->render();
         $content = $pdf->output();

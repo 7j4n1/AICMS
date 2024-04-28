@@ -52,25 +52,25 @@
                                     <th>Coop Id</th>
                                     <th>Amount</th>
                                     <th>Date</th>
-                                    <th>Savings</th>
-                                    <th>Shares</th>
-                                    <th>Loans</th>
-                                    <th>Others</th>
-                                    <th>Admin Charge</th>
+                                    <th>Savings(&#8358;)</th>
+                                    <th>Shares(&#8358;)</th>
+                                    <th>Loans(&#8358;)</th>
+                                    <th>Others(&#8358;)</th>
+                                    <th>Admin Charge(&#8358;)</th>
                                 </tr>
                             </thead>
                             <tbody>
 
                                 @foreach($ledgers as $ledger)
-                                    <tr wire:key="item-profile-{{ $ledger->id }}">
+                                    <tr wire:key="item-individualledger-{{ $ledger->id }}">
                                         <td>{{ $ledger->coopId }}</td>
-                                        <td>{{ $ledger->totalAmount }}</td>
+                                        <td>{{ number_format($ledger->totalAmount, 2) }}</td>
                                         <td>{{ $ledger->paymentDate }}</td>
-                                        <td>{{ $ledger->savingAmount }}</td>
-                                        <td>{{ $ledger->shareAmount }}</td>
-                                        <td>{{ $ledger->loanAmount }}</td>
-                                        <td>{{ $ledger->others }}</td>
-                                        <td>{{ $ledger->adminCharge }}</td>
+                                        <td>{{ number_format($ledger->savingAmount, 2) }}</td>
+                                        <td>{{ number_format($ledger->shareAmount, 2) }}</td>
+                                        <td>{{ number_format($ledger->loanAmount, 2) }}</td>
+                                        <td>{{ number_format($ledger->others, 2) }}</td>
+                                        <td>{{ number_format($ledger->adminCharge, 2) }}</td>
                                         
                                     </tr>
                                 @endforeach
