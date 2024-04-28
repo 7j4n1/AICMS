@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Admin\Reports\GeneralLedger;
+use App\Livewire\Admin\Reports\IndividualLedger;
 use App\Livewire\Members\ListMembers;
 use Illuminate\Support\Facades\Route;
 
@@ -19,9 +21,9 @@ Route::middleware('guest:admin')->group(function () {
     })->name('login');
 });
 
-Route::get('/admin/individual-download', function() {
-    return view('admin.reports.report_view');
-})->name('individualReportDownload');
+// Route::get('/admin/individual-download', function() {
+//     return view('admin.reports.report_view');
+// })->name('individualReportDownload');
 Route::get('/admin/download', function() {
     return view('livewire.admin.reports.individual-ledger-download');
 })->name('individualReport1');
@@ -41,13 +43,16 @@ Route::middleware('auth:admin')->group(function () {
             return view('admin.accounts.payment');
         })->name('payments');
 
-        Route::get('/individual-report', function() {
+        Route::get('/report/individual-report', function() {
             return view('admin.reports.individual_report');
         })->name('individualReport');
 
-        // Route::get('/individual-download', function() {
-        //     return view('admin.reports.report_view');
-        // })->name('individualReportDownload');
+        Route::get('/report/general-report', function() {
+            return view('admin.reports.general_report');
+        })->name('generalReport');
+
+        Route::get('/report/individual_download/{id}/{beginning_date}/{ending_date}', [IndividualLedger::class, 'downloadLedger'])->name('individualReportDownload');
+        Route::get('/report/general_download/{beginning_date}/{ending_date}', [GeneralLedger::class, 'downloadLedger'])->name('generalReportDownload');
 
         Route::get('/logout', function () {
             auth('admin')->logout();
