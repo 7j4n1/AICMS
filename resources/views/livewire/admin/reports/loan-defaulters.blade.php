@@ -1,7 +1,5 @@
 <div class="container">
     <!-- Button to open the modal for capturing new payment details -->
-    
-    
     <div class="row mb-3">
         <div class="col">
             <section class="card">

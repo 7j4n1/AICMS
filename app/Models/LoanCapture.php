@@ -50,6 +50,11 @@ class LoanCapture extends Model
         
     }
 
+    public function user()
+    {
+        return \App\Models\Member::where('coopId', $this->coopId)->first();
+    }
+
     // build relationships between guarantor1, guarantor2, guarantor3, guarantor4 and members
     public function guarantor1()
     {

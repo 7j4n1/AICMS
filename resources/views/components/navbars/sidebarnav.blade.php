@@ -56,18 +56,13 @@
                         </a>
                         <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{route('checkGuarantor')}}">
                                     Check guarantors
                                 </a>
                             </li>
                             <li>
                                 <a class="nav-link" href="{{route('loans')}}">
                                     Loan records
-                                </a>
-                            </li>
-                            <li>
-                                <a class="nav-link" href="#">
-                                    Defaulter's list
                                 </a>
                             </li>
                             
@@ -102,11 +97,6 @@
                             <li>
                                 <a class="nav-link" href="{{ Route('sharesReport') }}">
                                     Shares Reports(Yearly)
-                                </a>
-                            </li>
-                            <li>
-                                <a class="nav-link" href="#">
-                                    Summary Monthly Report
                                 </a>
                             </li>
                             
