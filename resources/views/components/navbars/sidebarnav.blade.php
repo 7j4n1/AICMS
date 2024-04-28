@@ -85,7 +85,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="pages-signin.html">
+                                <a class="nav-link" href="{{ route('generalReport') }}">
                                     General Reports
                                 </a>
                             </li>

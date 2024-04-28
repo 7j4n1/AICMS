@@ -4,7 +4,7 @@
         <div class="col-md-2 mb-2">
             <div class="form-group">
                 <label for="coopId">CoopId</label>
-                <select class="form-select" wire:model="coopId">
+                <select class="form-select" wire:model.live="coopId">
                     <option value=""></option>
                     @foreach($memberIds as $memberId)
                         <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
@@ -16,22 +16,25 @@
             <!-- Date Range input type -->
             <div class="form-group">
                 <label for="beginning_date">Date From</label>
-                <input type="date" name="beginning_date" id="beginning_date" class="form-control" wire:model="beginning_date">
+                <input type="date" name="beginning_date" id="beginning_date" class="form-control" wire:model.live="beginning_date">
             </div>
         </div>
         <div class="col-md-3 mb-2">
             <!-- Date Range input type -->
             <div class="form-group">
                 <label for="daterange">To Date</label>
-                <input type="date" name="daterange" id="daterange1" class="form-control" wire:model="ending_date">
+                <input type="date" name="daterange" id="daterange1" class="form-control" wire:model.live="ending_date">
             </div>
         </div>
         <div class="col-md-3 mb-4" style="padding-top: 2%;">
             <button type="submit" class="btn btn-primary" >Search</button>
         </div>
-        <div class="col-md-3 mb-4" style="padding-top: 2%;">
-            <button type="button" class="btn btn-primary" @click="downloadLedger('{{$coopId}}')">Export to Pdf</a>
-        </div>
+        @if($ledgers->count() > 0)
+            <div class="col-md-3 mb-4" style="padding-top: 2%;">
+                <!-- <button type="button" class="btn btn-primary" @click="downloadLedger('{{$coopId}}')">Export to Pdf</a> -->
+                <a href="{{ route('individualReportDownload', ['id' => $coopId, 'beginning_date' => $beginning_date, 'ending_date' => $ending_date]) }}" class="btn btn-primary">Export to Pdf</a>
+            </div>
+        @endif
 
     </form>
     

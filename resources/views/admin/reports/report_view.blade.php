@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{  str_replace('_', '-', app()->getLocale())  }}" class="" >
 	<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-		<!-- Basic -->
-        <!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> -->
-		<!-- <meta charset="Unicode"> -->
-        <meta charset="utf-8">
 
-		<title>{{--$memberId->surname--}} Ledger  "Admin Dashboard" | Al-Birru</title>
+		<title>{{$memberId->surname}} Account Ledger | Al-Birru</title>
 
 		<meta name="keywords" content="cooperative, islamic, society, Al-birru" />
 		<meta name="description" content="Al-Birr Islamic Cooperative Multipurpose society">
@@ -40,8 +37,12 @@
             .rounded .text-capitalize {
                 font-size: small;
             }
-            .naira::before {
-                content: "\20A6";
+            @font-face {
+                font-family: 'dejavu';
+                src: url("{{url('fonts/DejaVuSans.ttf')}}") format('truetype');
+            }
+            .naira {
+                font-family: 'dejavu', 'Segoe UI' !important;
             }
         </style>
         
