@@ -48,6 +48,7 @@ class LoanForm extends Form
             'guarantor4' => $this->guarantor4,
             'status' => $this->status,
             'userId' => auth('admin')->user()->id,
+            'repaymentDate' => date('Y-m-d', strtotime($this->loanDate. ' + 366 days'))
         ]);
 
         if(!$loan)

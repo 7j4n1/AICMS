@@ -24,7 +24,8 @@ class LoanCapture extends Model
         'guarantor3',
         'guarantor4',
         'status',
-        'userId'
+        'userId',
+        'repaymentDate'
     ];
 
     public function scopeAddToActiveLoan()
@@ -36,7 +37,10 @@ class LoanCapture extends Model
                 'loanAmount' => $this->loanAmount,
                 'loanPaid' => 0,
                 'loanBalance' => $this->loanAmount,
-                'userId' => $this->userId
+                'userId' => $this->userId,
+                'loanDate' => $this->loanDate,
+                'repaymentDate' => $this->repaymentDate,
+                'lastPaymentDate' => date('Y-m-d')
             ]);
 
             if(!$activeLoan)
@@ -44,5 +48,23 @@ class LoanCapture extends Model
                 
         });
         
+    }
+
+    // build relationships between guarantor1, guarantor2, guarantor3, guarantor4 and members
+    public function guarantor1()
+    {
+        return $this->belongsTo(Member::class, 'guarantor1', 'coopId');
+    }
+    public function guarantor2()
+    {
+        return $this->belongsTo(Member::class, 'guarantor2', 'coopId');
+    }
+    public function guarantor3()
+    {
+        return $this->belongsTo(Member::class, 'guarantor3', 'coopId');
+    }
+    public function guarantor4()
+    {
+        return $this->belongsTo(Member::class, 'guarantor4', 'coopId');
     }
 }
