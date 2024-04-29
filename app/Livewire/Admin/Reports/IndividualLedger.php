@@ -80,9 +80,19 @@ class IndividualLedger extends Component
             $dataTotals = PaymentCapture::query()
                 ->where('coopId', $id)
                 ->whereBetween('paymentDate', [$beginning_date, $ending_date])
-                ->selectRaw('SUM("loanAmount") as loanAmount, SUM("savingAmount") as savingAmount, SUM("totalAmount") as totalAmount, SUM("shareAmount") as shareAmount, SUM("adminCharge") as adminCharge, SUM("others") as others')
-                ->first();
+                ->get();
 
+            // ->selectRaw('SUM("loanAmount") as loanAmount, SUM("savingAmount") as savingAmount, SUM("totalAmount") as totalAmount, SUM("shareAmount") as shareAmount, SUM("adminCharge") as adminCharge, SUM("others") as others')
+
+            $dataTotals = $dataTotals->reduce(function($carry, $item){
+                $carry['loanAmount'] += $item->loanAmount;
+                $carry['savingAmount'] += $item->savingAmount;
+                $carry['totalAmount'] += $item->totalAmount;
+                $carry['shareAmount'] += $item->shareAmount;
+                $carry['adminCharge'] += $item->adminCharge;
+                $carry['others'] += $item->others;
+                return $carry;
+            }, ['loanAmount' => 0, 'savingAmount' => 0, 'totalAmount' => 0, 'shareAmount' => 0, 'adminCharge' => 0, 'others' => 0]);
             $html = View::make('admin.reports.report_view', ['ledgers' => $ledgers, 
                 'dataTotals' => $dataTotals, 'memberId' => $memberId, 'isOnLoan' => $isOnLoan,
                 'beginning_date' => $beginning_date, 'ending_date' => $ending_date
