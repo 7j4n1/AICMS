@@ -17,7 +17,7 @@ class MonthlyShares extends Component
                 ->selectRaw('MONTH(paymentDate) as month, sum(shareAmount) as shareAmount')
                 ->groupBy('month')->get();
 
-        $total_shares = $shares->sum('shareAmount');
+        $total_shares = $shares->sum('shareAmount') ?? 0;
 
         if($this->year == null)
             $this->year = date('Y');
