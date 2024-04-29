@@ -23,14 +23,15 @@ class Dashboard extends Component
     public function render()
     {
 
-        $totals = PaymentCapture::query()
-        ->selectRaw('SUM(payment_captures.totalAmount) as total_amount, SUM(payment_captures.savingAmount) as total_savings, SUM(payment_captures.loanAmount) as total_loans')
-        ->first();
+        // $totals = PaymentCapture::query()
+        // ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans')
+        // ->first();
 
+        $totals = PaymentCapture::all();
 
         if ($totals) {
-            $this->total_amounts = $totals->total_amount;
-            $this->total_savings = $totals->total_savings;
+            $this->total_amounts = $totals->sum('totalAmount');
+            $this->total_savings = $totals->sum('savingAmount');
             
             $this->total_members = Member::count();
             $this->total_shares = PaymentCapture::sum('shareAmount');
