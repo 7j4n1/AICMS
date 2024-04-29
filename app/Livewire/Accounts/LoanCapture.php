@@ -124,6 +124,17 @@ class LoanCapture extends Component
         $this->sendDispatchEvent();
     }
 
+    #[On('complete-loans')]
+    public function completeLoan($id) {
+        $loan = ModelsLoanCapture::find($id);
+
+        $loan->completedLoan();
+
+        session()->flash('message','Loan marked as completed successfully.');
+
+        $this->sendDispatchEvent();
+    }
+
     public function toggleModalOpen()
     {
         $this->isModalOpen = true;

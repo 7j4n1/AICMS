@@ -55,6 +55,33 @@ class LoanCapture extends Model
         return \App\Models\Member::where('coopId', $this->coopId)->first();
     }
 
+    public function activeLoan()
+    {
+        return $this->hasOne(ActiveLoans::class, 'coopId', 'coopId');
+    }
+
+    public function completedLoan()
+    {
+        $activeLoan = $this->activeLoan()->first();
+        $completedLoan = new CompletedLoans();
+        $completedLoan->coopId = $activeLoan->coopId;
+        $completedLoan->loanAmount = $activeLoan->loanAmount;
+        $completedLoan->loanPaid = $activeLoan->loanPaid;
+        $completedLoan->loanBalance = $activeLoan->loanBalance;
+        $completedLoan->userId = $activeLoan->userId;
+        $completedLoan->loanDate = $activeLoan->loanDate;
+        $completedLoan->repaymentDate = $activeLoan->repaymentDate;
+        $completedLoan->lastPaymentDate = $activeLoan->lastPaymentDate;
+        $completedLoan->save();
+
+        if($completedLoan){
+            static::query()->where('coopId', $this->coopId)->update([
+                'status' => DB::raw('0'),
+            ]);
+            $activeLoan->delete();
+        }
+    }
+
     // build relationships between guarantor1, guarantor2, guarantor3, guarantor4 and members
     public function guarantor1()
     {

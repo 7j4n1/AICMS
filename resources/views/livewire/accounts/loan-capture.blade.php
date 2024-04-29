@@ -167,9 +167,7 @@
                                     <th>Guarantor3</th>
                                     <th>Guarantor4</th>
                                     <th>Status</th>
-                                    @canAny(['can edit', 'can delete'], 'admin')
-                                        <th>Actions</th>
-                                    @endcanAny
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,8 +184,13 @@
                                         <td>{{ $loan->guarantor3 }}</td>
                                         <td>{{ $loan->guarantor4 }}</td>
                                         <td>{{ $loan->status }}</td>
-                                        @canAny(['can edit', 'can delete'], 'admin')
-                                            <td class="">
+                                        <td class="">
+                                            @if($loan->status == 1)
+                                                <button onclick="sendCompleteEvent('{{$loan->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Complete</button>
+                                            @endif
+                                            
+                                            @canAny(['can edit', 'can delete'], 'admin')
+                                            
                                                 @can('can edit', 'admin')
                                                     <button onclick="sendLoanEvent('{{$loan->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
                                                 @endcan
@@ -195,8 +198,9 @@
                                                     <button onclick="sendDeleteEvent('{{ $loan->id }}')" 
                                                     class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
                                                 @endcan
-                                            </td>
-                                        @endcanany
+                                            
+                                            @endcanany
+                                        </td>
                                     </tr>
                                 @endforeach
                                 
@@ -235,6 +239,10 @@
     <script>
         function sendLoanEvent(value) {
             Livewire.dispatch('edit-loans', { id: value });
+        }
+
+        function sendCompleteEvent(value) {
+            Livewire.dispatch('complete-loans', { id: value });
         }
 
         function sendDeleteEvent(value) {
