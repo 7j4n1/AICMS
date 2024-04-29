@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         $user = \App\Models\Admin::where('username', 'superadmin')->first();
 
         if(!$user){
-            \App\Models\Admin::factory()->create([
+            \App\Models\Admin::create([
                 'name' => 'Super Admin',
                 'username' => 'superadmin',
                 'email' => '',
