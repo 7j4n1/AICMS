@@ -45,17 +45,5 @@ class RoleAndPermissionSeeder extends Seeder
         }
         
 
-        $user = \App\Models\Admin::where('username', 'superadmin')->first();
-
-        if(!$user){
-            \App\Models\Admin::factory()->create([
-                'name' => 'Super Admin',
-                'username' => 'superadmin',
-                'email' => '',
-                'password' => bcrypt('password0987'),
-            ])->assignRole('super-admin');
-        }
-    
-
     }
 }

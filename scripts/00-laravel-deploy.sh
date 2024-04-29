@@ -13,5 +13,5 @@ echo 'Running migrations...'
 php artisan migrate --seeder="RoleAndPermissionSeeder" --force
 
 echo 'Running seeding...'
-php artisan migrate --seed --seeder="RoleAndPermissionSeeder" --force
+php artisan migrate --seed  --force
 
