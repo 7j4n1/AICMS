@@ -16,10 +16,11 @@ class MonthlyShares extends Component
         // $shares = PaymentCapture::whereYear("paymentDate", $this->year)
         //         ->selectRaw("MONTH(paymentDate) as month, sum(shareAmount) as shareAmount")
         //         ->groupBy("month")->get();
-        $shares = PaymentCapture::whereYear('payment_captures.paymentDate', $this->year)
-                ->selectRaw('EXTRACT(MONTH FROM "payment_captures.paymentDate") as month, SUM(shareAmount) as shareAmount')
-                ->groupBy('month')
-                ->get();
+        $shares = PaymentCapture::whereYear('paymentDate', $this->year)
+    ->selectRaw('EXTRACT(MONTH FROM "payment_captures.paymentDate") as month, SUM(shareAmount) as shareAmount')
+    ->groupBy('month')
+    ->get();
+
 
 
 
