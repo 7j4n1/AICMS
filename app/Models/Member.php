@@ -13,6 +13,8 @@ class Member extends Model
 
     protected $keyType = 'string';
 
+    protected $primaryKey = "id";
+
     protected $fillable = [
         'coopId',
         'surname',
@@ -28,4 +30,8 @@ class Member extends Model
         'yearJoined',
         'userId'
     ]; 
+
+    protected $casts = [
+        'id' => 'string',
+    ];
 }

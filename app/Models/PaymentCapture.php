@@ -13,6 +13,8 @@ class PaymentCapture extends Model
 
     protected $keyType = 'string';
 
+    protected $primaryKey = "id";
+
     protected $fillable = [
         'coopId',
         'splitOption',
@@ -24,5 +26,9 @@ class PaymentCapture extends Model
         'shareAmount',
         'userId',
         'adminCharge'
+    ];
+
+    protected $casts = [
+        'id' => 'string',
     ];
 }

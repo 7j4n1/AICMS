@@ -12,8 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::statement('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
         Schema::create('payment_captures', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
+            $table->uuid('id')->primary();
             $table->unsignedBigInteger('coopId');
             $table->unsignedDouble('splitOption')->default(0);
             $table->unsignedDouble('loanAmount')->default(0);
@@ -29,6 +30,7 @@ return new class extends Migration
 
             $table->timestamps();
         });
+        DB::statement('ALTER TABLE payment_captures ALTER COLUMN id SET DEFAULT uuid_generate_v4();');
     }
 
     /**
