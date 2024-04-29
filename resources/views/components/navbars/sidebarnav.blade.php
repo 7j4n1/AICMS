@@ -21,6 +21,12 @@
                             <span>Dashboard</span>
                         </a>                        
                     </li>
+                    <li>
+                        <a class="nav-link" href="{{route('admins')}}">
+                            <i class="bx bx-home-alt" aria-hidden="true"></i>
+                            <span>Administrators</span>
+                        </a>                        
+                    </li>
                     <li class="nav-parent">
                         <a class="nav-link" href="#">
                             <i class="bx bx-cart-alt" aria-hidden="true"></i>

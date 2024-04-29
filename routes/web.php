@@ -43,6 +43,10 @@ Route::middleware('auth:admin')->group(function () {
             return view('admin.accounts.payment');
         })->name('payments');
 
+        Route::get('/admins', function() {
+            return view('admin.members.admin');
+        })->name('admins');
+
         Route::get('/check-guarantor', function() {
             return view('admin.accounts.check');
         })->name('checkGuarantor');
