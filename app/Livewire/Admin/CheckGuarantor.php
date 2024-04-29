@@ -16,7 +16,7 @@ class CheckGuarantor extends Component
         $memberIds = Member::orderBy("coopId","asc")->get(['coopId']);
         $guarantor = PaymentCapture::query()
             ->where('coopId', $this->coopId)
-            ->selectRaw('sum(savingAmount) as savings, sum(shareAmount) as shares')
+            ->selectRaw('SUM(savingAmount) as savings, SUM(shareAmount) as shares')
             ->first();
 
         $guarantor_records = LoanCapture::query()

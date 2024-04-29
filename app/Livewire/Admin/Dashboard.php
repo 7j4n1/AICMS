@@ -10,15 +10,18 @@ use Livewire\WithPagination;
 
 class Dashboard extends Component
 {
+    use WithPagination;
     public $total_amounts = 0;
     public $total_savings = 0;
     public $total_loans = 0;
     public $total_members = 0;
     public $total_shares = 0;
+    
+
+    protected $paginationTheme = "bootstrap";
 
     public function render()
     {
-        WithPagination::paginationTheme('bootstrap');
 
         $totals = PaymentCapture::query()
         ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans')
