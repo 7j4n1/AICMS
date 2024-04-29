@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 Route::middleware('guest:admin')->group(function () {
     Route::get('/login', function () {
         return view('admin.authentication.login');
