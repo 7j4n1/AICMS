@@ -32,7 +32,10 @@ class CheckGuarantor extends Component
             ->orWhere('guarantor4', $this->coopId)
             ->get();
 
-        $totalLoan_guaranteed = $guarantees->sum('loanAmount') ?? 0;
+        if($guarantees->count() > 0)
+            $totalLoan_guaranteed = $guarantees->sum('loanAmount') ?? 0;
+        else
+            $totalLoan_guaranteed = 0;
 
         $totalOutstanding = 0;
         foreach ($guarantees as $guarantee) {
