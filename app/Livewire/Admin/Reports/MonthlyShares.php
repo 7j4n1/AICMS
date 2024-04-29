@@ -12,8 +12,7 @@ class MonthlyShares extends Component
     public function render()
     {
         // query to get the sum of shares for each month based on given year
-        $shares = PaymentCapture::query()
-                ->whereYear("paymentDate", $this->year)
+        $shares = PaymentCapture::whereYear("paymentDate", $this->year)
                 ->selectRaw("MONTH(paymentDate) as month, sum(shareAmount) as shareAmount")
                 ->groupBy("month")->get();
 
