@@ -38,7 +38,7 @@
                                             <div class="summary">
                                                 <h4 class="title">Total</h4>
                                                 <div class="info">
-                                                    <strong class="amount">&#8358; {{ ($guarantor != null) ? number_format(($guarantor->savings + $guarantor->shares), 2) : '0'}}</strong>
+                                                    <strong class="amount">&#8358; {{ number_format(($allsavings + $allshares), 2)}}</strong>
                                                 </div>
                                             </div>
                                             <div class="summary-footer">
@@ -61,7 +61,7 @@
                                             <div class="summary">
                                                 <h4 class="title">Savings</h4>
                                                 <div class="info">
-                                                    <strong class="amount">&#8358; {{$guarantor ? number_format($guarantor->savings, 2) : '0'}}</strong>
+                                                    <strong class="amount">&#8358; {{number_format($allsavings, 2)}}</strong>
                                                 </div>
                                             </div>
                                             <div class="summary-footer">
@@ -85,7 +85,7 @@
                                             <div class="summary">
                                                 <h4 class="title">Shares</h4>
                                                 <div class="info">
-                                                    <strong class="amount">&#8358; {{$guarantor ? number_format($guarantor->shares, 2) : '0'}}</strong>
+                                                    <strong class="amount">&#8358; {{number_format($allshares, 2)}}</strong>
                                                 </div>
                                             </div>
                                             <div class="summary-footer">

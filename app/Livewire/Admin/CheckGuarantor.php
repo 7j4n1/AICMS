@@ -16,8 +16,15 @@ class CheckGuarantor extends Component
         $memberIds = Member::orderBy("coopId","asc")->get(['coopId']);
         $guarantor = PaymentCapture::query()
             ->where('coopId', $this->coopId)
-            ->selectRaw('SUM(payment_captures.savingAmount) as savings, SUM(payment_captures.shareAmount) as shares')
             ->first();
+
+        $allsavings = PaymentCapture::query()
+            ->where('coopId', $this->coopId)
+            ->sum('savingAmount') ?? 0;
+
+        $allshares = PaymentCapture::query()
+            ->where('coopId', $this->coopId)
+            ->sum('shareAmount') ?? 0;
 
         $guarantor_records = LoanCapture::query()
             ->where('coopId', $this->coopId)
@@ -50,7 +57,8 @@ class CheckGuarantor extends Component
         return view('livewire.admin.check-guarantor')
             ->with(['guarantor' => $guarantor, 'guarantor_records' => $guarantor_records, 
             'guarantees' => $guarantees, 'totalLoan_guaranteed' => $totalLoan_guaranteed, 
-            'totalOutstanding' => $totalOutstanding, 'memberIds' => $memberIds]);
+            'totalOutstanding' => $totalOutstanding, 'memberIds' => $memberIds,
+            'allsavings' => $allsavings, 'allshares' => $allshares]);
     }
 
     public function searchResult()
