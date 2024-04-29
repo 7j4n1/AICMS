@@ -6,6 +6,7 @@ use App\Models\ActiveLoans;
 use App\Models\Member;
 use Livewire\Component;
 use App\Models\PaymentCapture;
+use Livewire\WithPagination;
 
 class Dashboard extends Component
 {
@@ -17,6 +18,8 @@ class Dashboard extends Component
 
     public function render()
     {
+        WithPagination::paginationTheme('bootstrap');
+        
         $totals = PaymentCapture::query()
         ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans')
         ->first();
@@ -40,6 +43,8 @@ class Dashboard extends Component
         
         if($loans->count() > 0)
             $this->total_loans = ActiveLoans::sum('loanAmount') ?? 0;
+        else
+            $this->total_loans = 0;
 
         return view('livewire.admin.dashboard')
             ->with(['session' => session(), 'members' => $members, 'loans' => $loans]);

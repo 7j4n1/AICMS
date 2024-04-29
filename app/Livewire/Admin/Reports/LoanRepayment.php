@@ -13,8 +13,14 @@ class LoanRepayment extends Component
     {
         $activeLoans = ActiveLoans::query()
             ->whereBetween('lastPaymentDate', [$this->beginning_date, $this->ending_date])->get();
-        $total_loans = $activeLoans->sum('loanAmount');
-        $total_balance = $activeLoans->sum('loanBalance');
+        if($activeLoans->count() > 0){
+            $total_loans = $activeLoans->sum('loanAmount');
+            $total_balance = $activeLoans->sum('loanBalance');
+        }else {
+            $total_loans = 0;
+            $total_balance = 0;
+        }
+        
 
         if($this->beginning_date == null)
             $this->beginning_date = date('Y-m-d', strtotime('first day of this month'));
