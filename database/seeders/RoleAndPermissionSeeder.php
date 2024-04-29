@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 
 class RoleAndPermissionSeeder extends Seeder
@@ -44,6 +45,16 @@ class RoleAndPermissionSeeder extends Seeder
         }
         
 
+        $user = \App\Models\Admin::where('username', 'superadmin')->first();
+
+        if(!$user){
+            \App\Models\Admin::factory()->create([
+                'name' => 'Super Admin',
+                'username' => 'superadmin',
+                'email' => '',
+                'password' => bcrypt('password0987'),
+            ])->assignRole('super-admin');
+        }
     
 
     }
