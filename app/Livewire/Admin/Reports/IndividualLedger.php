@@ -84,18 +84,27 @@ class IndividualLedger extends Component
 
             // ->selectRaw('SUM("loanAmount") as loanAmount, SUM("savingAmount") as savingAmount, SUM("totalAmount") as totalAmount, SUM("shareAmount") as shareAmount, SUM("adminCharge") as adminCharge, SUM("others") as others')
 
-            $dataTotals = $dataTotals->reduce(function($carry, $item){
-                $carry['loanAmount'] += $item->loanAmount;
-                $carry['savingAmount'] += $item->savingAmount;
-                $carry['totalAmount'] += $item->totalAmount;
-                $carry['shareAmount'] += $item->shareAmount;
-                $carry['adminCharge'] += $item->adminCharge;
-                $carry['others'] += $item->others;
-                return $carry;
-            }, ['loanAmount' => 0, 'savingAmount' => 0, 'totalAmount' => 0, 'shareAmount' => 0, 'adminCharge' => 0, 'others' => 0]);
+            $total_loan = $dataTotals->sum('loanAmount');
+            $total_saving = $dataTotals->sum('savingAmount');
+            $total_total = $dataTotals->sum('totalAmount');
+            $total_share = $dataTotals->sum('shareAmount');
+            $total_admin = $dataTotals->sum('adminCharge');
+            $total_others = $dataTotals->sum('others');
+
+            // $dataTotals = $dataTotals->reduce(function($carry, $item){
+            //     $carry['loanAmount'] += $item->loanAmount;
+            //     $carry['savingAmount'] += $item->savingAmount;
+            //     $carry['totalAmount'] += $item->totalAmount;
+            //     $carry['shareAmount'] += $item->shareAmount;
+            //     $carry['adminCharge'] += $item->adminCharge;
+            //     $carry['others'] += $item->others;
+            //     return $carry;
+            // }, ['loanAmount' => 0, 'savingAmount' => 0, 'totalAmount' => 0, 'shareAmount' => 0, 'adminCharge' => 0, 'others' => 0]);
             $html = View::make('admin.reports.report_view', ['ledgers' => $ledgers, 
                 'dataTotals' => $dataTotals, 'memberId' => $memberId, 'isOnLoan' => $isOnLoan,
-                'beginning_date' => $beginning_date, 'ending_date' => $ending_date
+                'beginning_date' => $beginning_date, 'ending_date' => $ending_date,
+                'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
+                'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others
             ]);
 
             $pdf = new Dompdf();

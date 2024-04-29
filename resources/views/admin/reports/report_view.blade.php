@@ -68,13 +68,13 @@
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
                                     <div class="rounded">
                                         <div class="p-2 text-capitalize">Total Amounts</div>
-                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($dataTotals->totalAmount, 2)}} </span></div>
+                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($total_total, 2)}} </span></div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
                                     <div class="rounded">
                                         <div class="p-2 text-capitalize">Total Savings</div>
-                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($dataTotals->savingAmount, 2)}}</span></div>
+                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($total_saving, 2)}}</span></div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
@@ -95,19 +95,19 @@
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
                                     <div class="rounded">
                                         <div class="p-2 text-capitalize">Total Shares</div>
-                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($dataTotals->shareAmount, 2)}} </span></div>
+                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($total_share, 2)}} </span></div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
                                     <div class="rounded">
                                         <div class="p-2 text-capitalize">Total Loans</div>
-                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($dataTotals->loanAmount, 2)}}</span></div>
+                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($total_loan, 2)}}</span></div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
                                     <div class="rounded">
                                         <div class="p-2 text-capitalize">Admin & Others</div>
-                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($dataTotals->adminCharge + $dataTotals->others, 2)}}</span></div>
+                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($total_admin + $total_others, 2)}}</span></div>
                                     </div>
                                 </div>
                             </div>
