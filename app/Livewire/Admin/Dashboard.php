@@ -38,7 +38,8 @@ class Dashboard extends Component
             ->orderBy('lastPaymentDate', 'desc')
             ->paginate(10);
         
-        $this->total_loans = ActiveLoans::sum('loanAmount') ?? 0;
+        if($loans->count() > 0)
+            $this->total_loans = ActiveLoans::sum('loanAmount') ?? 0;
 
         return view('livewire.admin.dashboard')
             ->with(['session' => session(), 'members' => $members, 'loans' => $loans]);
