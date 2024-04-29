@@ -24,7 +24,7 @@ class Dashboard extends Component
     {
 
         $totals = PaymentCapture::query()
-        ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans')
+        ->selectRaw('SUM(payment_captures.totalAmount) as total_amount, SUM(payment_captures.savingAmount) as total_savings, SUM(payment_captures.loanAmount) as total_loans')
         ->first();
 
 
