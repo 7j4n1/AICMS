@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Reports;
 
 use Livewire\Component;
 use App\Models\PaymentCapture;
+use Illuminate\Support\Facades\DB;
 
 class MonthlyShares extends Component
 {
@@ -12,9 +13,14 @@ class MonthlyShares extends Component
     public function render()
     {
         // query to get the sum of shares for each month based on given year
+        // $shares = PaymentCapture::whereYear("paymentDate", $this->year)
+        //         ->selectRaw("MONTH(paymentDate) as month, sum(shareAmount) as shareAmount")
+        //         ->groupBy("month")->get();
         $shares = PaymentCapture::whereYear("paymentDate", $this->year)
-                ->selectRaw("MONTH(paymentDate) as month, sum(shareAmount) as shareAmount")
-                ->groupBy("month")->get();
+                ->select('month', DB::raw('SUM(shareAmount) as shareAmount'))
+                ->groupBy(DB::raw('MONTH(paymentDate) as month'))
+                ->get();
+
 
         if($shares->count() > 0){
             $total_shares = $shares->sum("shareAmount") ?? 0;
