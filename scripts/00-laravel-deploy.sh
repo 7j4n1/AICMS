@@ -10,8 +10,8 @@ echo 'Caching routes...'
 php artisan route:cache
  
 echo 'Running migrations...'
-php artisan migrate --seeder="RoleAndPermissionSeeder"
+php artisan migrate --seeder="RoleAndPermissionSeeder" --force
 
 echo 'Running seeding...'
-php artisan migrate --seed --seeder="RoleAndPermissionSeeder"
+php artisan migrate --seed --seeder="RoleAndPermissionSeeder" --force
 
