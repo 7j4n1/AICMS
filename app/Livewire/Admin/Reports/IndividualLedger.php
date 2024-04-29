@@ -80,7 +80,7 @@ class IndividualLedger extends Component
             $dataTotals = PaymentCapture::query()
                 ->where('coopId', $id)
                 ->whereBetween('paymentDate', [$beginning_date, $ending_date])
-                ->selectRaw('sum("loanAmount") as loanAmount, sum("savingAmount") as savingAmount, sum("totalAmount") as totalAmount, sum("shareAmount") as shareAmount, sum("adminCharge") as adminCharge, sum("others") as others')
+                ->selectRaw('SUM("loanAmount") as loanAmount, SUM("savingAmount") as savingAmount, SUM("totalAmount") as totalAmount, SUM("shareAmount") as shareAmount, SUM("adminCharge") as adminCharge, SUM("others") as others')
                 ->first();
 
             $html = View::make('admin.reports.report_view', ['ledgers' => $ledgers, 
