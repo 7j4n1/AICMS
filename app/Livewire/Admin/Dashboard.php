@@ -19,7 +19,7 @@ class Dashboard extends Component
     public function render()
     {
         WithPagination::paginationTheme('bootstrap');
-        
+
         $totals = PaymentCapture::query()
         ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans')
         ->first();
@@ -42,7 +42,7 @@ class Dashboard extends Component
             ->paginate(10);
         
         if($loans->count() > 0)
-            $this->total_loans = ActiveLoans::sum('loanAmount') ?? 0;
+            $this->total_loans = ActiveLoans::sum('loanAmount');
         else
             $this->total_loans = 0;
 
