@@ -12,9 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
         Schema::create('members', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->unsignedBigInteger('coopId')->unique();
             // create columns for other Member details
             $table->string('surname')->nullable();
@@ -31,7 +30,6 @@ return new class extends Migration
             $table->string('userId')->nullable();
             $table->timestamps();
         });
-        DB::statement('ALTER TABLE members ALTER COLUMN id SET DEFAULT uuid_generate_v4();');
     }
 
     /**

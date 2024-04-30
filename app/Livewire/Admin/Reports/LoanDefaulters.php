@@ -18,10 +18,7 @@ class LoanDefaulters extends Component
             ->where('repaymentDate', '<', date('Y-m-d'))
             ->get();
 
-        if($loans->count() > 0)
-            $total_loans = $loans->sum('loanAmount');
-        else
-            $total_loans = 0;
+        $total_loans = $loans->sum('loanAmount') ?? 0;
         
         $total_balance = 0;
 
@@ -36,9 +33,7 @@ class LoanDefaulters extends Component
 
     public function searchResult()
     {
-        
         $this->sendDispatchEvent();
-   
     }
 
     public function sendDispatchEvent()

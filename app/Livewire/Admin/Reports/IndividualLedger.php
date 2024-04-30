@@ -7,9 +7,7 @@ use Dompdf\Options;
 use App\Models\Member;
 use Livewire\Component;
 use App\Models\ActiveLoans;
-use Livewire\Attributes\On;
 use App\Models\PaymentCapture;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\View;
 
 class IndividualLedger extends Component
@@ -53,9 +51,7 @@ class IndividualLedger extends Component
     }
     public function searchResult()
     {
-        
         $this->sendDispatchEvent();
-   
     }
 
     public function sendDispatchEvent()
@@ -71,7 +67,7 @@ class IndividualLedger extends Component
             ->whereBetween('paymentDate', [$beginning_date, $ending_date])
             ->orderBy('paymentDate', 'asc')
             ->get(['id', 'coopId', 'loanAmount', 'savingAmount', 'totalAmount', 'paymentDate', 'others', 'shareAmount', 'adminCharge']);
-        if($ledgers->count() > 0){
+        if($ledgers){
             $memberId = Member::where('coopId', $id)->first();
 
             $isActive = ActiveLoans::where('coopId', $id)->first();
@@ -84,22 +80,13 @@ class IndividualLedger extends Component
 
             // ->selectRaw('SUM("loanAmount") as loanAmount, SUM("savingAmount") as savingAmount, SUM("totalAmount") as totalAmount, SUM("shareAmount") as shareAmount, SUM("adminCharge") as adminCharge, SUM("others") as others')
 
-            $total_loan = $dataTotals->sum('loanAmount');
-            $total_saving = $dataTotals->sum('savingAmount');
-            $total_total = $dataTotals->sum('totalAmount');
-            $total_share = $dataTotals->sum('shareAmount');
-            $total_admin = $dataTotals->sum('adminCharge');
-            $total_others = $dataTotals->sum('others');
+            $total_loan = $dataTotals->sum('loanAmount') ?? 0;
+            $total_saving = $dataTotals->sum('savingAmount') ?? 0;
+            $total_total = $dataTotals->sum('totalAmount') ?? 0;
+            $total_share = $dataTotals->sum('shareAmount') ?? 0;
+            $total_admin = $dataTotals->sum('adminCharge') ?? 0;
+            $total_others = $dataTotals->sum('others') ?? 0;
 
-            // $dataTotals = $dataTotals->reduce(function($carry, $item){
-            //     $carry['loanAmount'] += $item->loanAmount;
-            //     $carry['savingAmount'] += $item->savingAmount;
-            //     $carry['totalAmount'] += $item->totalAmount;
-            //     $carry['shareAmount'] += $item->shareAmount;
-            //     $carry['adminCharge'] += $item->adminCharge;
-            //     $carry['others'] += $item->others;
-            //     return $carry;
-            // }, ['loanAmount' => 0, 'savingAmount' => 0, 'totalAmount' => 0, 'shareAmount' => 0, 'adminCharge' => 0, 'others' => 0]);
             $html = View::make('admin.reports.report_view', ['ledgers' => $ledgers, 
                 'dataTotals' => $dataTotals, 'memberId' => $memberId, 'isOnLoan' => $isOnLoan,
                 'beginning_date' => $beginning_date, 'ending_date' => $ending_date,

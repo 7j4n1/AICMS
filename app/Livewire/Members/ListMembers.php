@@ -35,8 +35,8 @@ class ListMembers extends Component
             ->orderBy('coopId', 'asc')
             ->get();
 
-        if($this->editingMemberId == null)
-            $this->memberForm->coopId = Member::max('coopId') + 1;
+        // if($this->editingMemberId == null)
+        //     $this->memberForm->coopId = Member::max('coopId') + 1;
 
         // $this->sendDispatchEvent();
 

@@ -23,18 +23,18 @@ class Dashboard extends Component
     public function render()
     {
 
-        // $totals = PaymentCapture::query()
-        // ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans')
-        // ->first();
+        $totals = PaymentCapture::query()
+        ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans, SUM(shareAmount) as total_shares')
+        ->first();
 
         $totals = PaymentCapture::all();
 
         if ($totals) {
-            $this->total_amounts = $totals->sum('totalAmount');
-            $this->total_savings = $totals->sum('savingAmount');
+            $this->total_amounts = $totals->total_amount ?? 0;
+            $this->total_savings = $totals->total_savings ?? 0;
             
             $this->total_members = Member::count();
-            $this->total_shares = PaymentCapture::sum('shareAmount');
+            $this->total_shares = $totals->total_shares ?? 0;
         }
 
         $members = Member::query()
@@ -45,10 +45,7 @@ class Dashboard extends Component
             ->orderBy('lastPaymentDate', 'desc')
             ->paginate(10);
         
-        if($loans->count() > 0)
-            $this->total_loans = ActiveLoans::sum('loanAmount');
-        else
-            $this->total_loans = 0;
+        $this->total_loans = ActiveLoans::sum('loanAmount') ?? 0;
 
         return view('livewire.admin.dashboard')
             ->with(['session' => session(), 'members' => $members, 'loans' => $loans]);

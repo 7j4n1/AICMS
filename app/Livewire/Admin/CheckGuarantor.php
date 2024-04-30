@@ -16,15 +16,8 @@ class CheckGuarantor extends Component
         $memberIds = Member::orderBy("coopId","asc")->get(['coopId']);
         $guarantor = PaymentCapture::query()
             ->where('coopId', $this->coopId)
+            ->selectRaw('sum(savingAmount) as savings, sum(shareAmount) as shares')
             ->first();
-
-        $allsavings = PaymentCapture::query()
-            ->where('coopId', $this->coopId)
-            ->sum('savingAmount') ?? 0;
-
-        $allshares = PaymentCapture::query()
-            ->where('coopId', $this->coopId)
-            ->sum('shareAmount') ?? 0;
 
         $guarantor_records = LoanCapture::query()
             ->where('coopId', $this->coopId)
@@ -39,10 +32,7 @@ class CheckGuarantor extends Component
             ->orWhere('guarantor4', $this->coopId)
             ->get();
 
-        if($guarantees->count() > 0)
-            $totalLoan_guaranteed = $guarantees->sum('loanAmount') ?? 0;
-        else
-            $totalLoan_guaranteed = 0;
+        $totalLoan_guaranteed = $guarantees->sum('loanAmount') ?? 0;
 
         $totalOutstanding = 0;
         foreach ($guarantees as $guarantee) {
@@ -58,7 +48,7 @@ class CheckGuarantor extends Component
             ->with(['guarantor' => $guarantor, 'guarantor_records' => $guarantor_records, 
             'guarantees' => $guarantees, 'totalLoan_guaranteed' => $totalLoan_guaranteed, 
             'totalOutstanding' => $totalOutstanding, 'memberIds' => $memberIds,
-            'allsavings' => $allsavings, 'allshares' => $allshares]);
+        ]);
     }
 
     public function searchResult()

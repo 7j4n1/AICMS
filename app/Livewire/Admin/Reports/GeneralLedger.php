@@ -16,7 +16,7 @@ class GeneralLedger extends Component
     {
         $ledgers = PaymentCapture::query()
                 ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
-                ->selectRaw('("coopId"), SUM("loanAmount") as loanAmount, SUM("savingAmount") as savingAmount, SUM("totalAmount") as totalAmount, SUM("shareAmount") as shareAmount, SUM("adminCharge") as adminCharge, SUM(others) as others')
+                ->selectRaw('coopId, sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
                 ->groupBy('coopId')->get();
 
         // sum each of the columns in the $ledgers result collections

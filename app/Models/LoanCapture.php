@@ -15,8 +15,6 @@ class LoanCapture extends Model
 
     protected $keyType = 'string';
 
-    protected $primaryKey = "id";
-
     protected $fillable = [
         'coopId',
         'loanAmount',
@@ -28,10 +26,6 @@ class LoanCapture extends Model
         'status',
         'userId',
         'repaymentDate'
-    ];
-
-    protected $casts = [
-        'id' => 'string',
     ];
 
     public function scopeAddToActiveLoan()
