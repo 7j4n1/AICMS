@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedDouble('loanPaid')->default(0.00);
             $table->unsignedDouble('loanBalance')->default(0.00);
             $table->date('loanDate');
-            $table->date('repaymentDate');
+            $table->date('repaymentDate')->nullable();
             $table->date('lastPaymentDate')->nullable();
             $table->string('userId')->nullable();
 

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->unsignedBigInteger('coopId');
             $table->unsignedDouble('loanAmount', null, 2)->default(0.00);
-            $table->date('loanDate')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->date('loanDate')->nullable();
             // 4 Guarantors coopId
             $table->unsignedBigInteger('guarantor1')->nullable();
             $table->unsignedBigInteger('guarantor2')->nullable();
