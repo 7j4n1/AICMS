@@ -19,6 +19,10 @@ class CheckGuarantor extends Component
             ->selectRaw('sum(savingAmount) as savings, sum(shareAmount) as shares')
             ->first();
 
+        $allsavings = $guarantor->savings ?? 0;
+        $allshares = $guarantor->shares ?? 0;
+        $totalSavings = $allsavings + $allshares;
+
         $guarantor_records = LoanCapture::query()
             ->where('coopId', $this->coopId)
             ->where('status', 1)
@@ -48,6 +52,7 @@ class CheckGuarantor extends Component
             ->with(['guarantor' => $guarantor, 'guarantor_records' => $guarantor_records, 
             'guarantees' => $guarantees, 'totalLoan_guaranteed' => $totalLoan_guaranteed, 
             'totalOutstanding' => $totalOutstanding, 'memberIds' => $memberIds,
+            'totalSavings' => $totalSavings, 'allshares' => $allshares, 'allsavings' => $allsavings
         ]);
     }
 

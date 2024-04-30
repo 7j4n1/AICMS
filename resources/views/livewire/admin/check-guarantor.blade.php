@@ -38,7 +38,7 @@
                                             <div class="summary">
                                                 <h4 class="title">Total</h4>
                                                 <div class="info">
-                                                    <strong class="amount">&#8358; {{ number_format(($allsavings + $allshares), 2)}}</strong>
+                                                    <strong class="amount">&#8358; {{ number_format(($totalSavings), 2)}}</strong>
                                                 </div>
                                             </div>
                                             <div class="summary-footer">
