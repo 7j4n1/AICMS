@@ -56,16 +56,17 @@ class GeneralLedger extends Component
     {
         $ledgers = PaymentCapture::query()
                 ->whereBetween('paymentDate', [$beginning_date, $ending_date])
-                ->selectRaw('coopId, sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
+                ->selectRaw('("coopId"), SUM("loanAmount") as loanAmount, SUM("savingAmount") as savingAmount, SUM("totalAmount") as totalAmount, SUM("shareAmount") as shareAmount, SUM("adminCharge") as adminCharge, SUM(others) as others')
                 ->groupBy('coopId')->get();
 
         // sum each of the columns in the $ledgers result collections
-        $total_loan = $ledgers->sum('loanAmount');
-        $total_saving = $ledgers->sum('savingAmount');
-        $total_total = $ledgers->sum('totalAmount');
-        $total_share = $ledgers->sum('shareAmount');
-        $total_admin = $ledgers->sum('adminCharge');
-        $total_others = $ledgers->sum('others');
+        $total_loan = $ledgers->sum('loanAmount') ?? 0;
+        $total_saving = $ledgers->sum('savingAmount') ?? 0;
+        $total_total = $ledgers->sum('totalAmount') ?? 0;
+        $total_share = $ledgers->sum('shareAmount') ?? 0;
+        $total_admin = $ledgers->sum('adminCharge') ?? 0;
+        $total_others = $ledgers->sum('others') ?? 0;
+
 
 
         if($ledgers->count() > 0){
