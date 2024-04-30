@@ -20,12 +20,12 @@ class GeneralLedger extends Component
                 ->groupBy('coopId')->get();
 
         // sum each of the columns in the $ledgers result collections
-        $total_loan = $ledgers->sum('loanAmount') ?? 0;
-        $total_saving = $ledgers->sum('savingAmount') ?? 0;
-        $total_total = $ledgers->sum('totalAmount') ?? 0;
-        $total_share = $ledgers->sum('shareAmount') ?? 0;
-        $total_admin = $ledgers->sum('adminCharge') ?? 0;
-        $total_others = $ledgers->sum('others') ?? 0;
+        $total_loan = $ledgers->sum('loanAmount');
+        $total_saving = $ledgers->sum('savingAmount');
+        $total_total = $ledgers->sum('totalAmount');
+        $total_share = $ledgers->sum('shareAmount');
+        $total_admin = $ledgers->sum('adminCharge');
+        $total_others = $ledgers->sum('others');
 
         if($this->beginning_date == null)
             $this->beginning_date = date('Y-m-d');
