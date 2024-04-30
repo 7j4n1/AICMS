@@ -27,7 +27,7 @@ class Dashboard extends Component
         ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans, SUM(shareAmount) as total_shares')
         ->first();
 
-        $totals = PaymentCapture::all();
+        // $totals = PaymentCapture::all();
 
         if ($totals) {
             $this->total_amounts = $totals->total_amount ?? 0;
