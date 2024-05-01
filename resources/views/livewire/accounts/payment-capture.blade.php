@@ -65,7 +65,7 @@
                                         <div class="col-md-6">
                                             <label for="splitOption" class="form-label">Split Option</label>
                                             <select class="form-select" wire:model.live="paymentForm.splitOption" id="splitOption">
-                                                <option value="0">--Select--</option>
+                                                <option value="0">0</option>
                                                 @foreach(range(1, 10) as $perc)
                                                     <option value="{{ $perc*10 }}">{{ $perc*10 }}</option>
                                                 @endforeach
