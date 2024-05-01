@@ -32,28 +32,30 @@ class PaymentCapture extends Component
         //     $this->paymentForm->savingAmount = $remainBal - $this->paymentForm->shareAmount;
             
         // }
+        
             
-            $total = $this->paymentForm->totalAmount;
-            if($total > 0){
-                $loan = $this->paymentForm->loanAmount;
-                $split = $this->paymentForm->splitOption;
-                $charge = $this->paymentForm->adminCharge;
+            // $total = $this->paymentForm->totalAmount;
+            // if($total > 0){
+            //     $loan = $this->paymentForm->loanAmount;
+            //     $split = $this->paymentForm->splitOption;
+            //     $charge = $this->paymentForm->adminCharge;
                 
-                $saving = $total - $loan;
-                $share = $total - $loan;
-                if ($split > 0) {
-                    $remainBalance = $total - $loan;
-                    if($charge > 0)
-                        $remainBalance = $remainBalance - $charge;
-                    if($this->paymentForm->others > 0)
-                        $remainBalance = $remainBalance - $this->paymentForm->others;
-                    $share = ($split / 100) * $remainBalance;
-                    $saving = $remainBalance - $share;
+            //     // $saving = $total - $loan;
+            //     // $share = $total - $saving;
+            //     if ($split > 0) {
+            //         $remainBalance = $total - $loan;
+            //         if($charge > 0)
+            //             $remainBalance = $remainBalance - $charge;
+            //         if($this->paymentForm->others > 0)
+            //             $remainBalance = $remainBalance - $this->paymentForm->others;
+            //         $share = ($split / 100) * $remainBalance;
+            //         $saving = $remainBalance - $share;
                     
-                }
-                $this->paymentForm->savingAmount = $saving;
-                $this->paymentForm->shareAmount = $share;
-            }
+            //         $this->paymentForm->savingAmount = $saving;
+            //         $this->paymentForm->shareAmount = $share;
+            //     }
+                
+            // }
 
         $this->payments = ModelsPaymentCapture::query()
             ->orderBy('paymentDate', 'asc')
@@ -71,11 +73,22 @@ class PaymentCapture extends Component
 
     public function resetForm()
     {
-        $this->paymentForm = new PaymentForm($this, 'paymentForm');
+        $this->paymentForm->resetForm();
     }
 
-    public function savePayment()
+    #[On('save-payments')]
+    public function savePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge)
     {
+        $this->paymentForm->coopId = $id;
+        $this->paymentForm->totalAmount = $totalAmount;
+        $this->paymentForm->loanAmount = $loanAmount;
+        $this->paymentForm->splitOption = $splitOption;
+        $this->paymentForm->savingAmount = $savingAmount;
+        $this->paymentForm->shareAmount = $shareAmount;
+        $this->paymentForm->others = $others;
+        $this->paymentForm->adminCharge = $adminCharge;
+
+        
         $this->validate();
 
         if(!$this->getErrorBag()->isEmpty())
@@ -84,6 +97,7 @@ class PaymentCapture extends Component
 
             return;
         }
+
 
         $this->paymentForm->save();
 
@@ -163,6 +177,7 @@ class PaymentCapture extends Component
     {
         $this->isModalOpen = false;
         $this->editingPaymentId = null;
+        $this->resetForm();
         $this->sendDispatchEvent();
     }
 

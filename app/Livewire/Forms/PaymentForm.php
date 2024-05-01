@@ -51,33 +51,42 @@ class PaymentForm extends Form
         'shareAmount.numeric' => 'The Share Amount field must be a number.',
     ];
 
-    public function boot()
-    {
-        $this->withValidator(function ($validator){
-            $validator->after(function ($validator){
-                // check if the coopId has an active loan
-                $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
-                if($activeLoan)
-                {
-                    if($this->loanAmount > $activeLoan->loanBalance)
-                    {
-                        $validator->errors()->add('loanAmount', 'The loan amount must not be greater than the remaining amount of the active loan.');
-                    }
-                }else {
-                    // if no active loan, and loanAmount is greater than 0, add error
-                    if($this->loanAmount > 0)
-                    {
-                        $validator->errors()->add('loanAmount', 'The loan amount must be 0 if there is no active loan.');
-                    }
-                }
+    // public function boot()
+    // {
+    //     $this->withValidator(function ($validator){
+    //         $validator->after(function ($validator){
 
-                if(($this->loanAmount + $this->savingAmount + $this->others + $this->shareAmount + $this->adminCharge) != $this->totalAmount){
-                    $validator->errors()->add('totalAmount', 'The total amount must be equal to the sum of loan amount, saving amount, others and share amount.');
-                }
+    //             $this->loanAmount = (float)$this->loanAmount ?? 0;
+    //             $this->savingAmount = (float)$this->savingAmount ?? 0;
+    //             $this->others = (float)$this->others ?? 0;
+    //             $this->shareAmount = (float)$this->shareAmount ?? 0;
+    //             $this->adminCharge = (float)$this->adminCharge ?? 0;
+    //             $this->totalAmount = (float)$this->totalAmount ?? 0;
 
-            });
-        });
-    }
+
+    //             // check if the coopId has an active loan
+    //             $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
+    //             if($activeLoan)
+    //             {
+    //                 if($this->loanAmount > $activeLoan->loanBalance)
+    //                 {
+    //                     $validator->errors()->add('loanAmount', 'The loan amount must not be greater than the remaining amount of the active loan.');
+    //                 }
+    //             }else {
+    //                 // if no active loan, and loanAmount is greater than 0, add error
+    //                 if($this->loanAmount > 0)
+    //                 {
+    //                     $validator->errors()->add('loanAmount', 'The loan amount must be 0 if there is no active loan.');
+    //                 }
+    //             }
+
+    //             if(($this->loanAmount + $this->savingAmount + $this->others + $this->shareAmount + $this->adminCharge) != $this->totalAmount){
+    //                 $validator->errors()->add('totalAmount', 'Your computation cannot be greater than the TOTAL.');
+    //             }
+
+    //         });
+    //     });
+    // }
 
 
     public function save()
@@ -116,13 +125,15 @@ class PaymentForm extends Form
     public function resetForm()
     {
         $this->coopId = null;
-        $this->splitOption = null;
-        $this->loanAmount = null;
-        $this->savingAmount = null;
-        $this->totalAmount = null;
+        $this->splitOption = 0;
+        $this->loanAmount = 0;
+        $this->savingAmount = 0;
+        $this->totalAmount = 0;
         $this->paymentDate = null;
-        $this->others = null;
-        $this->shareAmount = null;
+        $this->others = 0;
+        $this->shareAmount = 0;
+        $this->adminCharge = 0;
+        $this->resetErrorBag();
     }
 
 }

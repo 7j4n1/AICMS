@@ -48,7 +48,7 @@
                             <div class="">
                                 <div class="bg-gray-200 p-3 flex justify-between items-center rounded-t-lg">
                                     <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingPaymentId ? 'Edit Payment details' : 'Capture New Payment details' }}</h5>
-                                    <button type="button" class="btn-close transition duration-300" @click="isOpen = false; @this.set('isModalOpen', false);$wire.toggleModalClose()" aria-label="Close"></button>
+                                    <button type="button" class="btn btn-danger transition duration-300" @click="isOpen = false; @this.set('isModalOpen', false);$wire.toggleModalClose()" aria-label="Close"><i class="fas fa-close"></i> Cancel</button>
                                 </div>
                                 <div class="p-5">
 
@@ -58,7 +58,7 @@
                                         {{-- CoopId --}}
                                         <div class="col-md-12">
                                             <label for="title">Coop ID <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model.live="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
+                                            <input type="text" id="coopId" class="form-control" placeholder="Coop ID" wire:model.live="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
                                             @error('paymentForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
@@ -124,7 +124,7 @@
 
                                         <div class="text-end">
 
-                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingPaymentId ? 'Update' : 'Add' }} Payment</button>
+                                            <button type="button" class="btn btn-success transition duration-300" onclick="{{ $editingPaymentId ? '' : 'sendDataAfterValidation()' }}">{{ $editingPaymentId ? 'Update' : 'Add' }} Payment</button>
                                         </div>
 
 
@@ -228,6 +228,19 @@
             }
         }
 
+        function sendDataAfterValidation() {
+            let coopId = document.getElementById('coopId').value;
+            let totalAmount = document.getElementById('totalAmount').value;
+            let loanAmount = document.getElementById('loanAmount').value;
+            let splitOption = document.getElementById('splitOption').value;
+            let savingAmount = document.getElementById('savingAmount').value;
+            let shareAmount = document.getElementById('shareAmount').value;
+            let others = document.getElementById('otherAmount').value;
+            let adminCharge = document.getElementById('adminCharge').value;
+
+            Livewire.dispatch('save-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge});
+        }
+
         function calculatePercent() {
             let totalAmount = document.getElementById('totalAmount');
             let loanAmount = document.getElementById('loanAmount');
@@ -237,32 +250,46 @@
             let others = document.getElementById('otherAmount');
             let adminCharge = document.getElementById('adminCharge');
 
-            let total = parseFloat(totalAmount.value);
-            let loan = parseFloat(loanAmount.value);
-            let split = parseFloat(splitOption);
-            let charge = parseFloat(adminCharge.value);
-            
-            let saving = total - loan;
-            let share = total - loan;
-            if (split > 0) {
-                let remainBalance = total - loan;
-                if(charge > 0)
-                    remainBalance = remainBalance - charge;
-                if(others.value > 0)
-                    remainBalance = remainBalance - parseFloat(others.value);
-                share = (split / 100) * remainBalance;
-                saving = remainBalance - share;
-                
+            if (isNaN(totalAmount.value)) {
+                alert("Total Amount cannot be empty..")
+            }else {
+                let total = parseFloat(totalAmount.value);
+                let split = parseFloat(splitOption);
+                let admin = 0;
+
+                if (total >= 10000) {
+                    admin = 50;
+                    adminCharge.value = admin;
+
+                    savingAmount.value = (total - admin) * (100 - split) / 100
+                    shareAmount.value = (total - admin) * split / 100;
+                    loanAmount.value = 0;
+                    others.value = 0;
+                }else {
+                    admin = 0;
+                    adminCharge.value = admin;
+
+                    savingAmount.value = total * (100 - split) / 100
+                    shareAmount.value = total * split / 100;
+                    loanAmount.value = 0;
+                    others.value = 0;
+                }
+
+
             }
-            savingAmount.value = saving;
-            shareAmount.value = share;
+        
         }
 
         // subtract the loan amount from the total amount to get the saving amount and shares amount based on the split option changes
         // and each value changes events
-        // document.getElementById('splitOption').addEventListener('change', function() {
-        //     calculatePercent();
-        // });
+        document.getElementById('splitOption').addEventListener('change', function() {
+            calculatePercent();
+        });
+
+        // Add an input event on totalAmount id
+        document.getElementById('totalAmount').addEventListener('input', function() {
+            calculatePercent();
+        });
 
 
     </script>
