@@ -51,7 +51,7 @@
                             <div class="">
                                 <div class="bg-gray-200 p-3 flex justify-between items-center rounded-t-lg">
                                     <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingAdminId ? 'Edit Admin details' : 'Add new details' }}</h5>
-                                    <button type="button" class="btn-close transition duration-300" @click="isOpen = false; @this.set('isModalOpen', false);$wire.toggleModalClose()" aria-label="Close"></button>
+                                    <button type="button" class="btn btn-danger transition duration-300" @click="isOpen = false; @this.set('isModalOpen', false);$wire.toggleModalClose()" aria-label="Close"><i class="fas fa-close"></i> Cancel</button>
                                 </div>
                                 <div class="p-5">
 

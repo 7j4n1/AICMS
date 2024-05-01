@@ -46,6 +46,7 @@ class ListAdministrator extends Component
     {
         $this->isModalOpen = false;
         $this->editingAdminId = null;
+        $this->adminForm->resetForm();
         $this->sendDispatchEvent();
     }
 
