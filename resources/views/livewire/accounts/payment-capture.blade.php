@@ -228,6 +228,46 @@
             }
         }
 
+        function loanChange()
+        {
+            let totalAmount = document.getElementById('totalAmount');
+            let loanAmount = document.getElementById('loanAmount');
+            let splitOption = document.getElementById('splitOption').value;
+            let savingAmount = document.getElementById('savingAmount');
+            let shareAmount = document.getElementById('shareAmount');
+            let others = document.getElementById('otherAmount');
+            let adminCharge = document.getElementById('adminCharge');
+
+            if (isNaN(totalAmount.value)) {
+                alert("Total Amount cannot be empty..")
+            }
+            else {
+                let total = parseFloat(totalAmount.value);
+                let split = parseFloat(splitOption);
+                let loan = parseFloat(loanAmount.value);
+                let admin = 0;
+
+                if (total >= 10000) {
+                    admin = 50;
+                    adminCharge.value = admin;
+
+                    total -= admin;
+
+                    savingAmount.value = (total - loan) * (100 - split) / 100
+                    shareAmount.value = (total - loan) * split / 100;
+                    others.value = 0;
+                }else {
+                    admin = 0;
+                    adminCharge.value = admin;
+
+                    savingAmount.value = (total - loan) * (100 - split) / 100
+                    shareAmount.value = (total - loan) * split / 100;
+                    others.value = 0;
+                }
+
+            }
+        }
+
         function sendDataAfterValidation() {
             let coopId = document.getElementById('coopId').value;
             let totalAmount = document.getElementById('totalAmount').value;
@@ -238,7 +278,13 @@
             let others = document.getElementById('otherAmount').value;
             let adminCharge = document.getElementById('adminCharge').value;
 
-            Livewire.dispatch('save-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge});
+            if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)) !== Number(totalAmount)) {
+                alert("Your computation cannot be greater than the TOTAL.");
+            }else{
+                Livewire.dispatch('save-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge});
+            }
+
+            
         }
 
         function calculatePercent() {
@@ -252,7 +298,8 @@
 
             if (isNaN(totalAmount.value)) {
                 alert("Total Amount cannot be empty..")
-            }else {
+            }
+            else {
                 let total = parseFloat(totalAmount.value);
                 let split = parseFloat(splitOption);
                 let admin = 0;
@@ -289,6 +336,10 @@
         // Add an input event on totalAmount id
         document.getElementById('totalAmount').addEventListener('input', function() {
             calculatePercent();
+        });
+
+        document.getElementById('loanAmount').addEventListener('input', function() {
+            loanChange();
         });
 
 

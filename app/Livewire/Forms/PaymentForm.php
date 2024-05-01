@@ -51,10 +51,10 @@ class PaymentForm extends Form
         'shareAmount.numeric' => 'The Share Amount field must be a number.',
     ];
 
-    // public function boot()
-    // {
-    //     $this->withValidator(function ($validator){
-    //         $validator->after(function ($validator){
+    public function boot()
+    {
+        $this->withValidator(function ($validator){
+            $validator->after(function ($validator){
 
     //             $this->loanAmount = (float)$this->loanAmount ?? 0;
     //             $this->savingAmount = (float)$this->savingAmount ?? 0;
@@ -64,29 +64,29 @@ class PaymentForm extends Form
     //             $this->totalAmount = (float)$this->totalAmount ?? 0;
 
 
-    //             // check if the coopId has an active loan
-    //             $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
-    //             if($activeLoan)
-    //             {
-    //                 if($this->loanAmount > $activeLoan->loanBalance)
-    //                 {
-    //                     $validator->errors()->add('loanAmount', 'The loan amount must not be greater than the remaining amount of the active loan.');
-    //                 }
-    //             }else {
-    //                 // if no active loan, and loanAmount is greater than 0, add error
-    //                 if($this->loanAmount > 0)
-    //                 {
-    //                     $validator->errors()->add('loanAmount', 'The loan amount must be 0 if there is no active loan.');
-    //                 }
-    //             }
+                // check if the coopId has an active loan
+                $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
+                if($activeLoan)
+                {
+                    if($this->loanAmount > $activeLoan->loanBalance)
+                    {
+                        $validator->errors()->add('loanAmount', 'The loan amount must not be greater than the remaining amount of the active loan.');
+                    }
+                }else {
+                    // if no active loan, and loanAmount is greater than 0, add error
+                    if($this->loanAmount > 0)
+                    {
+                        $validator->errors()->add('loanAmount', 'The loan amount must be 0 if there is no active loan.');
+                    }
+                }
 
     //             if(($this->loanAmount + $this->savingAmount + $this->others + $this->shareAmount + $this->adminCharge) != $this->totalAmount){
     //                 $validator->errors()->add('totalAmount', 'Your computation cannot be greater than the TOTAL.');
     //             }
 
-    //         });
-    //     });
-    // }
+            });
+        });
+    }
 
 
     public function save()
