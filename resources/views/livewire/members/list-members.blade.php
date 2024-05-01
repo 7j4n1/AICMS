@@ -42,21 +42,10 @@
                         <div class="col-sm-6">
                             <div class="mb-3">
                                 <button class="btn btn-primary" @click="isOpen = true; @this.set('isModalOpen', true);">Add New <i class="fas fa-plus"></i></button>
-                                <button class="btn btn-danger" @click="$wire.toggleModalClose()">Cancel <i class="fas fa-plus"></i></button>
+                                
                             </div>
                         </div>
                         
-                        <!-- <div class="col-sm-6">
-                            <div class="mb-3 row">
-                                <div class="col-md-8 col-sm-12">
-                                    <input type="text" class="form-control" placeholder="Enter CoopId to Edit or Delete" wire:model.live="search" />
-                                </div>
-                                <div class="col-md-4 col-sm-12">
-                                    <button @click="$wire.editOldMember('{{ $search }}');" class="btn btn-success btn-sm w-100"><i class="fas fa-pencil-alt"></i> Edit</button>
-                                    <button @click="$wire.deleteOldMember('{{ $search }}');" class="btn btn-danger btn-sm w-100"><i class="fas fa-pencil-alt"></i> Delete</button>
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
 
                     <div  x-cloak x-show="isOpen" x-transition:opacity.duration.500ms class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"  tabindex="-1">
@@ -64,7 +53,7 @@
                             <div class="">
                                 <div class="bg-gray-200 p-3 flex justify-between items-center rounded-t-lg">
                                     <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingMemberId ? 'Edit Member details' : 'Add new details' }}</h5>
-                                    <button type="button" class="btn btn-danger transition duration-300" @click="isOpen = false; @this.set('isModalOpen', false);$wire.toggleModalClose()" aria-label="Close"><i class="fas fa-close"></i></button>
+                                    <button type="button" class="btn btn-danger transition duration-300" @click="isOpen = false; @this.set('isModalOpen', false);$wire.toggleModalClose()" aria-label="Close"><i class="fas fa-close"></i> Cancel</button>
                                 </div>
                                 <div class="p-5">
 

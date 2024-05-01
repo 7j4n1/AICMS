@@ -70,11 +70,12 @@ class MemberForm extends Form
         $this->otherNames = '';
         $this->occupation = '';
         $this->phoneNumber = '';
+        $this->gender = '';
         $this->religion = '';
         $this->bankName = '';
         $this->accountNumber = '';
         $this->nextOfKinName = '';
         $this->nextOfKinPhoneNumber = '';
-        $this->yearJoined = null;
+        $this->yearJoined = '';
     }
 }

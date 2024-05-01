@@ -67,6 +67,7 @@ class ListMembers extends Component
     {
         $this->isModalOpen = false;
         $this->editingMemberId = null;
+        $this->memberForm->resetForm();
         $this->sendDispatchEvent();
     }
 
