@@ -160,8 +160,7 @@
 
 
                                         <div class="text-end">
-                                            <!-- <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-secondary">Close</button> -->
-
+                                            
                                             <button type="submit" class="btn btn-success transition duration-300">{{ $editingMemberId ? 'Update' : 'Add' }} Member</button>
                                         </div>
 
