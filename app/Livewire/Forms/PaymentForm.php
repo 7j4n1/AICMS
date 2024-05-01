@@ -13,21 +13,22 @@ class PaymentForm extends Form
     public $id;
     #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $coopId;
-    #[Validate('required|numeric')]
-    public $splitOption = 10;
-    #[Validate('required|numeric')]
+    #[Validate('required|numeric|min:0')]
+    public $splitOption = 0;
+    #[Validate('required|numeric|min:0')]
     public $loanAmount = 0;
-    #[Validate('required|numeric')]
+    #[Validate('required|numeric|min:0')]
     public $savingAmount = 0;
-    #[Validate('required|numeric')]
+    #[Validate('required|numeric|min:0')]
     public $totalAmount = 0;
     #[Validate('required|date')]
     public $paymentDate;
-    #[Validate('required|numeric')]
+    #[Validate('required|numeric|min:0')]
     public $others = 0;
-    #[Validate('required|numeric')]
+    #[Validate('required|numeric|min:0')]
     public $shareAmount = 0;
-    public $adminCharge = 200;
+    #[Validate('numeric|min:0')]
+    public $adminCharge = 0;
 
 
     protected $messages = [
@@ -49,6 +50,34 @@ class PaymentForm extends Form
         'shareAmount.required' => 'The Share Amount field is required.',
         'shareAmount.numeric' => 'The Share Amount field must be a number.',
     ];
+
+    public function boot()
+    {
+        $this->withValidator(function ($validator){
+            $validator->after(function ($validator){
+                // check if the coopId has an active loan
+                $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
+                if($activeLoan)
+                {
+                    if($this->loanAmount > $activeLoan->loanBalance)
+                    {
+                        $validator->errors()->add('loanAmount', 'The loan amount must not be greater than the remaining amount of the active loan.');
+                    }
+                }else {
+                    // if no active loan, and loanAmount is greater than 0, add error
+                    if($this->loanAmount > 0)
+                    {
+                        $validator->errors()->add('loanAmount', 'The loan amount must be 0 if there is no active loan.');
+                    }
+                }
+
+                if(($this->loanAmount + $this->savingAmount + $this->others + $this->shareAmount + $this->adminCharge) != $this->totalAmount){
+                    $validator->errors()->add('totalAmount', 'The total amount must be equal to the sum of loan amount, saving amount, others and share amount.');
+                }
+
+            });
+        });
+    }
 
 
     public function save()
