@@ -213,7 +213,7 @@
                                         <td>{{ $guarantee->user()->surname }}</td>
                                         <td>{{ $guarantee->user()->phoneNumber }}</td>
                                         <td>{{ number_format($guarantee->loanAmount, 2) }}</td>
-                                        <td>{{ number_format($guarantee->loanBalance, 2) }}</td>
+                                        <td>{{ number_format(App\Models\ActiveLoans::where('coopId', $guarantee->coopId)->first()->loanBalance, 2) }}</td>
                                     </tr>
                                 @endforeach
                                 
