@@ -65,7 +65,7 @@ class ImportController extends Controller
                         'nextOfKinName' => $row[9],
                         'nextOfKinPhoneNumber' => $row[10],
                         'yearJoined' => $year,
-                        'userId' => auth('admin')->user()->coopId, // Retrieve user coopId
+                        'userId' => auth('admin')->user()->id, // Retrieve admin id
                         ];
                     }
                 }
