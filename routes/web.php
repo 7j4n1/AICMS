@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImportController;
 use App\Livewire\Admin\Reports\GeneralLedger;
 use App\Livewire\Admin\Reports\IndividualLedger;
 use App\Livewire\Members\ListMembers;
@@ -77,6 +78,10 @@ Route::middleware('auth:admin')->group(function () {
 
         Route::get('/report/individual_download/{id}/{beginning_date}/{ending_date}', [IndividualLedger::class, 'downloadLedger'])->name('individualReportDownload');
         Route::get('/report/general_download/{beginning_date}/{ending_date}', [GeneralLedger::class, 'downloadLedger'])->name('generalReportDownload');
+
+        Route::get('/import/members', [ImportController::class, 'index'])->name('importMembers');
+
+        Route::post('/import/members', [ImportController::class, 'import'])->name('newImport');
 
         Route::get('/logout', function () {
             auth('admin')->logout();
