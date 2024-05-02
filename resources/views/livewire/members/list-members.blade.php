@@ -165,7 +165,7 @@
 
                     {{-- Members Table --}}
                     <!-- <div class="table-responsive"> -->
-                        <table class="table table-bordered table-striped mb-0" id="datatable-tabletools">
+                        <table class="table table-bordered table-responsive table-striped mb-0" id="datatable-tabletools">
 
                             <thead>
                                 <tr>
@@ -211,8 +211,8 @@
                         
                     <!-- </div> -->
                     <div class="row mt-4">
-                        <div class="col-sm-6 offset-5">
-                            {{-- $members->links() --}}
+                        <div class="col-sm-12">
+                            {{ $members->links() }}
                         </div>
                     </div>
                 </div>
@@ -227,7 +227,7 @@
                 </header>
                 <div class="card-body">
                     <!-- <div  class="table-responsive"> -->
-                        <table class="table table-bordered table-striped mb-0" id="datatable-tabletools2">
+                        <table class="table table-bordered table-responsive table-striped mb-0" id="datatable-tabletools2">
 
                             <thead>
                                 <tr>
@@ -256,8 +256,8 @@
                         </table>
                     <!-- </div> -->
                     <div class="row mt-4">
-                        <div class="col-sm-6 offset-5">
-                            {{-- $members->links() --}}
+                        <div class="col-sm-12 ">
+                            {{ $members->links() }}
                         </div>
                     </div>
                 </div>

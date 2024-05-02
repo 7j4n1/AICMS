@@ -33,7 +33,7 @@ class ListMembers extends Component
     {
         $this->members = Member::query()
             ->orderBy('coopId', 'asc')
-            ->get();
+            ->paginate($this->paginate);
 
         // if($this->editingMemberId == null)
         //     $this->memberForm->coopId = Member::max('coopId') + 1;
