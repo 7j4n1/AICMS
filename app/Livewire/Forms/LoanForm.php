@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\ActiveLoans;
 use Livewire\Form;
 use App\Models\LoanCapture;
 use Livewire\Attributes\Validate;
@@ -11,7 +12,7 @@ class LoanForm extends Form
     public $id;
     #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $coopId;
-    #[Validate('required|numeric')]
+    #[Validate('required|numeric|min:0')]
     public $loanAmount;
     #[Validate('required|date')]
     public $loanDate;
@@ -34,6 +35,25 @@ class LoanForm extends Form
         'loanDate.date' => 'The Loan Date field must be a date.',
         'status.required' => 'The Status field is required.',
     ];
+
+    public function boot()
+    {
+        $this->withValidator(function ($validator){
+            $validator->after(function ($validator){
+                $coopId = $this->coopId;
+                $loan = ActiveLoans::where('coopId', $coopId)->first();
+                if($loan)
+                    $validator->errors()->add('coopId', 'Loan exists for the Coop ID.');
+
+                if($this->guarantor1 == $this->guarantor2 || $this->guarantor1 == $this->guarantor3 || $this->guarantor1 == $this->guarantor4)
+                    $validator->errors()->add('guarantor1', 'Guarantor 1 cannot be the same as Guarantor 2, 3 or 4');
+                if($this->guarantor2 == $this->guarantor3 || $this->guarantor2 == $this->guarantor4)
+                    $validator->errors()->add('guarantor2', 'Guarantor 2 cannot be the same as Guarantor 3 or 4');
+                if($this->guarantor3 == $this->guarantor4)
+                    $validator->errors()->add('guarantor3', 'Guarantor 3 cannot be the same as Guarantor 4');
+            });
+        });
+    }
 
     public function save()
     {
