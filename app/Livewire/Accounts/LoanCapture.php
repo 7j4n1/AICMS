@@ -147,6 +147,7 @@ class LoanCapture extends Component
     {
         $this->isModalOpen = false;
         $this->editingLoanId = null;
+        $this->resetForm();
         $this->sendDispatchEvent();
     }
 

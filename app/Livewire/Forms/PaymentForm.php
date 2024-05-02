@@ -56,14 +56,6 @@ class PaymentForm extends Form
         $this->withValidator(function ($validator){
             $validator->after(function ($validator){
 
-    //             $this->loanAmount = (float)$this->loanAmount ?? 0;
-    //             $this->savingAmount = (float)$this->savingAmount ?? 0;
-    //             $this->others = (float)$this->others ?? 0;
-    //             $this->shareAmount = (float)$this->shareAmount ?? 0;
-    //             $this->adminCharge = (float)$this->adminCharge ?? 0;
-    //             $this->totalAmount = (float)$this->totalAmount ?? 0;
-
-
                 // check if the coopId has an active loan
                 $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
                 if($activeLoan)
