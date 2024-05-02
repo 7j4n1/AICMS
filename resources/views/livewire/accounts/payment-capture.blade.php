@@ -278,6 +278,19 @@
             let others = document.getElementById('otherAmount').value;
             let adminCharge = document.getElementById('adminCharge').value;
 
+            if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '') {
+                alert("All fields are required..");
+                return;
+            }else if(isNaN(totalAmount) || isNaN(loanAmount) || isNaN(savingAmount) || isNaN(shareAmount) || isNaN(others) || isNaN(adminCharge)) {
+                alert("All fields must be numbers..");
+                return;
+            } 
+            
+            if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0) {
+                alert("All fields must be greater than zero..");
+                return;
+            }
+
             if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)) !== Number(totalAmount)) {
                 alert("Your computation cannot be greater than the TOTAL.");
             }else{
