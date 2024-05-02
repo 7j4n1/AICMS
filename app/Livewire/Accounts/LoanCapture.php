@@ -46,7 +46,7 @@ class LoanCapture extends Component
 
     public function resetForm()
     {
-        $this->loanForm = new LoanForm($this, 'loanForm');
+        $this->loanForm->resetForm();
     }
 
     public function saveLoan()

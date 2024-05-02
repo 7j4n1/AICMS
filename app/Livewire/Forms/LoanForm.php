@@ -86,12 +86,12 @@ class LoanForm extends Form
     public function resetForm()
     {
         $this->coopId = null;
-        $this->loanAmount = null;
+        $this->loanAmount = 0;
         $this->loanDate = null;
-        $this->guarantor1 = null;
-        $this->guarantor2 = null;
-        $this->guarantor3 = null;
-        $this->guarantor4 = null;
-        $this->status = null;
+        $this->guarantor1 = '';
+        $this->guarantor2 = '';
+        $this->guarantor3 = '';
+        $this->guarantor4 = '';
+        $this->status = 1;
     }
 }
