@@ -3,6 +3,7 @@
 namespace App\Livewire\Accounts;
 
 use Livewire\Component;
+use App\Models\ActiveLoans;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Livewire\Forms\PaymentForm;
@@ -56,6 +57,8 @@ class PaymentCapture extends Component
             //     }
                 
             // }
+        $activeLoan = ActiveLoans::where('coopId', $this->paymentForm->coopId)->first();
+            
 
         $this->payments = ModelsPaymentCapture::query()
             ->orderBy('paymentDate', 'asc')
@@ -63,7 +66,7 @@ class PaymentCapture extends Component
 
         return view('livewire.accounts.payment-capture',[
             'payments' => $this->payments
-        ])->with(['session' => session()]);
+        ])->with(['session' => session(), 'activeLoan' => $activeLoan]);
     }
 
     public function mount()
@@ -88,7 +91,7 @@ class PaymentCapture extends Component
         $this->paymentForm->others = $others;
         $this->paymentForm->adminCharge = $adminCharge;
 
-        
+
         $this->validate();
 
         if(!$this->getErrorBag()->isEmpty())
@@ -132,8 +135,19 @@ class PaymentCapture extends Component
 
     }
 
-    public function updatePayment()
+    #[On('update-payments')]
+    public function updatePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge)
     {
+        $this->paymentForm->coopId = $id;
+        $this->paymentForm->totalAmount = $totalAmount;
+        $this->paymentForm->loanAmount = $loanAmount;
+        $this->paymentForm->splitOption = $splitOption;
+        $this->paymentForm->savingAmount = $savingAmount;
+        $this->paymentForm->shareAmount = $shareAmount;
+        $this->paymentForm->others = $others;
+        $this->paymentForm->adminCharge = $adminCharge;
+
+        $this->validate();
 
         if(!$this->getErrorBag()->isEmpty())
         {

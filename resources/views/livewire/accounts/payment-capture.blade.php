@@ -42,7 +42,58 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-xl-6">
+                            <section class="card card-featured-left card-featured-secondary">
+                                <div class="card-body">
+                                    <div class="widget-summary">
+                                        <div class="widget-summary-col widget-summary-col-icon">
+                                            <div class="summary-icon bg-secondary">
+                                                <i class="fas fa-naira-sign"></i>
+                                            </div>
+                                        </div>
+                                        <div class="widget-summary-col">
+                                            <div class="summary">
+                                                <h3 class="">Loan Balance</h3>
+                                                <div class="info">
+                                                    <strong class="amount">&#8358; {{ ($activeLoan ? number_format($activeLoan->loanBalance, 2) : number_format(0, 2)) }} </strong>
+                                                </div>
+                                            </div>
+                                            <div class="summary-footer">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-xl-6">
+                            <section class="card card-featured-left card-featured-secondary">
+                                <div class="card-body">
+                                    <div class="widget-summary">
+                                        <div class="widget-summary-col widget-summary-col-icon">
+                                            <div class="summary-icon bg-secondary">
+                                                <!-- <i class="fas fa-naira-sign"></i> -->
+                                            </div>
+                                        </div>
+                                        <div class="widget-summary-col">
+                                            <div class="summary">
+                                                <h3 class="">Loan Status</h3>
+                                                <div class="info">
+                                                    <strong class="amount"> {{ ($activeLoan ? 'On Loan' : '-')}}</strong>
+                                                </div>
+                                            </div>
+                                            <div class="summary-footer">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        
+                    </div>
 
+                    {{-- Modal for capturing new payment details --}}
                     <div x-cloak x-show="isOpen" x-transition:opacity.duration.500ms class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"  tabindex="-1">
                         <div class="bg-white rounded-lg w-1/2">
                             <div class="">
@@ -124,7 +175,7 @@
 
                                         <div class="text-end">
 
-                                            <button type="button" class="btn btn-success transition duration-300" onclick="{{ $editingPaymentId ? '' : 'sendDataAfterValidation()' }}">{{ $editingPaymentId ? 'Update' : 'Add' }} Payment</button>
+                                            <button type="button" class="btn btn-success transition duration-300" onclick="{{ $editingPaymentId ? 'UpdateDataAfterValidation()' : 'sendDataAfterValidation()' }}">{{ $editingPaymentId ? 'Update' : 'Add' }} Payment</button>
                                         </div>
 
 
@@ -339,6 +390,39 @@
             }
         
         }
+
+        function UpdateDataAfterValidation() {
+            let coopId = document.getElementById('coopId').value;
+            let totalAmount = document.getElementById('totalAmount').value;
+            let loanAmount = document.getElementById('loanAmount').value;
+            let splitOption = document.getElementById('splitOption').value;
+            let savingAmount = document.getElementById('savingAmount').value;
+            let shareAmount = document.getElementById('shareAmount').value;
+            let others = document.getElementById('otherAmount').value;
+            let adminCharge = document.getElementById('adminCharge').value;
+
+            if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '') {
+                alert("All fields are required..");
+                return;
+            }else if(isNaN(totalAmount) || isNaN(loanAmount) || isNaN(savingAmount) || isNaN(shareAmount) || isNaN(others) || isNaN(adminCharge)) {
+                alert("All fields must be numbers..");
+                return;
+            } 
+            
+            if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0) {
+                alert("All fields must be greater than zero..");
+                return;
+            }
+
+            if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)) !== Number(totalAmount)) {
+                alert("Your computation cannot be greater than the TOTAL.");
+            }else{
+                Livewire.dispatch('update-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge});
+            }
+
+            
+        }
+
 
         // subtract the loan amount from the total amount to get the saving amount and shares amount based on the split option changes
         // and each value changes events
