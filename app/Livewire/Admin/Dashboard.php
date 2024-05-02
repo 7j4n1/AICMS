@@ -39,11 +39,11 @@ class Dashboard extends Component
 
         $members = Member::query()
             ->orderBy('coopId', 'desc')
-            ->paginate(10);
+            ->limit(10)->get();
 
         $loans = ActiveLoans::query()
             ->orderBy('lastPaymentDate', 'desc')
-            ->paginate(10);
+            ->limit(10)->get();
         
         $this->total_loans = ActiveLoans::sum('loanAmount') ?? 0;
 
