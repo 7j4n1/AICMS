@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Reports;
 use Livewire\Component;
 use App\Models\ActiveLoans;
 use App\Models\LoanCapture;
+use App\Models\PreviousLedger2023;
 
 class LoanDefaulters extends Component
 {
@@ -16,6 +17,7 @@ class LoanDefaulters extends Component
         $loans = LoanCapture::query()
             ->where('status', 1)
             ->where('repaymentDate', '<', date('Y-m-d'))
+            ->orderBy('id', 'asc')
             ->get();
 
         $total_loans = $loans->sum('loanAmount') ?? 0;
@@ -23,8 +25,10 @@ class LoanDefaulters extends Component
         $total_balance = 0;
 
         foreach ($loans as $loan) {
-            $balance = ActiveLoans::where('coopId', $loan->coopId)->first()->loanBalance;
+            $balance = ActiveLoans::where('coopId', $loan->coopId)->first()->loanBalance ?? 0;
+            $getCurrentOutloan = PreviousLedger2023::where('coopId', $loan->coopId)->first()->loanAmount ?? 0;
             $total_balance += $balance;
+            $total_balance -= $getCurrentOutloan;
         }
 
         return view('livewire.admin.reports.loan-defaulters')

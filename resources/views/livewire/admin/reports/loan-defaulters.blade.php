@@ -89,7 +89,13 @@
                                         <td>{{ $loan->coopId }}</td>
                                         <td>{{ number_format($loan->loanAmount, 2) }}</td>
                                         @php
+                                            $currentBal = \App\Models\PreviousLedger2023::where('coopId', $loan->coopId)->first();
                                             $balance = \App\Models\ActiveLoans::where('coopId', $loan->coopId)->first()->loanBalance;
+                                            //if($currentBal){
+                                            //    $balance = $balance - ($currentBal->balance ?? 0);
+                                            //}
+                                            //    $balance =  $loan->loanAmount - $currentBal;
+                                            
                                             
                                         @endphp
                                         <td>{{ number_format($balance, 2) }}</td>

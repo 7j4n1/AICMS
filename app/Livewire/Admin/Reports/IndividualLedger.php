@@ -8,6 +8,7 @@ use App\Models\Member;
 use Livewire\Component;
 use App\Models\ActiveLoans;
 use App\Models\PaymentCapture;
+use App\Models\PreviousLedger2023;
 use Illuminate\Support\Facades\View;
 
 class IndividualLedger extends Component
@@ -15,22 +16,37 @@ class IndividualLedger extends Component
     public $beginning_date;
     public $ending_date;
     public $coopId;
-    public $isFound = false;
-    public $dataTotals;
-    public $ledgers;
+    public $csrf_token;
 
     public function render()
     {
         $memberIds = Member::orderBy("coopId","asc")->get(['coopId']);
 
-        $this->ledgers = PaymentCapture::query()
+        $ledgers = PaymentCapture::query()
             ->where('coopId', $this->coopId)
             ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
             ->orderBy('paymentDate', 'asc')
-            ->get(['id', 'coopId', 'loanAmount', 'savingAmount', 'totalAmount', 'paymentDate', 'others', 'shareAmount', 'adminCharge']);
+            ->get();
 
-        // if($this->ledgers->count() > 0)
-        //     $this->sendDispatchEvent();
+        $preledgers = PreviousLedger2023::query()
+            ->where('coopId', $this->coopId)
+            ->selectRaw('sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
+            ->groupBy('coopId')->get();
+
+        // sum each of the columns in the $ledgers result collections
+        $total_loan = $ledgers->sum('loanAmount') ?? 0;
+        $total_saving = $ledgers->sum('savingAmount') ?? 0;
+        $total_total = $ledgers->sum('totalAmount') ?? 0;
+        $total_share = $ledgers->sum('shareAmount') ?? 0;
+        $total_admin = $ledgers->sum('adminCharge') ?? 0;
+        $total_others = $ledgers->sum('others') ?? 0;
+
+        $total_loan += $preledgers->sum('loanAmount') ?? 0;
+        $total_saving += $preledgers->sum('savingAmount') ?? 0;
+        $total_total += $preledgers->sum('totalAmount') ?? 0;
+        $total_share += $preledgers->sum('shareAmount') ?? 0;
+        $total_admin += $preledgers->sum('adminCharge') ?? 0;
+        $total_others += $preledgers->sum('others') ?? 0;
         
 
         if($this->beginning_date == null)
@@ -42,12 +58,16 @@ class IndividualLedger extends Component
             $this->ending_date = date('Y-m-d');
 
         
-        return view('livewire.admin.reports.individual-ledger')->with(['ledgers' => $this->ledgers, 'session' => session(), 'memberIds' => $memberIds]);
+        return view('livewire.admin.reports.individual-ledger')->with(['ledgers' => $ledgers, 'session' => session(), 'memberIds' => $memberIds,
+        'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
+        'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others,
+        'csrf_token' => $this->csrf_token
+        ]);
     }
 
     public function mount()
     {
-        
+        $this->csrf_token = csrf_token();
     }
     public function searchResult()
     {
