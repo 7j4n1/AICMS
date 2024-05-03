@@ -213,7 +213,7 @@
                                         <td>{{ $guarantee->user()->surname }}</td>
                                         <td>{{ $guarantee->user()->phoneNumber }}</td>
                                         <td>{{ number_format($guarantee->loanAmount, 2) }}</td>
-                                        <td>{{ number_format(App\Models\ActiveLoans::where('coopId', $guarantee->coopId)->first()->loanBalance, 2) }}</td>
+                                        <td>{{ number_format(App\Models\ActiveLoans::where('coopId', $guarantee->coopId)->first()->loanBalance ?? 0, 2) }}</td>
                                     </tr>
                                 @endforeach
                                 
@@ -234,7 +234,7 @@
 
                             @foreach($guarantor_records as $guarantor_record)
                                 <tr wire:key="item-generalguarantor_record-{{ $guarantor_record->id }}">
-                                    <td>{{ $guarantor_record->loanAmount }}</td>    
+                                    <td>{{ number_format($guarantor_record->loanAmount, 2) }}</td>    
                                     <td>{{ $guarantor_record->coopId }}</td>
                                     <td>{{ date('M-y', strtotime($guarantor_record->loanDate)) }}</td>
                                     <td>{{ ($guarantor_records->count()) > 0 ? '1' : '0' }}</td>

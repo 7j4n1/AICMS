@@ -7,24 +7,37 @@ use Livewire\Component;
 use App\Models\ActiveLoans;
 use App\Models\LoanCapture;
 use App\Models\PaymentCapture;
+use App\Models\PreviousLedger2023;
 
 class CheckGuarantor extends Component
 {
-    public $coopId=0;
+    public $coopId;
     public function render()
     {
         $memberIds = Member::orderBy("coopId","asc")->get(['coopId']);
         $guarantor = PaymentCapture::query()
-            ->where('coopId', $this->coopId)
+            ->where('coopId','=', $this->coopId)
             ->selectRaw('sum(savingAmount) as savings, sum(shareAmount) as shares')
             ->first();
+
+        $previousData = PreviousLedger2023::query()
+            ->where('coopId', '=',$this->coopId)
+            ->selectRaw('sum(savingAmount) as savings, sum(shareAmount) as shares')
+            ->first();
+        $preallsavings = $previousData->savings ?? 0;
+        $preallshares = $previousData->shares ?? 0;
+        $pretotalSavings = $preallsavings + $preallshares;
 
         $allsavings = $guarantor->savings ?? 0;
         $allshares = $guarantor->shares ?? 0;
         $totalSavings = $allsavings + $allshares;
 
+        $allsavings += $preallsavings;
+        $allshares += $preallshares;
+        $totalSavings += $pretotalSavings;
+
         $guarantor_records = LoanCapture::query()
-            ->where('coopId', $this->coopId)
+            ->where('coopId','=', $this->coopId)
             ->where('status', 1)
             ->get();
 
@@ -40,7 +53,7 @@ class CheckGuarantor extends Component
 
         $totalOutstanding = 0;
         foreach ($guarantees as $guarantee) {
-            $outstanding = ActiveLoans::where('coopId', $guarantee->coopId)->first()->loanBalance;
+            $outstanding = ActiveLoans::where('coopId','=', $guarantee->coopId)->first()->loanBalance ?? 0;
             $totalOutstanding += $outstanding;
         }
 
