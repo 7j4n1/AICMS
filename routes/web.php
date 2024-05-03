@@ -84,6 +84,8 @@ Route::middleware('auth:admin')->group(function () {
         Route::post('/import/members', [ImportController::class, 'import'])->name('newImport');
         Route::post('/import/loans', [ImportController::class, 'importLoan'])->name('newImportLoan');
 
+        Route::get('/import/getprev_loans', [ImportController::class, 'loadAllLoan'])->name('getPrevLoans');
+
         Route::get('/logout', function () {
             auth('admin')->logout();
             return redirect()->route('login');

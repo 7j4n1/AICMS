@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('loan_captures', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
-            $table->unsignedBigInteger('coopId');
+            $table->unsignedBigInteger('coopId')->nullable();
             $table->unsignedDouble('loanAmount', null, 2)->default(0.00);
             $table->date('loanDate')->nullable();
             // 4 Guarantors coopId

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('active_loans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('coopId')->unique();
+            $table->unsignedBigInteger('coopId')->nullable();
             $table->unsignedDouble('loanAmount')->default(0.00);
             $table->unsignedDouble('loanPaid')->default(0.00);
             $table->unsignedDouble('loanBalance')->default(0.00);

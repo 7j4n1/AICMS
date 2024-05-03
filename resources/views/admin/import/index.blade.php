@@ -40,5 +40,11 @@
   <button type="submit" class="btn btn-primary">Import Loans</button>
 </form>
 
+<div class="row mt-4">
+  <div class="col-sm-6">
+    <a class="btn btn-success" href="{{route('getPrevLoans')}}" target="_blank">Click here to load previous Loans</a>
+  </div>
+</div>
+
 <x-scriptvendor></x-scriptvendor>
 @endsection
