@@ -6,6 +6,7 @@ use App\Models\ActiveLoans;
 use App\Models\Member;
 use Livewire\Component;
 use App\Models\PaymentCapture;
+use App\Models\PreviousLedger2023;
 use Livewire\WithPagination;
 
 class Dashboard extends Component
@@ -27,15 +28,25 @@ class Dashboard extends Component
         ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans, SUM(shareAmount) as total_shares')
         ->first();
 
-        // $totals = PaymentCapture::all();
+        $pretotals = PreviousLedger2023::query()
+        ->selectRaw('SUM(totalAmount) as total_amount, SUM(savingAmount) as total_savings, SUM(loanAmount) as total_loans, SUM(shareAmount) as total_shares')
+        ->first();
 
-        if ($totals) {
+        $pretotal_amounts = $pretotals->total_amount ?? 0;
+        $pretotal_savings = $pretotals->total_savings ?? 0;
+        $pretotal_shares = $pretotals->total_shares ?? 0;
+
+        // if ($totals) {
             $this->total_amounts = $totals->total_amount ?? 0;
             $this->total_savings = $totals->total_savings ?? 0;
             
             $this->total_members = Member::count();
             $this->total_shares = $totals->total_shares ?? 0;
-        }
+
+            $this->total_amounts += $pretotal_amounts;
+            $this->total_savings += $pretotal_savings;
+            $this->total_shares += $pretotal_shares;
+        // }
 
         $members = Member::query()
             ->orderBy('coopId', 'desc')

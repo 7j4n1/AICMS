@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Reports;
 use Dompdf\Dompdf;
 use Livewire\Component;
 use App\Models\PaymentCapture;
+use App\Models\PreviousLedger2023;
 use Illuminate\Support\Facades\View;
 
 class GeneralLedger extends Component
@@ -15,9 +16,13 @@ class GeneralLedger extends Component
     public function render()
     {
         $ledgers = PaymentCapture::query()
-                ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
-                ->selectRaw('coopId, sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
-                ->groupBy('coopId')->get();
+            ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
+            ->selectRaw('coopId, sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
+            ->groupBy('coopId')->get();
+
+        $preledgers = PreviousLedger2023::query()
+            ->selectRaw('coopId, sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
+            ->groupBy('coopId')->get();
 
         // sum each of the columns in the $ledgers result collections
         $total_loan = $ledgers->sum('loanAmount') ?? 0;
@@ -26,6 +31,13 @@ class GeneralLedger extends Component
         $total_share = $ledgers->sum('shareAmount') ?? 0;
         $total_admin = $ledgers->sum('adminCharge') ?? 0;
         $total_others = $ledgers->sum('others') ?? 0;
+
+        $total_loan += $preledgers->sum('loanAmount') ?? 0;
+        $total_saving += $preledgers->sum('savingAmount') ?? 0;
+        $total_total += $preledgers->sum('totalAmount') ?? 0;
+        $total_share += $preledgers->sum('shareAmount') ?? 0;
+        $total_admin += $preledgers->sum('adminCharge') ?? 0;
+        $total_others += $preledgers->sum('others') ?? 0;
 
         if($this->beginning_date == null)
             $this->beginning_date = date('Y-m-d');
