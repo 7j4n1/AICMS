@@ -40,6 +40,21 @@
   <button type="submit" class="btn btn-primary">Import Loans</button>
 </form>
 
+<h2>Import 2023 Ledger CSV file</h2>
+<form method="POST" action="{{ route('lastledger2023') }}" enctype="multipart/form-data">
+  @csrf
+
+  <div class="form-group">
+    <label for="csvfile">Ledger CSV File:</label>
+    <input type="file" name="csvfile" id="csvfile" class="form-control">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Import Data for 2023</button>
+</form>
+
+
+<h2>Load Previous Loans</h2>
+
 <div class="row mt-4">
   <div class="col-sm-6">
     <a class="btn btn-success" href="{{route('getPrevLoans')}}" target="_blank">Click here to load previous Loans</a>

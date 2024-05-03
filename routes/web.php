@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportController;
 use App\Livewire\Admin\Reports\GeneralLedger;
 use App\Livewire\Admin\Reports\IndividualLedger;
@@ -85,6 +86,7 @@ Route::middleware('auth:admin')->group(function () {
         Route::post('/import/loans', [ImportController::class, 'importLoan'])->name('newImportLoan');
 
         Route::get('/import/getprev_loans', [ImportController::class, 'loadAllLoan'])->name('getPrevLoans');
+        Route::post('/import/ledgers/prev_ledger_2023', [HomeController::class, 'setLastLedger'])->name('lastledger2023');
 
         Route::get('/logout', function () {
             auth('admin')->logout();
