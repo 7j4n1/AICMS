@@ -21,11 +21,23 @@
   @csrf
 
   <div class="form-group">
-    <label for="csvfile">CSV File:</label>
+    <label for="csvfile">Members CSV File:</label>
     <input type="file" name="csvfile" id="csvfile" class="form-control">
   </div>
 
   <button type="submit" class="btn btn-primary">Import Data</button>
+</form>
+
+<h2>Import Loan CSV file for previous year</h2>
+<form method="POST" action="{{ route('newImportLoan') }}" enctype="multipart/form-data">
+  @csrf
+
+  <div class="form-group">
+    <label for="csvfile">Loan CSV File:</label>
+    <input type="file" name="csvfile" id="csvfile" class="form-control">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Import Loans</button>
 </form>
 
 <x-scriptvendor></x-scriptvendor>

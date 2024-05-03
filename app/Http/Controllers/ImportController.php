@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use SplFileObject;
 use App\Models\Member;
+use App\Models\PreviousLoan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -83,5 +84,67 @@ class ImportController extends Controller
       
         return redirect()->route('importMembers')->with(['error' => 'No csv file selected...']); // View for uploading the CSV file
     }
+
     
+    public function importLoan(Request $request)
+    {
+        if ($request->hasFile('csvfile')) {
+            $file = $request->file('csvfile');
+            $filePath = $file->getRealPath();
+      
+            // Open CSV file for reading
+            $csv = new SplFileObject($filePath, 'r');
+            $csv->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY); // Set CSV reading flags
+      
+            // Skip header row (optional)
+            if ($csv->fgets()) { // Read and discard the first line (assuming header)
+            }
+      
+            $dataArray = [];
+            while (!$csv->eof()) {
+              $row = $csv->fgetcsv();
+              if ($row) {
+                // Insert new record
+                
+                $coop = null;
+
+                
+                if($row[0] == '-' || $row[0] == null)
+                {
+                  $coop = null;
+                }
+
+                if (!empty($row[0])) {
+                  $coop = ltrim($row[0], '0');
+                }
+
+                $dataArray[] = [
+                'coopId' => $coop,
+                'loanAmount' => $row[1],
+                'loanDate' => date('Y-m-d', strtotime($row[2])),
+                'guarantor1' => ($row[3] == '-') ? null : ltrim($row[3], '0'),
+                'guarantor2' => ($row[4] == '-') ? null : ltrim($row[4], '0'),
+                'guarantor3' => ($row[5] == '-') ? null : ltrim($row[5], '0'),
+                'guarantor4' => ($row[6] == '-') ? null : ltrim($row[6], '0'),
+                'status' => $row[7],
+                'userId' => auth('admin')->user()->id, // Retrieve admin id
+                'repaymentDate' => null
+                ];
+                
+                
+              }
+            }
+      
+            // Insert new records (if any)
+            if (!empty($dataArray)) {
+              PreviousLoan::insert($dataArray);
+              return redirect()->route('importMembers')->with('success', 'Loan CSV data imported successfully!');
+            } else {
+              return redirect()->route('importMembers')->with('error', 'No data found in the Loan CSV file.');
+            }
+        }
+      
+        return redirect()->route('importMembers')->with(['error' => 'No loan csv file selected...']); // View for uploading the CSV file
+    }
+
 }

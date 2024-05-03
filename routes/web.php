@@ -82,6 +82,7 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/import/members', [ImportController::class, 'index'])->name('importMembers');
 
         Route::post('/import/members', [ImportController::class, 'import'])->name('newImport');
+        Route::post('/import/loans', [ImportController::class, 'importLoan'])->name('newImportLoan');
 
         Route::get('/logout', function () {
             auth('admin')->logout();
