@@ -56,7 +56,7 @@ class LoanDefaulters extends Component
 
         $loans = LoanCapture::query()
             ->where('status', 1) // Filter ongoing loans only
-            ->with('activeLoan:coopId') // eager loading related loan balance
+            ->with('activeLoan') // eager loading related loan balance
             ->orderBy('repaymentDate', 'asc')
             ->get();
         
@@ -81,7 +81,7 @@ class LoanDefaulters extends Component
                 ];
                 
                 $total_balance += $balance;
-                $total_loans += $loan->loanAmount ?? 0;
+                $total_loans += $loan->loanAmount;
             }
 
             // check for lastPaymentDate
