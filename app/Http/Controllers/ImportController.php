@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActiveLoans;
 use Exception;
 use SplFileObject;
 use App\Models\Member;
@@ -1276,38 +1277,68 @@ class ImportController extends Controller
       );
 
       foreach ($previous_loans as $loan) {
-        $existLoan = LoanCapture::where('id', $loan['id'])->first();
-
-        if($existLoan)
-          continue;
-
         if($loan['coopId'] == null || empty($loan['coopId']))
           continue;
+        
+        $existLoan = LoanCapture::where('coopId', $loan['coopId'])->first();
 
-        $loanC = LoanCapture::create([
-          'id' => $loan['id'],
-          'coopId' => $loan['coopId'],
-          'loanAmount' => $loan['loanAmount'],
-          'loanDate' => $loan['loanDate'],
-          'guarantor1' => $loan['guarantor1'] ?? $loan['coopId'],
-          'guarantor2' => $loan['guarantor2'],
-          'guarantor3' => $loan['guarantor3'],
-          'guarantor4' => $loan['guarantor4'],
-          'status' => $loan['status'],
-          'userId' => auth('admin')->user()->id,
-          'repaymentDate' => date('Y-m-d', strtotime($loan['loanDate']. ' + 540 days'))
-        ]);
+        // if exists, update the details
+        if($existLoan)
+        {
+          $existLoan->update([
+            'loanAmount' => $loan['loanAmount'],
+            'loanDate' => $loan['loanDate'],
+            'guarantor1' => $loan['guarantor1'] ?? $loan['coopId'],
+            'guarantor2' => $loan['guarantor2'],
+            'guarantor3' => $loan['guarantor3'],
+            'guarantor4' => $loan['guarantor4'],
+            'status' => $loan['status'],
+            'repaymentDate' => date('Y-m-d', strtotime($loan['loanDate']. ' + 540 days'))
+          ]);
 
-        if(!$loanC)
+          // search in ActiveLoan and update
+          $act = ActiveLoans::where('coopId', $loan['coopId'])->first();
+          if($act){
+            $act->update([
+              'loanAmount' => $loan['loanAmount'],
+              'loanBalance' => $loan['loanAmount'],
+              'loanDate' => $loan['loanDate'],
+              'repaymentDate' => date('Y-m-d', strtotime($loan['loanDate']. ' + 540 days')),
+              'lastPaymentDate' => $loan['loanDate']
+            ]);
+          } else {
+            if($existLoan->status == 1)
+              $existLoan->scopeAddToActiveLoanWithDate();
+          }
+
+        } else {
+          $loanC = LoanCapture::create([
+            'id' => $loan['id'],
+            'coopId' => $loan['coopId'],
+            'loanAmount' => $loan['loanAmount'],
+            'loanDate' => $loan['loanDate'],
+            'guarantor1' => $loan['guarantor1'] ?? $loan['coopId'],
+            'guarantor2' => $loan['guarantor2'],
+            'guarantor3' => $loan['guarantor3'],
+            'guarantor4' => $loan['guarantor4'],
+            'status' => $loan['status'],
+            'userId' => auth('admin')->user()->id,
+            'repaymentDate' => date('Y-m-d', strtotime($loan['loanDate']. ' + 540 days'))
+          ]);
+  
+          if(!$loanC)
             throw new Exception("Error Processing Loan Request into db", 1);
-            
-        try {
-          if($loanC->status == 1)
-            $loanC->scopeAddToActiveLoan();
-        } catch (Exception $th) {
-            throw new Exception("Error Processing Loan Request: ". $th->getMessage(), 1);
-            
+              
+          try {
+            if($loanC->status == 1)
+              $loanC->scopeAddToActiveLoanWithDate();
+          } catch (Exception $th) {
+              throw new Exception("Error Processing Loan Request: ". $th->getMessage(), 1);
+              
+          }
         }
+
+        
       }
       // {{-- end --}}
     }

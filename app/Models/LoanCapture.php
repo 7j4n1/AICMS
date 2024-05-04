@@ -50,6 +50,28 @@ class LoanCapture extends Model
         
     }
 
+    public function scopeAddToActiveLoanWithDate()
+    {
+        // Wrap in a database transaction
+        DB::transaction(function() {
+            $activeLoan = ActiveLoans::create([
+                'coopId' => $this->coopId,
+                'loanAmount' => $this->loanAmount,
+                'loanPaid' => 0,
+                'loanBalance' => $this->loanAmount,
+                'userId' => $this->userId,
+                'loanDate' => $this->loanDate,
+                'repaymentDate' => $this->repaymentDate,
+                'lastPaymentDate' => $this->loanDate
+            ]);
+
+            if(!$activeLoan)
+                throw new Exception("Failed to create an active loan.");
+                
+        });
+        
+    }
+
     public function user()
     {
         return \App\Models\Member::where('coopId', $this->coopId)->first();

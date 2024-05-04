@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PreviousLedger2023;
 use SplFileObject;
+use App\Models\ActiveLoans;
 use Illuminate\Http\Request;
+use App\Models\PreviousLedger2023;
 
 class HomeController extends Controller
 {
@@ -37,25 +38,38 @@ class HomeController extends Controller
 
                 if (!empty($row[0])) {
                   $coop = ltrim($row[0], '0');
-                }
-                $loan = (($row[5] == '-') || (empty($row[5]))) ? 0 : ltrim($row[5], '0');
-                $share = (($row[3] == '-') || (empty($row[3]))) ? 0 : ltrim($row[3], '0');
-                $saving = (($row[4] == '-') || (empty($row[4]))) ? 0 : ltrim($row[4], '0');
-                $others = (($row[6] == '-') || (empty($row[6]))) ? 0 : ltrim($row[6], '0');
-                $total = (float)$loan + (float)$share + (float)$saving + (float)$others;
+                
+                  $loan = (($row[5] == '-') || (empty($row[5]))) ? 0 : ltrim($row[5], '0');
+                  $share = (($row[3] == '-') || (empty($row[3]))) ? 0 : ltrim($row[3], '0');
+                  $saving = (($row[4] == '-') || (empty($row[4]))) ? 0 : ltrim($row[4], '0');
+                  $others = (($row[6] == '-') || (empty($row[6]))) ? 0 : ltrim($row[6], '0');
+                  $total = (float)$loan + (float)$share + (float)$saving + (float)$others;
 
-                $dataArray[] = [
-                'coopId' => $coop,
-                'shareAmount' => $share,
-                'savingAmount' => $saving,
-                'loanAmount' => $loan,
-                'others' => $others,
-                'userId' => auth('admin')->user()->id, // Retrieve admin id
-                'adminCharge' => 0,
-                'totalAmount' => $total,
-                ];
-                
-                
+                  $dataArray[] = [
+                  'coopId' => $coop,
+                  'shareAmount' => $share,
+                  'savingAmount' => $saving,
+                  'loanAmount' => $loan,
+                  'others' => $others,
+                  'userId' => auth('admin')->user()->id, // Retrieve admin id
+                  'adminCharge' => 0,
+                  'totalAmount' => $total,
+                  ];
+                  
+                  // update the member activeloans balance with the new loan amount
+                  $activeLoan = ActiveLoans::where('coopId', $coop)->first();
+                  if($activeLoan) {
+                    
+                    if($activeLoan->loanAmount >= $loan){
+                      $activeLoan->loanPaid = (float)$activeLoan->loanAmount - (float)$loan;
+                      $activeLoan->loanBalance = (float)$loan;
+                    } else {
+                      $activeLoan->loanPaid = (float)$activeLoan->loanAmount;
+                      $activeLoan->loanBalance = 0;
+                    }
+                    $activeLoan->save();
+                  }
+                }
               }
             }
       
