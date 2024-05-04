@@ -88,6 +88,8 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/import/getprev_loans', [ImportController::class, 'loadAllLoan'])->name('getPrevLoans');
         Route::post('/import/ledgers/prev_ledger_2023', [HomeController::class, 'setLastLedger'])->name('lastledger2023');
 
+        Route::get('/import/setdate', [HomeController::class, 'setPaymentDate'])->name('setPaymentDate');
+
         Route::get('/logout', function () {
             auth('admin')->logout();
             return redirect()->route('login');

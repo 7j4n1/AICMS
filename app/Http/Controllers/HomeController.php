@@ -85,4 +85,14 @@ class HomeController extends Controller
       
         return redirect()->route('importMembers')->with(['error' => 'No ledger_2023 csv file selected...']); // View for uploading the CSV file
     }
+
+    public function setPaymentDate()
+    {
+      $paymentDate = date('Y-m-d', strtotime('2023-12-31'));
+
+      PreviousLedger2023::where('paymentDate', null)
+        ->update(['paymentDate' => $paymentDate]);
+
+      echo "<h2>Payment date set successfully!</h2>";
+    }
 }
