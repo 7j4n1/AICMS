@@ -50,26 +50,34 @@ class LoanDefaulters extends Component
     private function checkLoanDefaulters()
     {
         $currentDate = Carbon::now();
+        $minConsequtiveDefault = 2; // Minimum number of months a member can default before being tagged as a defaulter
+
+
+
         $loans = LoanCapture::query()
-            ->where('status', 1)
+            ->where('status', 1) // Filter ongoing loans only
+            ->with('activeLoan:coopId') // eager loading related loan balance
             ->orderBy('repaymentDate', 'asc')
             ->get();
         
         $total_balance = 0;
         $total_loans = 0;
+        $defaulters_list = [];
 
         // get the list of defaulters where the repaymentDate is less than the current date
         // and tag members on active loan as defaulter if He/she refuse to pay two/three/four/five/..... months consecutively.
-        $defaulters_list = [];
+        
         foreach ($loans as $loan) {
             $repaymentDate = Carbon::parse($loan->repaymentDate);
-            $diff = $currentDate->diffInMonths($repaymentDate);
-            $balance = ActiveLoans::where('coopId', $loan->coopId)->first()->loanBalance ?? 0;
+            $diffInMonths = $currentDate->diffInMonths($repaymentDate);
+            
 
-            if ($diff >= 1) {
+            if ($diffInMonths >= $minConsequtiveDefault) {
+                $balance = $loan->activeLoan->loanBalance ?? 0;
                 $defaulters_list[] = [
                     'loan' => $loan,
-                    'diff' => $diff
+                    'diff' => $diffInMonths,
+                    'balance' => $balance,
                 ];
                 
                 $total_balance += $balance;
@@ -77,18 +85,18 @@ class LoanDefaulters extends Component
             }
 
             // check for lastPaymentDate
-            $lastPaymentDate = Carbon::parse($loan->lastPaymentDate);
-            $diff = $currentDate->diffInMonths($lastPaymentDate);
-            // check if not in the defaulters list array, then add to the defaulters list array
-            $newLoan = [
-                'loan' => $loan,
-                'diff' => $diff
-            ];
-            if ($diff >= 2 && !in_array($newLoan, $defaulters_list)) {
-                $defaulters_list[] = $newLoan;
-                $total_balance += $balance;
-                $total_loans += $loan->loanAmount ?? 0;
-            }
+            // $lastPaymentDate = Carbon::parse($loan->lastPaymentDate);
+            // $diff = $currentDate->diffInMonths($lastPaymentDate);
+            // // check if not in the defaulters list array, then add to the defaulters list array
+            // $newLoan = [
+            //     'loan' => $loan,
+            //     'diff' => $diff
+            // ];
+            // if ($diff >= 2 && !in_array($newLoan, $defaulters_list)) {
+            //     $defaulters_list[] = $newLoan;
+            //     $total_balance += $balance;
+            //     $total_loans += $loan->loanAmount ?? 0;
+            // }
 
         }
 
