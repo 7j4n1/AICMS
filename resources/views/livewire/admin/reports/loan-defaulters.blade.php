@@ -63,7 +63,7 @@
                             <thead>
                                 <tr>
                                     <th>Loan Date</th>
-                                    <th>Default Days</th>
+                                    <th>Def. Months</th>
                                     <th>Id</th>
                                     <th>Loan Amount(&#8358;)</th>
                                     <th>Balance(&#8358;)</th>
@@ -76,48 +76,43 @@
                             <tbody>
 
                                 @foreach($loans as $loan)
-                                    <tr wire:key="item-generalloan-{{ $loan->id }}">
-                                        <td>{{ date('d-M-Y',strtotime($loan->loanDate)) }}</td> 
+                                    <tr wire:key="item-generalloan-{{ $loan['loan']->id }}">
+                                        <td>{{ date('d-M-Y',strtotime($loan['loan']->loanDate)) }}</td> 
                                            <!-- Days interval between repayment Date and Today  -->
                                         @php
-                                            $date1 = new DateTime($loan->repaymentDate);
+                                            $date1 = new DateTime($loan['loan']->repaymentDate);
                                             $date2 = new DateTime(date('Y-m-d'));
                                             $interval = $date1->diff($date2);
                                             $date_ = $interval->format('%R%a days');
                                         @endphp
-                                        <td>{{ $date_ }}</td>
-                                        <td>{{ $loan->coopId }}</td>
-                                        <td>{{ number_format($loan->loanAmount, 2) }}</td>
+                                        <td>{{ $loan['diff'] }}</td>
+                                        <td>{{ $loan['loan']->coopId }}</td>
+                                        <td>{{ number_format($loan['loan']->loanAmount, 2) }}</td>
                                         @php
-                                            $currentBal = \App\Models\PreviousLedger2023::where('coopId', $loan->coopId)->first();
-                                            $balance = \App\Models\ActiveLoans::where('coopId', $loan->coopId)->first()->loanBalance;
-                                            //if($currentBal){
-                                            //    $balance = $balance - ($currentBal->balance ?? 0);
-                                            //}
-                                            //    $balance =  $loan->loanAmount - $currentBal;
+                                            $balance = \App\Models\ActiveLoans::where('coopId', $loan['loan']->coopId)->first()->loanBalance ?? 0;
                                             
                                             
                                         @endphp
                                         <td>{{ number_format($balance, 2) }}</td>
-                                        @if($loan->guarantor1()->first() == null)
+                                        @if($loan['loan']->guarantor1()->first() == null)
                                             <td></td>
                                         @else
-                                            <td>{{ $loan->guarantor1()->first()->surname }}/{{$loan->guarantor1()->first()->phoneNumber}}</td>
+                                            <td>{{ $loan['loan']->guarantor1()->first()->surname }}/{{$loan['loan']->guarantor1()->first()->phoneNumber}}</td>
                                         @endif
-                                        @if($loan->guarantor2()->first() == null)
+                                        @if($loan['loan']->guarantor2()->first() == null)
                                             <td></td>
                                         @else
-                                            <td>{{ $loan->guarantor2()->first()->surname }}/{{$loan->guarantor2()->first()->phoneNumber}}</td>
+                                            <td>{{ $loan['loan']->guarantor2()->first()->surname }}/{{$loan['loan']->guarantor2()->first()->phoneNumber}}</td>
                                         @endif
-                                        @if($loan->guarantor3()->first() == null)
+                                        @if($loan['loan']->guarantor3()->first() == null)
                                             <td></td>
                                         @else
-                                            <td>{{ $loan->guarantor3()->first()->surname }}/{{$loan->guarantor3()->first()->phoneNumber}}</td>
+                                            <td>{{ $loan['loan']->guarantor3()->first()->surname }}/{{$loan['loan']->guarantor3()->first()->phoneNumber}}</td>
                                         @endif
-                                        @if($loan->guarantor4()->first() == null)
+                                        @if($loan['loan']->guarantor4()->first() == null)
                                             <td></td>
                                         @else
-                                            <td>{{ $loan->guarantor4()->first()->surname }}/{{$loan->guarantor4()->first()->phoneNumber}}</td>
+                                            <td>{{ $loan['loan']->guarantor4()->first()->surname }}/{{$loan['loan']->guarantor4()->first()->phoneNumber}}</td>
                                         @endif
                                     </tr>
                                 @endforeach

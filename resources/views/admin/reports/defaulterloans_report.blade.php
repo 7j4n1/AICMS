@@ -10,11 +10,11 @@
     {{-- Handle Browser dispatched Events --}}
     <script>
         window.addEventListener('DOMContentLoaded', (event) => {
-            initTable([0, 1, 2, 3, 4, 5, 6]);
+            initTable([0, 1, 2, 3, 4, 5, 6, 7, 8]);
         });
         document.addEventListener('livewire:init', () => {
             Livewire.on('on-openModal', () => {
-                initTable([0, 1, 2, 3, 4, 5, 6]);
+                initTable([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
                 window.setTimeout(function() {
                     $(".auto-close").fadeTo(500, 0).slideUp(500, function(){
