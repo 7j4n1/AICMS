@@ -10,11 +10,6 @@ use App\Models\PreviousLoan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-use Illuminate\Support\Facades\Log;
-use function PHPUnit\Framework\isNull;
-use function PHPUnit\Framework\isEmpty;
-use Maatwebsite\Excel\Facades\Excel; // Laravel Excel package
-
 class ImportController extends Controller
 {
     public function index()
