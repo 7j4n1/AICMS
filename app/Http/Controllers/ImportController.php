@@ -19,6 +19,7 @@ class ImportController extends Controller
     }
     public function import(Request $request)
     {
+      set_time_limit(300);
         if ($request->hasFile('csvfile')) {
             $file = $request->file('csvfile');
             $filePath = $file->getRealPath();
@@ -1275,6 +1276,7 @@ class ImportController extends Controller
         array('id' => 'd976e1a3-08fd-11ef-a6cd-a44cc8213838','coopId' => '682','loanAmount' => '1000000','loanDate' => '2023-01-12','guarantor1' => NULL,'guarantor2' => NULL,'guarantor3' => NULL,'guarantor4' => NULL,'status' => '1','userId' => '6','repaymentDate' => NULL,'created_at' => NULL,'updated_at' => NULL),
         array('id' => 'd976e1d4-08fd-11ef-a6cd-a44cc8213838','coopId' => '207','loanAmount' => '3000000','loanDate' => '2023-01-12','guarantor1' => '30','guarantor2' => '25','guarantor3' => NULL,'guarantor4' => NULL,'status' => '1','userId' => '6','repaymentDate' => NULL,'created_at' => NULL,'updated_at' => NULL)
       );
+      set_time_limit(300);
 
       foreach ($previous_loans as $loan) {
         if($loan['coopId'] == null || empty($loan['coopId']))

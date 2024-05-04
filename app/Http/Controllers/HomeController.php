@@ -11,6 +11,7 @@ class HomeController extends Controller
 {
     public function setLastLedger(Request $request) {
         if ($request->hasFile('csvfile')) {
+          set_time_limit(300);
             $file = $request->file('csvfile');
             $filePath = $file->getRealPath();
       
