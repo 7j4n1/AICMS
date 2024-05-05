@@ -90,6 +90,8 @@ Route::middleware('auth:admin')->group(function () {
 
         Route::get('/import/setdate', [HomeController::class, 'setPaymentDate'])->name('setPaymentDate');
 
+        Route::get('/clearall', [HomeController::class, 'clearLoans'])->name('clearall');
+
         Route::get('/logout', function () {
             auth('admin')->logout();
             return redirect()->route('login');
