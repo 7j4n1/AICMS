@@ -17,18 +17,18 @@ class MonthlyShares extends Component
         // query to get the sum of shares for each month based on given year
         
         
-        if($this->year == "2023" || $this->year == 2023){
+        // if($this->year == "2023" || $this->year == 2023){
             
-            $this->myshares = PreviousLedger2023::query()
-                ->whereYear('paymentDate', $this->year)
-                ->selectRaw('MONTH(paymentDate) as month, sum(shareAmount) as shareAmount')
-                ->groupBy('month')->get();
-        }else {
+        //     $this->myshares = PreviousLedger2023::query()
+        //         ->whereYear('paymentDate', $this->year)
+        //         ->selectRaw('MONTH(paymentDate) as month, sum(shareAmount) as shareAmount')
+        //         ->groupBy('month')->get();
+        // }else {
             $this->myshares = PaymentCapture::query()
                 ->whereYear('paymentDate', $this->year)
                 ->selectRaw('MONTH(paymentDate) as month, sum(shareAmount) as shareAmount')
                 ->groupBy('month')->get();
-        }
+        // }
         
         $total_shares = $this->myshares->sum('shareAmount') ?? 0;
         
