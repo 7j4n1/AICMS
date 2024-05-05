@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use SplFileObject;
 use App\Models\ActiveLoans;
+use App\Models\LoanCapture;
+use App\Models\Member;
 use App\Models\PaymentCapture as ModelsPaymentCapture;
 use Illuminate\Http\Request;
 use App\Models\PreviousLedger2023;
@@ -47,6 +49,11 @@ class HomeController extends Controller
                   $others = (($row[6] == '-') || (empty($row[6]))) ? 0 : ltrim($row[6], '0');
                   $total = (float)$loan + (float)$share + (float)$saving + (float)$others;
 
+                  $checkIfExist = Member::where('coopId', $coop)->first();
+                  if(!$checkIfExist)
+                  {
+                    continue;
+                  }
                   $dataArray[] = [
                   'coopId' => $coop,
                   'shareAmount' => $share,
@@ -56,19 +63,22 @@ class HomeController extends Controller
                   'userId' => auth('admin')->user()->id, // Retrieve admin id
                   'adminCharge' => 0,
                   'totalAmount' => $total,
+                  'paymentDate' => date('Y-m-d', strtotime('2023-12-31')),
                   ];
                   
                   // update the member activeloans balance with the new loan amount
                   $activeLoan = ActiveLoans::where('coopId', $coop)->first();
                   if($activeLoan) {
-                    
+                    $paymentDate = date('Y-m-d', strtotime('2023-12-31'));
                     if($activeLoan->loanAmount >= $loan){
                       // $activeLoan->loanPaid = (float)$activeLoan->loanAmount - (float)$loan;
                       // $activeLoan->loanBalance = (float)$loan;
-                      $activeLoan->setPayment((float)$loan);
+
+                      $activeLoan->setPayment((float)$loan, $paymentDate);
                     } else {
                       $activeLoan->loanPaid = (float)$activeLoan->loanAmount;
                       $activeLoan->loanBalance = 0;
+                      $activeLoan->lastPaymentDate = $paymentDate;
                       $activeLoan->save();
                     }
                     
@@ -105,7 +115,8 @@ class HomeController extends Controller
     {
       // Delete * from ActiveLoans 
       ActiveLoans::truncate();
-
+      LoanCapture::truncate();
       ModelsPaymentCapture::truncate();
+
     }
 }
