@@ -28,8 +28,8 @@
   <button type="submit" class="btn btn-primary">Import Data</button>
 </form>
 
-<h2>Import Loan CSV file for previous year</h2>
-<form method="POST" action="{{ route('newImportLoan') }}" enctype="multipart/form-data">
+{{--<h2>Import Loan CSV file for previous year</h2>--}}
+{{--<form method="POST" action="{{ route('newImportLoan') }}" enctype="multipart/form-data">
   @csrf
 
   <div class="form-group">
@@ -38,7 +38,7 @@
   </div>
 
   <button type="submit" class="btn btn-primary">Import Loans</button>
-</form>
+</form> --}}
 
 <h2>Import 2023 Ledger CSV file</h2>
 <form method="POST" action="{{ route('lastledger2023') }}" enctype="multipart/form-data">

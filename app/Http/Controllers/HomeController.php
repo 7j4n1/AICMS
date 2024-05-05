@@ -117,6 +117,7 @@ class HomeController extends Controller
       ActiveLoans::truncate();
       LoanCapture::truncate();
       ModelsPaymentCapture::truncate();
+      PreviousLedger2023::truncate();
 
     }
 }
