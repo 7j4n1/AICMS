@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Livewire\Accounts\PaymentCapture;
 use SplFileObject;
 use App\Models\ActiveLoans;
+use App\Models\PaymentCapture as ModelsPaymentCapture;
 use Illuminate\Http\Request;
 use App\Models\PreviousLedger2023;
 
@@ -80,7 +80,7 @@ class HomeController extends Controller
             // Insert new records (if any)
             if (!empty($dataArray)) {
               // PreviousLedger2023::insert($dataArray);
-              PaymentCapture::insert($dataArray);
+              ModelsPaymentCapture::insert($dataArray);
 
               return redirect()->route('importMembers')->with('success', '2023 Ledger CSV data imported successfully!');
             } else {
@@ -95,9 +95,17 @@ class HomeController extends Controller
     {
       $paymentDate = date('Y-m-d', strtotime('2023-12-31'));
 
-      PreviousLedger2023::where('paymentDate', null)
+      ModelsPaymentCapture::where('paymentDate', null)
         ->update(['paymentDate' => $paymentDate]);
 
       echo "<h2>Payment date set successfully!</h2>";
+    }
+
+    public function clearLoans()
+    {
+      // Delete * from ActiveLoans 
+      ActiveLoans::truncate();
+
+      ModelsPaymentCapture::truncate();
     }
 }
