@@ -21,7 +21,7 @@ class ActiveLoans extends Model
         'lastPaymentDate',
     ];
 
-    public function setPayment($amount)
+    public function setPayment($amount, $date=null)
     {
         // Update loanPaid with the new amount
         static::query()->where('id', $this->id)->update([
@@ -31,7 +31,7 @@ class ActiveLoans extends Model
         // Update loanBalance directly in the database
         static::query()->where('id', $this->id)->update([
             'loanBalance' => DB::raw('loanAmount - loanPaid'),
-            'lastPaymentDate' => date('Y-m-d'),
+            'lastPaymentDate' => $date ?? date('Y-m-d'),
         ]);
 
         // Refresh the object instance (optional)
