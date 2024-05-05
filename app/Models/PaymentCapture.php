@@ -26,4 +26,19 @@ class PaymentCapture extends Model
         'adminCharge'
     ];
 
+    public function updateLoan($prev_amount)
+    {
+        $loan = ActiveLoans::where('coopId', $this->coopId)->first();
+        if($loan)
+        {
+            $prevBalance = $loan->loanPaid - (float)$prev_amount;
+            $newLoanPaid = $prevBalance + (float)$this->loanAmount;
+
+            $loan->loanPaid = $newLoanPaid;
+            $loan->remainingBalance = $loan->loanAmount - $newLoanPaid;
+            $loan->save();
+        }
+        
+    }
+
 }

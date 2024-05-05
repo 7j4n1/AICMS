@@ -122,6 +122,8 @@
                                                 @endforeach
                                             </select>
                                         </div>
+
+                                        <input type="hidden" value="{{ $prev_amount}}" id="prevAmount" />
                                         
                                             {{-- Amount --}}
                                         <div class="col-md-6">
@@ -400,6 +402,7 @@
             let shareAmount = document.getElementById('shareAmount').value;
             let others = document.getElementById('otherAmount').value;
             let adminCharge = document.getElementById('adminCharge').value;
+            let prevAmount = document.getElementById('prevAmount').value;
 
             if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '') {
                 alert("All fields are required..");
@@ -417,7 +420,7 @@
             if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)) !== Number(totalAmount)) {
                 alert("Your computation cannot be greater than the TOTAL.");
             }else{
-                Livewire.dispatch('update-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge});
+                Livewire.dispatch('update-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge, prevAmount: prevAmount});
             }
 
             

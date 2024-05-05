@@ -20,6 +20,8 @@ class PaymentCapture extends Component
     public $isModalOpen = false;
     public $editingPaymentId = null;
 
+    public $prev_amount = 0;
+
     private $paginate = 10;
 
     
@@ -129,6 +131,7 @@ class PaymentCapture extends Component
         $this->paymentForm->fill($payment->toArray());
 
         $this->editingPaymentId = $id;
+        $this->prev_amount = $payment->loanAmount ?? 0;
 
         $this->isModalOpen = true;
         $this->sendDispatchEvent();
@@ -136,7 +139,7 @@ class PaymentCapture extends Component
     }
 
     #[On('update-payments')]
-    public function updatePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge)
+    public function updatePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge, $prevAmount)
     {
         $this->paymentForm->coopId = $id;
         $this->paymentForm->totalAmount = $totalAmount;
@@ -158,6 +161,8 @@ class PaymentCapture extends Component
         $payment = ModelsPaymentCapture::find($this->editingPaymentId);
 
         $payment->update($this->paymentForm->toArray());
+
+        $payment->updateLoan($prevAmount);
 
         $this->editingPaymentId = null;
 
