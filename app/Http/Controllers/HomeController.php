@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Livewire\Accounts\PaymentCapture;
 use SplFileObject;
 use App\Models\ActiveLoans;
 use Illuminate\Http\Request;
@@ -62,13 +63,15 @@ class HomeController extends Controller
                   if($activeLoan) {
                     
                     if($activeLoan->loanAmount >= $loan){
-                      $activeLoan->loanPaid = (float)$activeLoan->loanAmount - (float)$loan;
-                      $activeLoan->loanBalance = (float)$loan;
+                      // $activeLoan->loanPaid = (float)$activeLoan->loanAmount - (float)$loan;
+                      // $activeLoan->loanBalance = (float)$loan;
+                      $activeLoan->setPayment((float)$loan);
                     } else {
                       $activeLoan->loanPaid = (float)$activeLoan->loanAmount;
                       $activeLoan->loanBalance = 0;
+                      $activeLoan->save();
                     }
-                    $activeLoan->save();
+                    
                   }
                 }
               }
@@ -76,7 +79,9 @@ class HomeController extends Controller
       
             // Insert new records (if any)
             if (!empty($dataArray)) {
-              PreviousLedger2023::insert($dataArray);
+              // PreviousLedger2023::insert($dataArray);
+              PaymentCapture::insert($dataArray);
+
               return redirect()->route('importMembers')->with('success', '2023 Ledger CSV data imported successfully!');
             } else {
               return redirect()->route('importMembers')->with('error', 'No data found in the 2023_ledger CSV file.');
