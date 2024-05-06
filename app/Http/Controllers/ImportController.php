@@ -1315,15 +1315,31 @@ class ImportController extends Controller
 
         } else {
           // check if member with coopId exists
-          $member = Member::where('coopId', $loan['coopId'])->first();
+          $member = $this->checkIfMemberExists($loan['coopId']);
           if(!$member)
             continue;
+
+          $g1 = null;
+          
+          if($loan['guarantor1'] == null || empty($loan['guarantor1']))
+          {
+            $g1 = $loan['coopId'];
+          }else {
+            // check for guarantor 1 and if exists
+            $guarantor1 = $this->checkIfMemberExists($loan['guarantor1']);
+            if($guarantor1)
+              $g1 = $loan['guarantor1'];
+            else
+              $g1 = $loan['coopId'];
+          }
+          
+          
           $loanC = LoanCapture::create([
             'id' => $loan['id'],
             'coopId' => $loan['coopId'],
             'loanAmount' => $loan['loanAmount'],
             'loanDate' => $loan['loanDate'],
-            'guarantor1' => $loan['guarantor1'] ?? $loan['coopId'],
+            'guarantor1' => $g1,
             'guarantor2' => $loan['guarantor2'],
             'guarantor3' => $loan['guarantor3'],
             'guarantor4' => $loan['guarantor4'],
@@ -1347,5 +1363,13 @@ class ImportController extends Controller
         
       }
       // {{-- end --}}
+    }
+
+    public function checkIfMemberExists($coopId)
+    {
+      $member = Member::where('coopId', $coopId)->first();
+      if(!$member)
+        return false;
+      return true;
     }
 }
