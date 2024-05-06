@@ -1290,10 +1290,10 @@ class ImportController extends Controller
           $existLoan->update([
             'loanAmount' => $loan['loanAmount'],
             'loanDate' => $loan['loanDate'],
-            'guarantor1' => $loan['guarantor1'] ?? $loan['coopId'],
-            'guarantor2' => $loan['guarantor2'],
-            'guarantor3' => $loan['guarantor3'],
-            'guarantor4' => $loan['guarantor4'],
+            'guarantor1' => $this->checkIfMemberExists($loan['guarantor1']) ? $loan['guarantor1'] : $loan['coopId'],
+            'guarantor2' => $this->otherGuarantorCheckNullorFilter($loan['guarantor2']),
+            'guarantor3' => $this->otherGuarantorCheckNullorFilter($loan['guarantor3']),
+            'guarantor4' => $this->otherGuarantorCheckNullorFilter($loan['guarantor4']),
             'status' => $loan['status'],
             'repaymentDate' => date('Y-m-d', strtotime($loan['loanDate']. ' + 540 days'))
           ]);
