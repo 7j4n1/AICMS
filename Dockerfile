@@ -1,4 +1,4 @@
-FROM richarvey/nginx-php-fpm:3.1.4
+FROM richarvey/nginx-php-fpm:latest
 
 COPY . .
 
@@ -16,5 +16,9 @@ ENV LOG_CHANNEL stderr
 
 # Allow composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
+
+# Give permisions to the storage folder and cache
+RUN chmod -R 775 /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage
 
 CMD ["/start.sh"]
