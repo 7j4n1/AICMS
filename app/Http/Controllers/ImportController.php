@@ -1340,9 +1340,9 @@ class ImportController extends Controller
             'loanAmount' => $loan['loanAmount'],
             'loanDate' => $loan['loanDate'],
             'guarantor1' => $g1,
-            'guarantor2' => $loan['guarantor2'],
-            'guarantor3' => $loan['guarantor3'],
-            'guarantor4' => $loan['guarantor4'],
+            'guarantor2' => $this->otherGuarantorCheckNullorFilter($loan['guarantor2']),
+            'guarantor3' => $this->otherGuarantorCheckNullorFilter($loan['guarantor3']),
+            'guarantor4' => $this->otherGuarantorCheckNullorFilter($loan['guarantor4']),
             'status' => $loan['status'],
             'userId' => auth('admin')->user()->id,
             'repaymentDate' => date('Y-m-d', strtotime($loan['loanDate']. ' + 540 days'))
@@ -1371,5 +1371,22 @@ class ImportController extends Controller
       if(!$member)
         return false;
       return true;
+    }
+
+    public function otherGuarantorCheckNullorFilter($guarantor)
+    {
+        $g0 = null;
+          
+          if($guarantor == null || empty($guarantor))
+          {
+            $g0 = null;
+          }else {
+            // check for guarantor 1 and if exists
+            $guarantor1 = $this->checkIfMemberExists($guarantor);
+            if($guarantor1)
+              $g0 = $guarantor;
+          }
+
+      return $g0;
     }
 }
