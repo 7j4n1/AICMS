@@ -1,6 +1,5 @@
-# Simple CRUD API Documentation
+# AlBirr MCS Documentation
 
-Welcome to the CRUD API documentation Laravel application. This API allows you to create, read, update, and delete person records.
 
 ## Table of Contents
 
