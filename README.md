@@ -1,66 +1,120 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Simple CRUD API Documentation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Welcome to the CRUD API documentation Laravel application. This API allows you to create, read, update, and delete person records.
 
-## About Laravel
+## Table of Contents
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Getting Started
 
-## Learning Laravel
+### Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Before you start, make sure you have the following prerequisites installed on your system:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- PHP (>= 7.4) or Xampp
+- PHP Composer (You can download from getcomposer.org)
+- Database (e.g., MySQL)
+- Git cli (optional)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Installation
 
-## Laravel Sponsors
+1. Clone this repository or download zip:
+![alt text](clone.png)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   ```bash
+   git clone https://github.com/7j4n1/AICMS.git
+   cd AICMS 
+   ```
+2. cd into your project, You will need to be inside that project file to enter all of the rest of the commands in this readme. So remember to type 
+```bash
+cd AICMS
+```
+ to move your terminal working location to the project file we just barely created.
 
-### Premium Partners
+2. Install PHP dependencies using Composer:
+Whenever you clone a new Laravel project you must now install all of the project dependencies. This is what actually installs Laravel itself, among other necessary packages to get started.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    ```bash
+    composer install 
+    ```
+    or try
+    ```bash
+    composer update
+    ```
+3. Create a copy of your .env file. We will make a copy of the .env.example file and create a .env file that we can start to fill out to do things like database configuration in the next few steps.
 
-## Contributing
+    ```bash
+    cp .env.example .env
+    ```
+    or 
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    ```bash
+    scp .env.example .env
+    ```
+    This will create a copy of the .env.example file in your project and name the copy simply .env.
+    
+4. Generate an app encryption key
+Laravel requires you to have an app encryption key which is generally randomly generated and stored in your .env file. The app will use this encryption key to encode various elements of your application from cookies to password hashes and more.
+In the terminal we can run this command to generate that key. (Make sure that you have already installed Laravel via composer and created an .env file before doing this, of which we have done both).
+    ```bash
+    php artisan key:generate
+    ```
+    If you check the .env file again, you will see that it now has a long random string of characters in the APP_KEY field. We now have a valid app encryption key.
 
-## Code of Conduct
+5. Create an empty database for our application
+Create an empty database for your project using the Xampp or Mysql Application (PhpMyAdmin). In our example we created a database called “albirricms_2024”. Just create an empty database here, the exact steps will depend on your system setup.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+6. In the .env file, add database information to allow Laravel to connect to the database
+    Configure the database config variables as follows:
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=albirricms_2024
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
+    In the .env file fill in the DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, and DB_PASSWORD options to match the credentials of the database you just created. This will allow us to run migrations and seed the database in the next step.
 
-## Security Vulnerabilities
+7. Run the migrations after each other:
+    ```bash
+    php artisan optimize:clear
+    
+    php artisan migrate --seeder="RoleAndPermissionSeeder" --force
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    php artisan migrate --seed  --force
+    ```
 
-## License
+    if they're successful, you will see the tables in the database you created (phpmyadmin)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+8. Start the development server:
+    ```bash
+    php artisan serve
+
+    ```
+    Laravel API is now up and running on {http://localhost:8000} which is the base url!
+
+The username and password for superadmin are the same.
+
+## Import Member details and Ledgers
+
+- it is very important to import the members before the ledger in order to avoid database relationship problem.
+- The csv files can be found in the folder ("AICMS\data") in the project folder
+
+1. navigate to this link, after signing in
+```bash
+http://localhost:8000/admin/import/members
+```
+![alt text](image1.png)
+the members details files(6) one after the other, they can be found in (\AICMS\data\albirrudatacapture_ files). Import successful will be returned before uploading the next one.
+![alt text](step1.png)
+
+2. Import the Previous Loan records, by clicking on the green button. It will open a new tab, when it's done, A text will show saying "Imported, Successfully."
+![alt text](step2.png)
+
+3. Import the Previous Ledger by selecting ledger_2003.csv
+![alt text](step3.png)

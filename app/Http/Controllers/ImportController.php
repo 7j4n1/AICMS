@@ -1363,6 +1363,8 @@ class ImportController extends Controller
         
       }
       // {{-- end --}}
+
+      echo "<h2>Done, Successfully</h2>";
     }
 
     public function checkIfMemberExists($coopId)
