@@ -66,7 +66,7 @@ In the terminal we can run this command to generate that key. (Make sure that yo
 
 5. Create an empty database for our application
 Create an empty database for your project using the Xampp or Mysql Application (PhpMyAdmin). In our example we created a database called “albirricms_2024”. Just create an empty database here, the exact steps will depend on your system setup.
-
+![alt text](mysql.png)
 6. In the .env file, add database information to allow Laravel to connect to the database
     Configure the database config variables as follows:
     ```
