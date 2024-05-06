@@ -1314,6 +1314,10 @@ class ImportController extends Controller
           }
 
         } else {
+          // check if member with coopId exists
+          $member = Member::where('coopId', $loan['coopId'])->first();
+          if(!$member)
+            continue;
           $loanC = LoanCapture::create([
             'id' => $loan['id'],
             'coopId' => $loan['coopId'],
