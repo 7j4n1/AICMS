@@ -245,7 +245,7 @@
                     <!-- </div> -->
                     <div class="row mt-4">
                         <div class="col-sm-6 offset-5">
-                            {{-- $payments->links() --}}
+                            {{ $payments->links() }}
                         </div>
                     </div>
                 </div>

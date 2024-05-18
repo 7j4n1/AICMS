@@ -31,7 +31,7 @@ class LoanCapture extends Component
 
         $this->loans = ModelsLoanCapture::query()
             ->orderBy('coopId', 'asc')
-            ->get();
+            ->paginate($this->paginate);
 
         return view('livewire.accounts.loan-capture',[
             'loans' => $this->loans,

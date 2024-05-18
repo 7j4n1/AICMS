@@ -68,6 +68,7 @@ class PaymentForm extends Form
                     // if no active loan, and loanAmount is greater than 0, add error
                     if($this->loanAmount > 0)
                     {
+                        $this->loanAmount = 0;
                         $validator->errors()->add('loanAmount', 'The loan amount must be 0 if there is no active loan.');
                     }
                 }

@@ -64,7 +64,7 @@ class PaymentCapture extends Component
 
         $this->payments = ModelsPaymentCapture::query()
             ->orderBy('paymentDate', 'asc')
-            ->get();
+            ->paginate($this->paginate);
 
         return view('livewire.accounts.payment-capture',[
             'payments' => $this->payments

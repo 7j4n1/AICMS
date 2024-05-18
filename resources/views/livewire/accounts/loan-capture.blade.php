@@ -210,7 +210,7 @@
                     <!-- </div> -->
                     <div class="row mt-4">
                         <div class="col-sm-6 offset-5">
-                            {{-- $loans->links() --}}
+                            {{ $loans->links() }}
                         </div>
                     </div>
                 </div>
