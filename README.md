@@ -83,7 +83,7 @@ Create an empty database for your project using the Xampp or Mysql Application (
     ```bash
     php artisan optimize:clear
     
-    php artisan migrate --seeder="RoleAndPermissionSeeder" --force
+    php artisan migrate:fresh --seeder="RoleAndPermissionSeeder" --force
 
     php artisan migrate --seed  --force
     ```
