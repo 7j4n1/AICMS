@@ -51,7 +51,7 @@ class LoanCapture extends Component
 
     public function saveLoan()
     {
-        $this->validate();
+        $this->loanForm->validate();
 
         if(!$this->getErrorBag()->isEmpty())
         {

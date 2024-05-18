@@ -94,7 +94,7 @@ class PaymentCapture extends Component
         $this->paymentForm->adminCharge = $adminCharge;
 
 
-        $this->validate();
+        $this->paymentForm->validate();
 
         if(!$this->getErrorBag()->isEmpty())
         {
