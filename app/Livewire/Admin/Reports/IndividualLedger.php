@@ -34,19 +34,23 @@ class IndividualLedger extends Component
             ->groupBy('coopId')->get();
 
         // sum each of the columns in the $ledgers result collections
-        $total_loan = $ledgers->sum('loanAmount') ?? 0;
+        // $total_loan = $ledgers->sum('loanAmount') ?? 0;
         $total_saving = $ledgers->sum('savingAmount') ?? 0;
         $total_total = $ledgers->sum('totalAmount') ?? 0;
         $total_share = $ledgers->sum('shareAmount') ?? 0;
         $total_admin = $ledgers->sum('adminCharge') ?? 0;
         $total_others = $ledgers->sum('others') ?? 0;
 
-        $total_loan += $preledgers->sum('loanAmount') ?? 0;
+        // $total_loan += $preledgers->sum('loanAmount') ?? 0;
         $total_saving += $preledgers->sum('savingAmount') ?? 0;
         $total_total += $preledgers->sum('totalAmount') ?? 0;
         $total_share += $preledgers->sum('shareAmount') ?? 0;
         $total_admin += $preledgers->sum('adminCharge') ?? 0;
         $total_others += $preledgers->sum('others') ?? 0;
+
+        $isActive = ActiveLoans::where('coopId', $this->coopId)->first();
+
+        $total_loan = ($isActive) ? $isActive->loanBalance : 0;
         
 
         if($this->beginning_date == null)
