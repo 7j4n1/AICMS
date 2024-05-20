@@ -436,53 +436,58 @@
 
         // Add an input event on totalAmount id
         document.getElementById('totalAmount').addEventListener('input', function() {
-            // let total = document.getElementById('totalAmount');
-            // total.value = Number(total.value).toLocaleString('en-US');
+            let total = document.getElementById('totalAmount');
+            total.value = total.value.replace(/,/g, '');
+            total.value = Number(total.value).toLocaleString('en-US');
             calculatePercent();
         });
 
         document.getElementById('loanAmount').addEventListener('input', function() {
-            // let total = document.getElementById('loanAmount');
-            // total.value = Number(total.value).toLocaleString('en-US');
+            let total = document.getElementById('loanAmount');
+            total.value = total.value.replace(/,/g, '');
+            total.value = Number(total.value).toLocaleString('en-US');
             loanChange();
         });
 
         document.getElementById('savingAmount').addEventListener('input', function() {
             let savingAmount = document.getElementById('savingAmount');
+            savingAmount.value = savingAmount.value.replace(/,/g, '');
             savingAmount.value = Number(savingAmount.value).toLocaleString('en-US');
         });
         document.getElementById('shareAmount').addEventListener('input', function() {
             let shareAmount = document.getElementById('shareAmount');
+            shareAmount.value = shareAmount.value.replace(/,/g, '');
             shareAmount.value = Number(shareAmount.value).toLocaleString('en-US');
         });
         document.getElementById('otherAmount').addEventListener('input', function() {
             let otherAmount = document.getElementById('otherAmount');
+            otherAmount.value = otherAmount.value.replace(/,/g, '');
             otherAmount.value = Number(otherAmount.value).toLocaleString('en-US');
         });
 
-        document.getElementById('savingAmount').addEventListener('blur', function() {
-            let savingAmount = document.getElementById('savingAmount');
-            savingAmount.value = Number(savingAmount.value).toLocaleString('en-US');
-        });
-        document.getElementById('shareAmount').addEventListener('blur', function() {
-            let shareAmount = document.getElementById('shareAmount');
-            shareAmount.value = Number(shareAmount.value).toLocaleString('en-US');
-        });
-        document.getElementById('otherAmount').addEventListener('blur', function() {
-            let otherAmount = document.getElementById('otherAmount');
-            otherAmount.value = Number(otherAmount.value).toLocaleString('en-US');
-        });
+        // document.getElementById('savingAmount').addEventListener('blur', function() {
+        //     let savingAmount = document.getElementById('savingAmount');
+        //     savingAmount.value = Number(savingAmount.value).toLocaleString('en-US');
+        // });
+        // document.getElementById('shareAmount').addEventListener('blur', function() {
+        //     let shareAmount = document.getElementById('shareAmount');
+        //     shareAmount.value = Number(shareAmount.value).toLocaleString('en-US');
+        // });
+        // document.getElementById('otherAmount').addEventListener('blur', function() {
+        //     let otherAmount = document.getElementById('otherAmount');
+        //     otherAmount.value = Number(otherAmount.value).toLocaleString('en-US');
+        // });
 
-        // add event listener to the total amount on loss of focus
-        document.getElementById('totalAmount').addEventListener('blur', function() {
-            let total = document.getElementById('totalAmount');
-            total.value = Number(total.value).toLocaleString('en-US');
-        });
+        // // add event listener to the total amount on loss of focus
+        // document.getElementById('totalAmount').addEventListener('blur', function() {
+        //     let total = document.getElementById('totalAmount');
+        //     total.value = Number(total.value).toLocaleString('en-US');
+        // });
 
-        document.getElementById('loanAmount').addEventListener('blur', function() {
-            let total = document.getElementById('loanAmount');
-            total.value = Number(total.value).toLocaleString('en-US');
-        });
+        // document.getElementById('loanAmount').addEventListener('blur', function() {
+        //     let total = document.getElementById('loanAmount');
+        //     total.value = Number(total.value).toLocaleString('en-US');
+        // });
 
 
     </script>
