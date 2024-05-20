@@ -43,6 +43,11 @@ class RoleAndPermissionSeeder extends Seeder
             $managerRole = Role::create(['guard_name' => 'admin', 'name' => 'manager'])
             ->syncPermissions(['can create', 'can view']);
         }
+        // member role
+        if(!Role::where('name', 'member')->first()){
+            $memberRole = Role::create(['guard_name' => 'admin', 'name' => 'member'])
+            ->syncPermissions(['can view']);
+        }
         
 
     }

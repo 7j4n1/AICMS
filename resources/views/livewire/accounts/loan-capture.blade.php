@@ -253,9 +253,12 @@
             }
         }
 
-        document.getElementById('loanAmount').addEventListener('blur', function() {
+        document.getElementById('loanAmount').addEventListener('input', function() {
             let loanAmount = document.getElementById('loanAmount');
-            loanAmount.value = Number(loanAmount.value).toLocaleString('en-US');
+            // remove formatting before a new one is applied
+            loanAmount.value = loanAmount.value.replace(/,/g, '');
+            loanAmount.value = new Intl.NumberFormat().format(Number(loanAmount.value));
+            // loanAmount.value = parseFloat(loanAmount.value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         });
     </script>
     

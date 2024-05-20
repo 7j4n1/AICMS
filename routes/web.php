@@ -53,6 +53,8 @@ Route::get('/export/members', [MemberController::class, 'export'])->name('export
 Route::get('/export/loans', [PaymentController::class, 'exportActiveLoans'])->name('exportLoans');
 Route::get('/export/payments', [PaymentController::class, 'export'])->name('exportLedgers');
 
+Route::get('/generateLogins', [MemberController::class, 'generateLoginDetails'])->name('generateLogins');
+
 Route::middleware('auth:admin')->group(function () {
     Route::group(['prefix' => 'admin'], function () {
         Route::get('/dashboard', function () {

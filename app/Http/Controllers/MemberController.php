@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\MembersExport;
 use App\Imports\MembersImport;
+use App\Models\Admin;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -44,5 +45,31 @@ class MemberController extends Controller
     public function export()
     {
         return Excel::download(new MembersExport, date('Y-m-d').'members.xlsx');
+    }
+
+
+    public function generateLoginDetails()
+    {
+        $members = Member::all();
+
+        try {
+            foreach ($members as $member) {
+                // check if the member already has login details
+                if (Admin::where('username', $member->coopId)->exists()) {
+                    continue;
+                }
+                $user = Admin::create([
+                    'name' => $member->surname ?? 'User',
+                    'username' => $member->coopId,
+                    'password' => bcrypt('password@'.$member->coopId),
+                ])->assignRole('member');
+    
+            }
+        } catch (\Throwable $th) {
+            return 'An error occured while generating login details.';
+        }
+        
+        
+        return 'Login details generated successfully.';
     }
 }
