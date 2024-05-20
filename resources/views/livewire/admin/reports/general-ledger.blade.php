@@ -20,7 +20,7 @@
         </div>
         @if($ledgers->count() > 0)
             <div class="col-md-3 mb-4" style="padding-top: 2%;">
-                <a href="{{ route('generalReportDownload', ['beginning_date' => $beginning_date, 'ending_date' => $ending_date]) }}" class="btn btn-primary">Export to PDF</a>
+                <a href="{{ route('generalReportDownload', ['beginning_date' => $beginning_date, 'ending_date' => $ending_date, 'from_number' => 1, 'to_number' => 100]) }}" target="_blank" class="btn btn-primary">Export to PDF</a>
             </div>
         @endif
 
@@ -144,7 +144,7 @@
                                     <th>Total Amount(&#8358;)</th>
                                     <th>Total Savings(&#8358;)</th>
                                     <th>Total Shares(&#8358;)</th>
-                                    <th>TotalLoans(&#8358;)</th>
+                                    <th>Paid Loans(&#8358;)</th>
                                     <th>Total Others(&#8358;)</th>
                                     <th>Total Admin(&#8358;)</th>
                                 </tr>
