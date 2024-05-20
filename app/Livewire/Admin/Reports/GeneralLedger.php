@@ -64,12 +64,23 @@ class GeneralLedger extends Component
         $this->dispatch('on-openModal');
     }
 
-    public function downloadLedger($beginning_date, $ending_date)
+    public function downloadLedger($beginning_date, $ending_date, $from_number = 0, $to_number=100)
     {
+        // get the ledgers for the specified date range
+        // and specified the number of records to be returned based on the $from_number and $to_number
         $ledgers = PaymentCapture::query()
                 ->whereBetween('paymentDate', [$beginning_date, $ending_date])
                 ->selectRaw('coopId, SUM(loanAmount) as loanAmount, SUM(savingAmount) as savingAmount, SUM(totalAmount) as totalAmount, SUM(shareAmount) as shareAmount, SUM(adminCharge) as adminCharge, SUM(others) as others')
-                ->groupBy('coopId')->get();
+                ->groupBy('coopId')
+                ->limit($to_number)
+                ->offset($from_number)
+                ->get();
+        // $ledgers = PaymentCapture::query()
+        //         ->whereBetween('paymentDate', [$beginning_date, $ending_date])
+        //         ->selectRaw('coopId, SUM(loanAmount) as loanAmount, SUM(savingAmount) as savingAmount, SUM(totalAmount) as totalAmount, SUM(shareAmount) as shareAmount, SUM(adminCharge) as adminCharge, SUM(others) as others')
+        //         ->groupBy('coopId')
+        //         ->limit($number_of_records)
+        //         ->get();
 
         // sum each of the columns in the $ledgers result collections
         $total_loan = $ledgers->sum('loanAmount') ?? 0;

@@ -25,13 +25,13 @@ class IndividualLedger extends Component
         $ledgers = PaymentCapture::query()
             ->where('coopId', $this->coopId)
             ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
-            ->orderBy('paymentDate', 'asc')
+            ->orderByDesc('paymentDate')
             ->get();
 
-        $preledgers = PreviousLedger2023::query()
-            ->where('coopId', $this->coopId)
-            ->selectRaw('sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
-            ->groupBy('coopId')->get();
+        // $preledgers = PreviousLedger2023::query()
+        //     ->where('coopId', $this->coopId)
+        //     ->selectRaw('sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
+        //     ->groupBy('coopId')->get();
 
         // sum each of the columns in the $ledgers result collections
         // $total_loan = $ledgers->sum('loanAmount') ?? 0;
@@ -42,11 +42,11 @@ class IndividualLedger extends Component
         $total_others = $ledgers->sum('others') ?? 0;
 
         // $total_loan += $preledgers->sum('loanAmount') ?? 0;
-        $total_saving += $preledgers->sum('savingAmount') ?? 0;
-        $total_total += $preledgers->sum('totalAmount') ?? 0;
-        $total_share += $preledgers->sum('shareAmount') ?? 0;
-        $total_admin += $preledgers->sum('adminCharge') ?? 0;
-        $total_others += $preledgers->sum('others') ?? 0;
+        // $total_saving += $preledgers->sum('savingAmount') ?? 0;
+        // $total_total += $preledgers->sum('totalAmount') ?? 0;
+        // $total_share += $preledgers->sum('shareAmount') ?? 0;
+        // $total_admin += $preledgers->sum('adminCharge') ?? 0;
+        // $total_others += $preledgers->sum('others') ?? 0;
 
         $isActive = ActiveLoans::where('coopId', $this->coopId)->first();
 
@@ -89,13 +89,15 @@ class IndividualLedger extends Component
         $ledgers = PaymentCapture::query()
             ->where('coopId', $id)
             ->whereBetween('paymentDate', [$beginning_date, $ending_date])
-            ->orderBy('paymentDate', 'asc')
+            ->orderByDesc('paymentDate')
             ->get(['id', 'coopId', 'loanAmount', 'savingAmount', 'totalAmount', 'paymentDate', 'others', 'shareAmount', 'adminCharge']);
         if($ledgers){
             $memberId = Member::where('coopId', $id)->first();
 
             $isActive = ActiveLoans::where('coopId', $id)->first();
             $isOnLoan = ($isActive) ? true : false;
+
+            $balance = ($isActive) ? $isActive->loanBalance : 0;
 
             $dataTotals = PaymentCapture::query()
                 ->where('coopId', $id)
@@ -115,7 +117,8 @@ class IndividualLedger extends Component
                 'dataTotals' => $dataTotals, 'memberId' => $memberId, 'isOnLoan' => $isOnLoan,
                 'beginning_date' => $beginning_date, 'ending_date' => $ending_date,
                 'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
-                'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others
+                'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others,
+                'balance' => $balance
             ]);
 
             $pdf = new Dompdf();

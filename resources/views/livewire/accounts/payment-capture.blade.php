@@ -218,11 +218,11 @@
                                     <tr wire:key="item-profile-{{ $payment->id }}">
                                         <td>{{ $counter++ }}</td>
                                         <td>{{ $payment->coopId }}</td>
-                                        <td>{{ $payment->totalAmount }}</td>
-                                        <td>{{ $payment->savingAmount }}</td>
-                                        <td>{{ $payment->shareAmount }}</td>
-                                        <td>{{ $payment->loanAmount }}</td>
-                                        <td>{{ $payment->others }}</td>
+                                        <td>{{ number_format($payment->totalAmount, 2) }}</td>
+                                        <td>{{ number_format($payment->savingAmount, 2) }}</td>
+                                        <td>{{ number_format($payment->shareAmount, 2) }}</td>
+                                        <td>{{ number_format($payment->loanAmount, 2) }}</td>
+                                        <td>{{ number_format($payment->others, 2) }}</td>
                                         <td>{{ $payment->splitOption }}</td>
                                         <td>{{ $payment->paymentDate }}</td>
                                         @canany(['can edit', 'can delete'], 'admin')
@@ -245,7 +245,7 @@
                     <!-- </div> -->
                     <div class="row mt-4">
                         <div class="col-sm-6 offset-5">
-                            {{ $payments->links() }}
+                            {{-- $payments->links() --}}
                         </div>
                     </div>
                 </div>
@@ -283,7 +283,7 @@
 
         function loanChange()
         {
-            let totalAmount = document.getElementById('totalAmount');
+            let totalAmount = document.getElementById('totalAmount').value.replace(/,/g, '');
             let loanAmount = document.getElementById('loanAmount');
             let splitOption = document.getElementById('splitOption').value;
             let savingAmount = document.getElementById('savingAmount');
@@ -291,11 +291,11 @@
             let others = document.getElementById('otherAmount');
             let adminCharge = document.getElementById('adminCharge');
 
-            if (isNaN(totalAmount.value)) {
+            if (isNaN(Number(totalAmount))) {
                 alert("Total Amount cannot be empty..")
             }
             else {
-                let total = parseFloat(totalAmount.value);
+                let total = parseFloat(totalAmount);
                 let split = parseFloat(splitOption);
                 let loan = parseFloat(loanAmount.value);
                 let admin = 0;
@@ -306,15 +306,15 @@
 
                     total -= admin;
 
-                    savingAmount.value = (total - loan) * (100 - split) / 100
-                    shareAmount.value = (total - loan) * split / 100;
+                    savingAmount.value = Number((total - loan) * (100 - split) / 100).toLocaleString('en-US');
+                    shareAmount.value = Number((total - loan) * split / 100).toLocaleString('en-US');
                     others.value = 0;
                 }else {
                     admin = 0;
                     adminCharge.value = admin;
 
-                    savingAmount.value = (total - loan) * (100 - split) / 100
-                    shareAmount.value = (total - loan) * split / 100;
+                    savingAmount.value = Number((total - loan) * (100 - split) / 100).toLocaleString('en-US');
+                    shareAmount.value = Number((total - loan) * split / 100).toLocaleString('en-US');
                     others.value = 0;
                 }
 
@@ -323,18 +323,18 @@
 
         function sendDataAfterValidation() {
             let coopId = document.getElementById('coopId').value;
-            let totalAmount = document.getElementById('totalAmount').value;
-            let loanAmount = document.getElementById('loanAmount').value;
+            let totalAmount = document.getElementById('totalAmount').value.replace(/,/g, '');
+            let loanAmount = document.getElementById('loanAmount').value.replace(/,/g, '');
             let splitOption = document.getElementById('splitOption').value;
-            let savingAmount = document.getElementById('savingAmount').value;
-            let shareAmount = document.getElementById('shareAmount').value;
-            let others = document.getElementById('otherAmount').value;
+            let savingAmount = document.getElementById('savingAmount').value.replace(/,/g, '');
+            let shareAmount = document.getElementById('shareAmount').value.replace(/,/g, '');
+            let others = document.getElementById('otherAmount').value.replace(/,/g, '');
             let adminCharge = document.getElementById('adminCharge').value;
 
             if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '') {
                 alert("All fields are required..");
                 return;
-            }else if(isNaN(totalAmount) || isNaN(loanAmount) || isNaN(savingAmount) || isNaN(shareAmount) || isNaN(others) || isNaN(adminCharge)) {
+            }else if(isNaN(Number(totalAmount)) || isNaN(Number(loanAmount)) || isNaN(Number(savingAmount)) || isNaN(Number(shareAmount)) || isNaN(Number(others)) || isNaN(adminCharge)) {
                 alert("All fields must be numbers..");
                 return;
             } 
@@ -354,7 +354,7 @@
         }
 
         function calculatePercent() {
-            let totalAmount = document.getElementById('totalAmount');
+            let totalAmount = document.getElementById('totalAmount').value.replace(/,/g, '');
             let loanAmount = document.getElementById('loanAmount');
             let splitOption = document.getElementById('splitOption').value;
             let savingAmount = document.getElementById('savingAmount');
@@ -362,11 +362,12 @@
             let others = document.getElementById('otherAmount');
             let adminCharge = document.getElementById('adminCharge');
 
-            if (isNaN(totalAmount.value)) {
+            // convert total amount to number
+            if (isNaN(Number(totalAmount))) {
                 alert("Total Amount cannot be empty..")
             }
             else {
-                let total = parseFloat(totalAmount.value);
+                let total = parseFloat(totalAmount);
                 let split = parseFloat(splitOption);
                 let admin = 0;
 
@@ -374,16 +375,16 @@
                     admin = 50;
                     adminCharge.value = admin;
 
-                    savingAmount.value = (total - admin) * (100 - split) / 100
-                    shareAmount.value = (total - admin) * split / 100;
+                    savingAmount.value = Number((total - admin) * (100 - split) / 100).toLocaleString('en-US');
+                    shareAmount.value = Number((total - admin) * split / 100).toLocaleString('en-US');
                     loanAmount.value = 0;
                     others.value = 0;
                 }else {
                     admin = 0;
                     adminCharge.value = admin;
 
-                    savingAmount.value = total * (100 - split) / 100
-                    shareAmount.value = total * split / 100;
+                    savingAmount.value = Number(total * (100 - split) / 100).toLocaleString('en-US');
+                    shareAmount.value = Number(total * split / 100).toLocaleString('en-US');;
                     loanAmount.value = 0;
                     others.value = 0;
                 }
@@ -395,22 +396,22 @@
 
         function UpdateDataAfterValidation() {
             let coopId = document.getElementById('coopId').value;
-            let totalAmount = document.getElementById('totalAmount').value;
-            let loanAmount = document.getElementById('loanAmount').value;
+            let totalAmount = document.getElementById('totalAmount').value.replace(/,/g, '');
+            let loanAmount = document.getElementById('loanAmount').value.replace(/,/g, '');
             let splitOption = document.getElementById('splitOption').value;
-            let savingAmount = document.getElementById('savingAmount').value;
-            let shareAmount = document.getElementById('shareAmount').value;
-            let others = document.getElementById('otherAmount').value;
+            let savingAmount = document.getElementById('savingAmount').value.replace(/,/g, '');
+            let shareAmount = document.getElementById('shareAmount').value.replace(/,/g, '');
+            let others = document.getElementById('otherAmount').value.replace(/,/g, '');
             let adminCharge = document.getElementById('adminCharge').value;
             let prevAmount = document.getElementById('prevAmount').value;
 
             if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '') {
                 alert("All fields are required..");
                 return;
-            }else if(isNaN(totalAmount) || isNaN(loanAmount) || isNaN(savingAmount) || isNaN(shareAmount) || isNaN(others) || isNaN(adminCharge)) {
+            }else if(isNaN(Number(totalAmount)) || isNaN(Number(loanAmount)) || isNaN(Number(savingAmount)) || isNaN(Number(shareAmount)) || isNaN(Number(others)) || isNaN(adminCharge)) {
                 alert("All fields must be numbers..");
                 return;
-            } 
+            }  
             
             if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0) {
                 alert("All fields must be greater than zero..");
@@ -435,11 +436,52 @@
 
         // Add an input event on totalAmount id
         document.getElementById('totalAmount').addEventListener('input', function() {
+            // let total = document.getElementById('totalAmount');
+            // total.value = Number(total.value).toLocaleString('en-US');
             calculatePercent();
         });
 
         document.getElementById('loanAmount').addEventListener('input', function() {
+            // let total = document.getElementById('loanAmount');
+            // total.value = Number(total.value).toLocaleString('en-US');
             loanChange();
+        });
+
+        document.getElementById('savingAmount').addEventListener('input', function() {
+            let savingAmount = document.getElementById('savingAmount');
+            savingAmount.value = Number(savingAmount.value).toLocaleString('en-US');
+        });
+        document.getElementById('shareAmount').addEventListener('input', function() {
+            let shareAmount = document.getElementById('shareAmount');
+            shareAmount.value = Number(shareAmount.value).toLocaleString('en-US');
+        });
+        document.getElementById('otherAmount').addEventListener('input', function() {
+            let otherAmount = document.getElementById('otherAmount');
+            otherAmount.value = Number(otherAmount.value).toLocaleString('en-US');
+        });
+
+        document.getElementById('savingAmount').addEventListener('blur', function() {
+            let savingAmount = document.getElementById('savingAmount');
+            savingAmount.value = Number(savingAmount.value).toLocaleString('en-US');
+        });
+        document.getElementById('shareAmount').addEventListener('blur', function() {
+            let shareAmount = document.getElementById('shareAmount');
+            shareAmount.value = Number(shareAmount.value).toLocaleString('en-US');
+        });
+        document.getElementById('otherAmount').addEventListener('blur', function() {
+            let otherAmount = document.getElementById('otherAmount');
+            otherAmount.value = Number(otherAmount.value).toLocaleString('en-US');
+        });
+
+        // add event listener to the total amount on loss of focus
+        document.getElementById('totalAmount').addEventListener('blur', function() {
+            let total = document.getElementById('totalAmount');
+            total.value = Number(total.value).toLocaleString('en-US');
+        });
+
+        document.getElementById('loanAmount').addEventListener('blur', function() {
+            let total = document.getElementById('loanAmount');
+            total.value = Number(total.value).toLocaleString('en-US');
         });
 
 

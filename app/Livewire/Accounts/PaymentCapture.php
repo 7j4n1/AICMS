@@ -63,8 +63,9 @@ class PaymentCapture extends Component
             
 
         $this->payments = ModelsPaymentCapture::query()
-            ->orderBy('paymentDate', 'asc')
-            ->paginate($this->paginate);
+            ->orderByDesc('paymentDate')
+            ->limit(100)
+            ->get();
 
         return view('livewire.accounts.payment-capture',[
             'payments' => $this->payments
@@ -128,7 +129,18 @@ class PaymentCapture extends Component
             return;
         }
 
-        $this->paymentForm->fill($payment->toArray());
+        $this->paymentForm->fill([
+            'coopId' => $payment->coopId,
+            'splitOption' => $payment->splitOption,
+            'loanAmount' => number_format($payment->loanAmount),
+            'savingAmount' => number_format($payment->savingAmount),
+            'totalAmount' => number_format($payment->totalAmount),
+            'paymentDate' => $payment->paymentDate,
+            'others' => number_format($payment->others),
+            'shareAmount' => number_format($payment->shareAmount),
+            'userId' => $payment->userId,
+            'adminCharge' => $payment->adminCharge,
+        ]);
 
         $this->editingPaymentId = $id;
         $this->prev_amount = $payment->loanAmount ?? 0;
@@ -142,12 +154,12 @@ class PaymentCapture extends Component
     public function updatePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge, $prevAmount)
     {
         $this->paymentForm->coopId = $id;
-        $this->paymentForm->totalAmount = $totalAmount;
-        $this->paymentForm->loanAmount = $loanAmount;
+        $this->paymentForm->totalAmount = $this->paymentForm->convertToPhpNumber($totalAmount);
+        $this->paymentForm->loanAmount = $this->paymentForm->convertToPhpNumber($loanAmount);
         $this->paymentForm->splitOption = $splitOption;
-        $this->paymentForm->savingAmount = $savingAmount;
-        $this->paymentForm->shareAmount = $shareAmount;
-        $this->paymentForm->others = $others;
+        $this->paymentForm->savingAmount = $this->paymentForm->convertToPhpNumber($savingAmount);
+        $this->paymentForm->shareAmount = $this->paymentForm->convertToPhpNumber($shareAmount);
+        $this->paymentForm->others = $this->paymentForm->convertToPhpNumber($others);
         $this->paymentForm->adminCharge = $adminCharge;
 
         $this->validate();

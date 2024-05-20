@@ -10,26 +10,45 @@ use Livewire\Attributes\Validate;
 
 class PaymentForm extends Form
 {
+    // protected $rules = [
+    //     'coopId' => 'required|numeric|min:1|exists:members,coopId',
+    //     'splitOption' => 'required|numeric|min:0',
+    //     'loanAmount' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
+    //     'savingAmount' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
+    //     'totalAmount' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
+    //     'paymentDate' => 'required|date',
+    //     'others' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
+    //     'shareAmount' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
+    //     'adminCharge' => 'numeric|min:0',
+    // ];
+
     public $id;
     #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $coopId;
     #[Validate('required|numeric|min:0')]
     public $splitOption = 0;
-    #[Validate('required|numeric|min:0')]
+    // #[Validate('required|numeric|min:0')]
+    #[Validate('required')]
     public $loanAmount = 0;
-    #[Validate('required|numeric|min:0')]
+    // #[Validate('required|numeric|min:0')]
+    #[Validate('required')]
     public $savingAmount = 0;
-    #[Validate('required|numeric|min:0')]
+    // #[Validate('required|numeric|min:0')]
+    #[Validate('required')]
     public $totalAmount = 0;
     #[Validate('required|date')]
     public $paymentDate;
-    #[Validate('required|numeric|min:0')]
+    // #[Validate('required|numeric|min:0')]
+    #[Validate('required')]
     public $others = 0;
-    #[Validate('required|numeric|min:0')]
+    // #[Validate('required|numeric|min:0')]
+    #[Validate('required')]
     public $shareAmount = 0;
     #[Validate('numeric|min:0')]
     public $adminCharge = 0;
 
+
+    // rules
 
     protected $messages = [
         'coopId.required' => 'The Coop ID field is required.',
@@ -60,13 +79,13 @@ class PaymentForm extends Form
                 $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
                 if($activeLoan)
                 {
-                    if($this->loanAmount > $activeLoan->loanBalance)
+                    if($this->convertToPhpNumber($this->loanAmount) > $activeLoan->loanBalance)
                     {
                         $validator->errors()->add('loanAmount', 'The loan amount must not be greater than the remaining amount of the active loan.');
                     }
                 }else {
                     // if no active loan, and loanAmount is greater than 0, add error
-                    if($this->loanAmount > 0)
+                    if($this->convertToPhpNumber($this->loanAmount) > 0)
                     {
                         $this->loanAmount = 0;
                         $validator->errors()->add('loanAmount', 'The loan amount must be 0 if there is no active loan.');
@@ -88,12 +107,12 @@ class PaymentForm extends Form
         $payment = PaymentCapture::create([
             'coopId' => $this->coopId,
             'splitOption' => $this->splitOption,
-            'loanAmount' => $this->loanAmount,
-            'savingAmount' => $this->savingAmount,
-            'totalAmount' => $this->totalAmount,
+            'loanAmount' => $this->convertToPhpNumber($this->loanAmount),
+            'savingAmount' => $this->convertToPhpNumber($this->savingAmount),
+            'totalAmount' => $this->convertToPhpNumber($this->totalAmount),
             'paymentDate' => $this->paymentDate,
-            'others' => $this->others,
-            'shareAmount' => $this->shareAmount,
+            'others' => $this->convertToPhpNumber($this->others),
+            'shareAmount' => $this->convertToPhpNumber($this->shareAmount),
             'userId' => auth('admin')->user()->id,
             'adminCharge' => $this->adminCharge,
         ]);
@@ -104,11 +123,11 @@ class PaymentForm extends Form
         }
             
         // throw new Exception("Create a payment successfully.");
-        if(($this->loanAmount >= 1) && !is_null($this->loanAmount)){
+        if(($this->convertToPhpNumber($this->loanAmount) >= 1) && !is_null($this->convertToPhpNumber($this->loanAmount))){
             $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
             if($activeLoan)
             {
-                $activeLoan->setPayment($this->loanAmount);
+                $activeLoan->setPayment($this->convertToPhpNumber($this->loanAmount));
             }
         }
 
@@ -127,6 +146,18 @@ class PaymentForm extends Form
         $this->shareAmount = 0;
         $this->adminCharge = 0;
         $this->resetErrorBag();
+    }
+
+    // function to convert js locale en-US to php number
+    /**
+     * Convert a number from en-US locale to PHP number
+     *
+     * @param string $number
+     * @return float
+     */
+    public function convertToPhpNumber($number)
+    {
+        return (float)str_replace(',', '', $number);
     }
 
 }

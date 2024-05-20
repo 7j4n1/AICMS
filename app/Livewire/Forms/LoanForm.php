@@ -12,7 +12,7 @@ class LoanForm extends Form
     public $id;
     #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $coopId;
-    #[Validate('required|numeric|min:0')]
+    #[Validate('required')]
     public $loanAmount;
     #[Validate('required|date')]
     public $loanDate;
@@ -47,9 +47,9 @@ class LoanForm extends Form
 
                 if($this->guarantor1 == $this->guarantor2 || $this->guarantor1 == $this->guarantor3 || $this->guarantor1 == $this->guarantor4)
                     $validator->errors()->add('guarantor1', 'Guarantor 1 cannot be the same as Guarantor 2, 3 or 4');
-                if($this->guarantor2 == $this->guarantor3 || $this->guarantor2 == $this->guarantor4)
+                if(!is_null($this->guarantor2) && ($this->guarantor2 == $this->guarantor3 || $this->guarantor2 == $this->guarantor4))
                     $validator->errors()->add('guarantor2', 'Guarantor 2 cannot be the same as Guarantor 3 or 4');
-                if($this->guarantor3 == $this->guarantor4)
+                if(!is_null($this->guarantor3) && ($this->guarantor3 == $this->guarantor4))
                     $validator->errors()->add('guarantor3', 'Guarantor 3 cannot be the same as Guarantor 4');
             });
         });
@@ -60,7 +60,7 @@ class LoanForm extends Form
         $this->validate();
         $loan = LoanCapture::create([
             'coopId' => $this->coopId,
-            'loanAmount' => $this->loanAmount,
+            'loanAmount' => $this->convertToPhpNumber($this->loanAmount),
             'loanDate' => $this->loanDate,
             'guarantor1' => $this->guarantor1,
             'guarantor2' => $this->guarantor2,
@@ -93,5 +93,16 @@ class LoanForm extends Form
         $this->guarantor3 = '';
         $this->guarantor4 = '';
         $this->status = 1;
+    }
+
+    /**
+     * Convert a number from en-US locale to PHP number
+     *
+     * @param string $number
+     * @return float
+     */
+    public function convertToPhpNumber($number)
+    {
+        return (float)str_replace(',', '', $number);
     }
 }

@@ -71,7 +71,7 @@
                                             {{-- Amount --}}
                                         <div class="col-md-6">
                                             <label for="loanAmount">Loan Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Loan Amount" wire:model.live="loanForm.loanAmount" />
+                                            <input type="text" id="loanAmount" class="form-control" placeholder="Loan Amount" wire:model.live="loanForm.loanAmount" />
                                             @error('loanForm.loanAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
@@ -177,7 +177,7 @@
                                     <tr wire:key="item-profile-{{ $loan->id }}">
                                         <td>{{ $counter++ }}</td>
                                         <td>{{ $loan->coopId }}</td>
-                                        <td>{{ $loan->loanAmount }}</td>
+                                        <td>{{ number_format($loan->loanAmount, 2) }}</td>
                                         <td>{{ $loan->loanDate }}</td>
                                         <td>{{ $loan->guarantor1 }}</td>
                                         <td>{{ $loan->guarantor2 }}</td>
@@ -210,7 +210,7 @@
                     <!-- </div> -->
                     <div class="row mt-4">
                         <div class="col-sm-6 offset-5">
-                            {{ $loans->links() }}
+                            {{-- $loans->links() --}}
                         </div>
                     </div>
                 </div>
@@ -252,6 +252,11 @@
                 Livewire.dispatch('delete-loans', { id: value });
             }
         }
+
+        document.getElementById('loanAmount').addEventListener('blur', function() {
+            let loanAmount = document.getElementById('loanAmount');
+            loanAmount.value = Number(loanAmount.value).toLocaleString('en-US');
+        });
     </script>
     
 </div>

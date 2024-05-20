@@ -76,6 +76,25 @@
                     </li>
                     <li class="nav-parent">
                         <a class="nav-link" href="#">
+                            <i class="bx bx-cart-alt" aria-hidden="true"></i>
+                            <span>Imports/Export</span>
+                        </a>
+                        <ul class="nav nav-children">
+                            <li>
+                                <a class="nav-link" href="{{route('importallMembers')}}">
+                                    Imports records
+                                </a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="{{route('exports')}}">
+                                    Export records
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li class="nav-parent">
+                        <a class="nav-link" href="#">
                             <i class="bx bx-file" aria-hidden="true"></i>
                             <span>Reports</span>
                         </a>

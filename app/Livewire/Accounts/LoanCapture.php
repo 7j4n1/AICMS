@@ -6,8 +6,10 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Livewire\Forms\LoanForm;
+use App\Models\ActiveLoans;
 use App\Models\LoanCapture as ModelsLoanCapture;
 use App\Models\Member;
+use Illuminate\Support\Facades\Cache;
 
 class LoanCapture extends Component
 {
@@ -25,18 +27,18 @@ class LoanCapture extends Component
 
     public function render()
     {
-        $memberIds = Member::query()
+        $this->loans = Cache::store('file')->remember('loans', now()->addHours(6), function () {
+            return ModelsLoanCapture::query()
+            ->orderByDesc('loanDate')->limit(100)->get();
+        });
+
+        $memberIds = Cache::store('file')->remember('memberIds', now()->addHours(3), function () {
+            return Member::query()
             ->orderBy('coopId', 'asc')
             ->get(['coopId']);
+        });
 
-        $this->loans = ModelsLoanCapture::query()
-            ->orderBy('coopId', 'asc')
-            ->paginate($this->paginate);
-
-        return view('livewire.accounts.loan-capture',[
-            'loans' => $this->loans,
-            'memberIds' => $memberIds,
-        ])->with(['session' => session()]);
+        return view('livewire.accounts.loan-capture')->with(['session' => session(),'loans' => $this->loans, 'memberIds' => $memberIds]);
     }
 
     public function mount()
@@ -56,11 +58,13 @@ class LoanCapture extends Component
         if(!$this->getErrorBag()->isEmpty())
         {
             $this->isModalOpen = true;
+            session()->flash('error','Some error occured');
             return;
         }
 
         $this->loanForm->save();
 
+        Cache::store('file')->forget('loans');
         
         session()->flash('success','Loan details captured successfully');
 
@@ -117,9 +121,14 @@ class LoanCapture extends Component
 
     #[On('delete-loans')]
     public function deleteOldLoan($id) {
-        ModelsLoanCapture::find($id)->delete();
+        $loan = ModelsLoanCapture::find($id);
+        ActiveLoans::where('coopId', $loan->coopId)->first()->delete();
+
+        $loan->delete();
 
         session()->flash('message','Loan details deleted successfully.');
+
+        Cache::store('file')->forget('loans');
 
         $this->sendDispatchEvent();
     }
@@ -131,6 +140,7 @@ class LoanCapture extends Component
         $loan->completedLoan();
 
         session()->flash('message','Loan marked as completed successfully.');
+        Cache::store('file')->forget('loans');
 
         $this->sendDispatchEvent();
     }
@@ -139,6 +149,7 @@ class LoanCapture extends Component
     {
         $this->isModalOpen = true;
         $this->editingLoanId = null;
+        $this->resetErrorBag();
         $this->resetForm();
         $this->sendDispatchEvent();
     }

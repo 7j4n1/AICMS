@@ -80,7 +80,7 @@
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
                                     <div class="rounded">
                                         <div class="p-2 text-capitalize">Loan Status</div>
-                                        <div class="panel-title p-2"><span class="text-bold"> {{$isOnLoan ? 'Active' : 'Not Active'}}</span></div>
+                                        <div class="panel-title p-2"><span class="text-bold"> {{$isOnLoan ? 'Active' : 'Not Active'}} - (NGN {{number_format($balance, 2)}})</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -100,7 +100,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
                                     <div class="rounded">
-                                        <div class="p-2 text-capitalize">Total Loans</div>
+                                        <div class="p-2 text-capitalize">Paid Loans</div>
                                         <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($total_loan, 2)}}</span></div>
                                     </div>
                                 </div>
@@ -156,7 +156,7 @@
                         <th>Amount(#)</th>
                         <th>Savings(#)</th>
                         <th>Shares(#)</th>
-                        <th>Loans(#)</th>
+                        <th>P.Loans(#)</th>
                         <th>Others(#)</th>
                         <th>Admin(#)</th>
                     </tr>

@@ -1,3 +1,5 @@
+<?php set_time_limit(240); ?>
+
 <!DOCTYPE html>
 <html lang="{{  str_replace('_', '-', app()->getLocale())  }}" class="" >
 	<head>
@@ -87,7 +89,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-3 mb-2 col-xs-3">
                                     <div class="rounded">
-                                        <div class="p-2 text-capitalize">Total Loans</div>
+                                        <div class="p-2 text-capitalize">Total Paid Loans</div>
                                         <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($total_loan, 2)}}</span></div>
                                     </div>
                                 </div>
@@ -144,7 +146,7 @@
                         <th>Total Amount(#)</th>
                         <th>Total Savings(#)</th>
                         <th>Total Shares(#)</th>
-                        <th>Total Loans(#)</th>
+                        <th>Paid Loans(#)</th>
                         <th>Total Others(#)</th>
                         <th>Total Admin(#)</th>
                     </tr>
