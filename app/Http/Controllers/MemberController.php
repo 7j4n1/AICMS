@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\MembersExport;
-use App\Imports\MembersImport;
 use App\Models\Admin;
 use App\Models\Member;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
+use App\Exports\MembersExport;
+use App\Imports\MembersImport;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Schema;
 
 class MemberController extends Controller
 {
@@ -49,6 +51,35 @@ class MemberController extends Controller
 
 
     public function generateLoginDetails()
+    {
+        set_time_limit(0);
+        Member::whereDoesntHave('admin')->chunk(100, function ($members) {
+            DB::beginTransaction();
+            try {
+                foreach ($members as $member) {
+                    
+                    Admin::create([
+                        'name' => $member->surname ?? 'User',
+                        'username' => 'albirru'.$member->coopId,
+                        'password' => Hash::make('password@'.$member->coopId),
+                        'coopId' => $member->coopId,
+                    ])->assignRole('member');
+        
+                }
+
+                DB::commit();
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                return 'An error occured while generating login details.';
+            }
+        });
+
+        
+        
+        return 'Login details generated successfully.';
+    }
+
+    public function generateLoginDetailsOld()
     {
         $members = Member::all();
 

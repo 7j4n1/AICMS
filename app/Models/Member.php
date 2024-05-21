@@ -29,4 +29,9 @@ class Member extends Model
         'userId'
     ]; 
 
+    public function admin()
+    {
+        return $this->hasOne(Admin::class, 'coopId', 'coopId');
+    }
+
 }

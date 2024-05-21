@@ -26,6 +26,7 @@ class Admin extends Authenticatable
         'username',
         'email',
         'password',
+        'coopId',
     ];
 
     /**
