@@ -36,24 +36,7 @@ Route::get('/admin/download', function() {
     return view('livewire.admin.reports.individual-ledger-download');
 })->name('individualReport1');
 
-// Import routes for members and loans
-Route::get('/import/allusers', [MemberController::class, 'index'])->name('importallMembers');
-Route::get('/import/activeloans', [ImportController::class, 'indexLoan'])->name('importLoans');
-// post routes for importing members and loans
-Route::post('/import/allmembers', [MemberController::class, 'import'])->name('member_import');
-Route::post('/import/activeloans', [PaymentController::class, 'importActiveLoans'])->name('loan_import');
-Route::post('/import/allledgers', [PaymentController::class, 'import'])->name('payment_import');
 
-Route::get('/exports', function() {
-    return view('export');
-
-})->name('exports');
-Route::get('/export/members', [MemberController::class, 'export'])->name('exportMembers');
-
-Route::get('/export/loans', [PaymentController::class, 'exportActiveLoans'])->name('exportLoans');
-Route::get('/export/payments', [PaymentController::class, 'export'])->name('exportLedgers');
-
-Route::get('/generateLogins', [MemberController::class, 'generateLoginDetails'])->name('generateLogins');
 
 Route::middleware('auth:admin')->group(function () {
     Route::group(['prefix' => 'admin'], function () {
@@ -117,6 +100,25 @@ Route::middleware('auth:admin')->group(function () {
             auth('admin')->logout();
             return redirect()->route('login');
         })->name('logout');
+
+        // Import routes for members and loans
+        Route::get('/import/allusers', [MemberController::class, 'index'])->name('importallMembers');
+        Route::get('/import/activeloans', [ImportController::class, 'indexLoan'])->name('importLoans');
+        // post routes for importing members and loans
+        Route::post('/import/allmembers', [MemberController::class, 'import'])->name('member_import');
+        Route::post('/import/activeloans', [PaymentController::class, 'importActiveLoans'])->name('loan_import');
+        Route::post('/import/allledgers', [PaymentController::class, 'import'])->name('payment_import');
+
+        Route::get('/exports', function() {
+            return view('export');
+
+        })->name('exports');
+        Route::get('/export/members', [MemberController::class, 'export'])->name('exportMembers');
+
+        Route::get('/export/loans', [PaymentController::class, 'exportActiveLoans'])->name('exportLoans');
+        Route::get('/export/payments', [PaymentController::class, 'export'])->name('exportLedgers');
+
+        Route::get('/generatelogins', [MemberController::class, 'generateLoginDetails'])->name('generateLogins');
     });
 
     

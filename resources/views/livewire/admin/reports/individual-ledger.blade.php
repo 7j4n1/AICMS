@@ -3,7 +3,11 @@
         <div class="col">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">Individual Ledger</h2>
+                    @if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->hasRole('member', 'admin'))
+                        <h2 class="card-title">My Personal Ledger</h2>
+                    @else
+                        <h2 class="card-title">Individual Ledger</h2>
+                    @endif
                 </header>
                 <div class="card-body">
                     <div class="row mb-3">
@@ -109,9 +113,12 @@
             </section>
         </div>
     </div>
+
+    
     <!-- Button to open the modal for capturing new payment details -->
     <form wire:submit="searchResult" class="row g-3">
         <input type="hidden" name="_token" value="{{ $csrf_token }}">
+        @canany(['can edit', 'can delete'], 'admin')
         <div class="col-md-2 mb-2">
             <div class="form-group">
                 <label for="coopId">CoopId</label>
@@ -123,6 +130,7 @@
                 </select>
             </div>
         </div>
+        @endcanany
         <div class="col-md-3 mb-2">
             <!-- Date Range input type -->
             <div class="form-group">
@@ -149,11 +157,16 @@
 
     </form>
     
+    
     <div class="row mb-3">
         <div class="col">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">All Individual Ledgers</h2>
+                    @if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->hasRole(['member'], 'admin'))
+                        <h2 class="card-title">My Personal Ledger</h2>
+                    @else
+                        <h2 class="card-title">All Individual Ledgers</h2>
+                    @endif
                 </header>
                 <div class="card-body">
                 

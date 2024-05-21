@@ -30,6 +30,9 @@ class RoleAndPermissionSeeder extends Seeder
             Permission::create(['guard_name' => 'admin', 'name' => 'can delete']);
         if(!Permission::where('name', 'can view')->first())
             Permission::create(['guard_name' => 'admin', 'name' => 'can view']);
+        if(!Permission::where('name', 'can view only')->first())
+            Permission::create(['guard_name' => 'admin', 'name' => 'can view only']);
+        
 
         // Create a superadmin role for users authenticating with the admin guard:
         // check if role exists
@@ -46,7 +49,7 @@ class RoleAndPermissionSeeder extends Seeder
         // member role
         if(!Role::where('name', 'member')->first()){
             $memberRole = Role::create(['guard_name' => 'admin', 'name' => 'member'])
-            ->syncPermissions(['can view']);
+            ->syncPermissions(['can view only']);
         }
         
 

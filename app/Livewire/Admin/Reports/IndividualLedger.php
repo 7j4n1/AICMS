@@ -3,14 +3,11 @@
 namespace App\Livewire\Admin\Reports;
 
 use Dompdf\Dompdf;
-use Dompdf\Options;
 use App\Models\Member;
 use Livewire\Component;
 use App\Models\ActiveLoans;
 use App\Models\PaymentCapture;
-use App\Models\PreviousLedger2023;
 use Illuminate\Support\Facades\View;
-
 class IndividualLedger extends Component
 {
     public $beginning_date;
@@ -20,33 +17,39 @@ class IndividualLedger extends Component
 
     public function render()
     {
+        // check if the autentcated user is a member or an admin
+        // if the authenticated user is an admin, get all the memberIds
+        // else get only the authenticated user's coopId
+        
         $memberIds = Member::orderBy("coopId","asc")->get(['coopId']);
-
         $ledgers = PaymentCapture::query()
             ->where('coopId', $this->coopId)
             ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
             ->orderByDesc('paymentDate')
             ->get();
+            
+        $user = auth('admin')->check() && auth('admin')->user()->hasRole(['member'], 'admin');
 
-        // $preledgers = PreviousLedger2023::query()
-        //     ->where('coopId', $this->coopId)
-        //     ->selectRaw('sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
-        //     ->groupBy('coopId')->get();
+
+        if($user){
+            $this->coopId = auth('admin')->user()->coopId;
+            // set the beginning to the first day of the month if null
+            $this->beginning_date = ($this->beginning_date == null) ? date('Y-m-01') : $this->beginning_date;
+            // set the ending to the last day of the month if null
+            $this->ending_date = ($this->ending_date == null) ? date('Y-m-d') : $this->ending_date;
+            $ledgers = PaymentCapture::query()
+                ->where('coopId', $this->coopId)
+                ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
+                ->orderByDesc('paymentDate')
+                ->get();
+        }
 
         // sum each of the columns in the $ledgers result collections
-        // $total_loan = $ledgers->sum('loanAmount') ?? 0;
         $total_saving = $ledgers->sum('savingAmount') ?? 0;
         $total_total = $ledgers->sum('totalAmount') ?? 0;
         $total_share = $ledgers->sum('shareAmount') ?? 0;
         $total_admin = $ledgers->sum('adminCharge') ?? 0;
         $total_others = $ledgers->sum('others') ?? 0;
-
-        // $total_loan += $preledgers->sum('loanAmount') ?? 0;
-        // $total_saving += $preledgers->sum('savingAmount') ?? 0;
-        // $total_total += $preledgers->sum('totalAmount') ?? 0;
-        // $total_share += $preledgers->sum('shareAmount') ?? 0;
-        // $total_admin += $preledgers->sum('adminCharge') ?? 0;
-        // $total_others += $preledgers->sum('others') ?? 0;
 
         $isActive = ActiveLoans::where('coopId', $this->coopId)->first();
 
@@ -55,8 +58,6 @@ class IndividualLedger extends Component
 
         if($this->beginning_date == null)
             $this->beginning_date = date('Y-m-d');
-        else
-            $this->sendDispatchEvent();
         
         if($this->ending_date == null)
             $this->ending_date = date('Y-m-d');

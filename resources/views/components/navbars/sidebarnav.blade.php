@@ -15,12 +15,26 @@
             <nav id="menu" class="nav-main" role="navigation">
 
                 <ul class="nav nav-main">
+                    
+                    
                     <li>
                         <a class="nav-link" href="{{route('dashboard')}}">
                             <i class="bx bx-home-alt" aria-hidden="true"></i>
-                            <span>Dashboard</span>
+                            <span>My Dashboard</span>
                         </a>                        
                     </li>
+                    <!-- @can('can view', 'admin') -->
+                    <!-- check if the authenticated user role is not superadmin or manager -->
+                        @if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->hasRole('member', 'admin'))
+                        <li>
+                            <a class="nav-link" href="{{ route('individualReport') }}">
+                                <i class="bx bx-cart-alt" aria-hidden="true"></i>
+                                <span>Personal Ledger</span>
+                            </a>
+                        </li>
+                        @endif
+                    <!-- @endcan -->
+                    @canany(['can edit', 'can delete'], 'admin')
                     <li>
                         <a class="nav-link" href="{{route('admins')}}">
                             <i class="bx bx-home-alt" aria-hidden="true"></i>
@@ -93,6 +107,8 @@
                             
                         </ul>
                     </li>
+                    <!-- if the authenticated user can edit and can delete -->
+                    
                     <li class="nav-parent">
                         <a class="nav-link" href="#">
                             <i class="bx bx-file" aria-hidden="true"></i>
@@ -127,6 +143,7 @@
                             
                         </ul>
                     </li>
+                    @endcanany
                 </ul>
             </nav>
         </div>

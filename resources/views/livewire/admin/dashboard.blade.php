@@ -35,7 +35,11 @@
                         </div>
                         <div class="widget-summary-col">
                             <div class="summary">
+                            @if(!auth('admin')->user()->hasRole(['member']))
                                 <h3 class="">Total Loans</h3>
+                            @else
+                                <h3 class="">Outstanding Loan</h3>
+                            @endif
                                 <div class="info">
                                     <strong class="amount">&#8358; {{number_format($total_loans, 2)}}</strong>
                                 </div>
@@ -99,7 +103,7 @@
         </div>
         
     </div>
-
+    @canany(['can edit', 'can delete'])
     <div class="row mb-3">
         <div class="col-xl-6">
             <h3>List of Members</h3>
@@ -120,19 +124,22 @@
                 </tbody>
             </table>
         </div>
+
+        @endcanany
+
         <div class="col-xl-6">
         <h3>List of Active Loans</h3>
             <table class="table table-responsive table-striped">
                 <thead>
                     <th>Coop Id</th>
-                    <th>Loan Balance</th>
+                    <th>Loan Balance (&#8358;)</th>
                     <th>Last Payment Date</th>
                 </thead>
                 <tbody>
                     @foreach($loans as $loan)
                         <tr>
                             <td>{{$loan->coopId}}</td>
-                            <td>{{$loan->loanBalance}}</td>
+                            <td>{{number_format($loan->loanBalance, 2)}}</td>
                             <td>{{date('d-M-Y', strtotime($loan->lastPaymentDate))}}</td>
                         </tr>
                     @endforeach
@@ -142,6 +149,8 @@
         </div>
         
     </div>
+
+    
 </div>
       
 
