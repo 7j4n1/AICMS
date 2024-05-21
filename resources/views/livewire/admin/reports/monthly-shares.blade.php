@@ -7,7 +7,7 @@
                 <label for="year">Select Year</label>
                 <select class="form-select" wire:model.live="year">
                     <!-- default option is current year -->
-                    @foreach(range(2010, 2050) as $year1)
+                    @foreach(range(2023, 2040) as $year1)
                         <option value="{{ $year1 }}">{{ $year1 }}</option>
                     @endforeach
                 </select>
@@ -56,20 +56,31 @@
                     <table class="table table-bordered table-striped mb-0" id="datatable-tabletools">
 
                         <thead>
-                            <th scope="col">Year</th>
-                            <th scope="col">Month</th>
-                            <th scope="col">Total Shares(&#8358;)</th>
+                            <!-- <th scope="col">Year</th> -->
+                            <th scope="col">Coop ID</th>
+                            @for ($i = 1; $i <= 12; $i++)
+                                <th scope="col">{{ date('M', mktime(0,0, 0, $i, 1)) }}</th>
+                            @endfor
                             
                         </thead>
                         <tbody>
-
-                            @foreach($shares as $share)
-                                <tr wire:key="item-monthlysharesledger-{{ $share->month }}">
-                                    <td scope="row">{{$year}}</td>
+                            
+                            @foreach ($shares as $coopId => $share)
+                                <tr wire:key="item-monthlysharesledger-{{ $coopId }}">
+                                    <td scope="row">{{ $coopId }}</td>
+                                    @for ($i = 1; $i <= 12; $i++)
+                                        <td scope="row">
+                                            {{ number_format($share->firstWhere('month', $i)->shareAmount ?? 0, 2) }}
+                                        </td>
+                                    @endfor
+                                </tr>
+                            
+                            @endforeach
+                                {{--<tr wire:key="item-monthlysharesledger-{{ $share[''] }}">
+                                    <!-- <td scope="row">{{$year}}</td> -->
                                     <td scope="row">{{$month_day[$share->month]}}</td>    
                                     <td scope="row">{{ number_format($share->shareAmount, 2) }}</td>
-                                </tr>
-                            @endforeach
+                                </tr> --}}
                             
                         </tbody>
                     </table>

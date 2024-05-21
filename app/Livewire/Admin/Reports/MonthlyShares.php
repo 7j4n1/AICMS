@@ -3,8 +3,7 @@
 namespace App\Livewire\Admin\Reports;
 
 use Livewire\Component;
-use App\Models\PaymentCapture;
-use App\Models\PreviousLedger2023;
+use App\Models\PaymentCapture; // Add this line
 use Illuminate\Support\Facades\DB;
 
 class MonthlyShares extends Component
@@ -12,25 +11,41 @@ class MonthlyShares extends Component
     public $year;
     public $month_day;
     private $myshares;
+
     public function render()
     {
-        // query to get the sum of shares for each month based on given year
         
+        // query to get the sum of shares for each month based on given year group by coopId
+        // get unique coopId
+
+            // $this->myshares = PaymentCapture::query()
+            //     ->selectRaw('MONTH(paymentDate) as month, sum(shareAmount) as shareAmount')
+            //     ->groupBy('coopId')
+            //     ->groupBy('month')->limit(10);
+
+        $this->myshares = PaymentCapture::query()
+            ->select(
+                DB::raw('coopId'), 
+                DB::raw('SUM(shareAmount) as shareAmount'),
+                DB::raw('MONTH(paymentDate) as month')
+            )
+            ->whereYear('paymentDate', $this->year)
+            ->groupBy('coopId', 'month')
+            ->get()->groupBy('coopId');
+
         
-        // if($this->year == "2023" || $this->year == 2023){
-            
-        //     $this->myshares = PreviousLedger2023::query()
-        //         ->whereYear('paymentDate', $this->year)
-        //         ->selectRaw('MONTH(paymentDate) as month, sum(shareAmount) as shareAmount')
-        //         ->groupBy('month')->get();
-        // }else {
-            $this->myshares = PaymentCapture::query()
-                ->whereYear('paymentDate', $this->year)
-                ->selectRaw('MONTH(paymentDate) as month, sum(shareAmount) as shareAmount')
-                ->groupBy('month')->get();
+        // foreach ($this->myshares as $share) {
+        //     $this->allshares[$share->coopId][] = [
+        //         'coopId' => $share->coopId,
+        //         'shareAmount' => $share->shareAmount,
+        //         'month' => $share->month
+        //     ];
         // }
         
-        $total_shares = $this->myshares->sum('shareAmount') ?? 0;
+        
+        $total_shares = PaymentCapture::query()
+            ->whereYear('paymentDate', $this->year)
+            ->sum('shareAmount') ?? 0;
         
 
         if($this->year == null)
