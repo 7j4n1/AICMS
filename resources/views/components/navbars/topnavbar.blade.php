@@ -38,6 +38,8 @@
                         <span class="role">Administrator</span>
                     @elseif(auth('admin')->user()->hasRole('manager'))
                         <span class="role">Manager</span>
+                    @else
+                        <span class="role">Member</span>
                     @endif
                 </div>
 
@@ -47,9 +49,11 @@
             <div class="dropdown-menu">
                 <ul class="list-unstyled mb-2">
                     <li class="divider"></li>
+                    @if(!Auth::guard('admin')->user()->hasRole('member'))
                     <li>
                         <a role="menuitem" tabindex="-1" href="{{route('admins')}}"><i class="bx bx-user-circle"></i> My Profile</a>
                     </li>
+                    @endif
                     <li>
                         <a role="menuitem" tabindex="-1" href="{{ route('logout') }}"><i class="bx bx-power-off"></i> Logout</a>
                     </li>
