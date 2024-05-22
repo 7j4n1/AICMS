@@ -23,17 +23,16 @@
                             <span>My Dashboard</span>
                         </a>                        
                     </li>
-                    <!-- @can('can view', 'admin') -->
-                    <!-- check if the authenticated user role is not superadmin or manager -->
-                        @if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->hasRole('member', 'admin'))
+                    
+                    @if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->hasRole('member', 'admin'))
                         <li>
                             <a class="nav-link" href="{{ route('individualReport') }}">
                                 <i class="bx bx-cart-alt" aria-hidden="true"></i>
                                 <span>Personal Ledger</span>
                             </a>
                         </li>
-                        @endif
-                    <!-- @endcan -->
+                    @endif
+
                     @canany(['can edit', 'can delete'], 'admin')
                     <li>
                         <a class="nav-link" href="{{route('admins')}}">
