@@ -37,6 +37,7 @@
 		<!-- Theme Custom CSS -->
 		<link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 
+		@livewireStyles
         @stack('page-styles')
 
 		<!-- Head Libs -->

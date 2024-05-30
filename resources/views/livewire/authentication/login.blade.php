@@ -35,7 +35,7 @@
                         <div class="form-group mb-3">
                             <label>Username <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input name="username" type="text" class="form-control form-control-lg" wire:model.live="loginForm.username" />
+                                <input name="username" type="text" class="form-control form-control-lg" wire:model.blur="loginForm.username" />
                                 <span class="input-group-text">
                                     <i class="bx bx-user text-4"></i>
                                 </span>
@@ -50,7 +50,7 @@
                                 <label class="float-start">Password <span class="text-danger">*</span></label>
                             </div>
                             <div class="input-group">
-                                <input name="pwd" type="password" class="form-control form-control-lg" wire:model.live="loginForm.password" />
+                                <input name="pwd" type="password" class="form-control form-control-lg" wire:model.defer="loginForm.password" />
                                 <span class="input-group-text">
                                     <i class="bx bx-lock text-4"></i>
                                 </span>
