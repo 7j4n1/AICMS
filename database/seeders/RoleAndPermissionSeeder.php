@@ -52,6 +52,16 @@ class RoleAndPermissionSeeder extends Seeder
             ->syncPermissions(['can view only']);
         }
         
+        $user = \App\Models\Admin::where('username', 'superadmin')->first();
+
+        if(!$user){
+            \App\Models\Admin::create([
+                'name' => 'Super Admin',
+                'username' => 'superadmin',
+                'email' => '',
+                'password' => Hash::make('password0987'),
+            ])->assignRole('super-admin');
+        }
 
     }
 }
