@@ -63,14 +63,14 @@
                                         {{-- CoopId --}}
                                         <div class="col-md-12">
                                             <label for="title">Assign Coop ID <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model="memberForm.coopId" {{ $editingMemberId ? 'disabled' : '' }}/>
+                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model.blur="memberForm.coopId" {{ $editingMemberId ? 'disabled' : '' }}/>
                                             @error('memberForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
                                             {{-- Surname --}}
                                         <div class="col-md-6">
                                             <label for="surname">Surname <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Surname" wire:model.live="memberForm.surname" />
+                                            <input type="text"  class="form-control" placeholder="Surname" wire:model.blur="memberForm.surname" />
                                             @error('memberForm.surname') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 

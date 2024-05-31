@@ -78,14 +78,7 @@
                                 <button type="submit" class="btn btn-primary mt-2 transition duration-300">Sign In</button>
                             </div>
                         </div>
-<!-- 
-                        <span class="mt-3 mb-3 line-thru text-center text-uppercase">
-                            <span>or</span>
-                        </span> -->
 
-                        
-
-                        <!-- <p class="text-center">Don't have an account yet? <a href="pages-signup.html">Sign Up!</a></p> -->
 
                     </form>
                 </div>

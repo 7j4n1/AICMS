@@ -1,8 +1,8 @@
 
-<div x-data="{ isOpen: @entangle('isModalOpen') }" class="container">
+<div x-data="{ isOpen: $wire.entangle('isModalOpen').live }" class="container">
     
     <!-- Button to open the modal for adding a new member details -->
-    <div class="row mb-3">
+    <div x-show="! isOpen" class="row mb-3">
         <div class="col">
             <section class="card">
                 <header class="card-header">
@@ -40,71 +40,18 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="mb-3">
-                                <button class="btn btn-primary" @click="isOpen = true; @this.set('isModalOpen', true);">Add New <i class="fas fa-plus"></i></button>
+                                <button type="button" x-show="! isOpen" x-on:click="isOpen = ! isOpen" class="btn btn-primary" >Create New Admin <i class="fas fa-plus"></i></button>
+                                <!-- <button type="button" x-show="isOpen" x-on:click="isOpen = ! isOpen" class="btn btn-danger transition duration-300" aria-label="Close"><i class="fas fa-close"></i> Cancel </button> -->
+                                <!-- <a class="btn btn-primary" href="{{route('new-admin')}}" wire:navigate>Create New Admin <i class="fas fa-plus"></i></a>
+                                <button type="button" wire:click="$dispatch('openModal', { component: 'admin.adminform.admin'})" class="btn btn-primary" >Create New Admin <i class="fas fa-plus"></i></button> -->
                             </div>
                         </div>
                         
                     </div>
-
-                    <div  x-cloak x-show="isOpen" x-transition:opacity.duration.500ms class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"  tabindex="-1">
-                        <div class="bg-white rounded-lg w-1/2">
-                            <div class="">
-                                <div class="bg-gray-200 p-3 flex justify-between items-center rounded-t-lg">
-                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingAdminId ? 'Edit Admin details' : 'Add new details' }}</h5>
-                                    <button type="button" class="btn btn-danger transition duration-300" @click="isOpen = false; @this.set('isModalOpen', false);$wire.toggleModalClose()" aria-label="Close"><i class="fas fa-close"></i> Cancel</button>
-                                </div>
-                                <div class="p-5">
-
-                                    {{-- Form starts --}}
-                                    <form wire:submit="{{ $editingAdminId ? 'updateAdmin' : 'saveAdmin' }}" class="row g-3">
-
-                                        {{-- Name --}}
-                                        <div class="col-md-6">
-                                            <label for="title">Full Name <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Full Name" wire:model.live="adminForm.name" />
-                                            @error('adminForm.name') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-                        
-                                            {{-- username --}}
-                                        <div class="col-md-6">
-                                            <label for="username">Username <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="username" wire:model.live="adminForm.username" />
-                                            @error('adminForm.username') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-
-                                        @if(!$editingAdminId)
-                                        {{-- Password --}}
-                                        <div class="col-md-6">
-                                            <label for="password">Password </label>
-                                            <input type="password"  class="form-control" placeholder="Password" wire:model.live="adminForm.password" />
-                                            @error('adminForm.password') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-
-                                        {{-- Comfirm Password --}}
-                                        <div class="col-md-6">
-                                            <label for="password">Confirm Password </label>
-                                            <input type="password"  class="form-control" placeholder="Confirm Password" wire:model.live="adminForm.password_confirmation" />
-                                            @error('adminForm.password_confirmation') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-
-                                        @endif
-                                        <div class="text-end">
-
-                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingAdminId ? 'Update' : 'Add' }} Admin</button>
-                                        </div>
-
-                                    </form>
-                                    {{-- Form ends --}}
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
+                    
                     {{-- Members Table --}}
                     <!-- <div class="table-responsive"> -->
+                    <div >
                     <table class="table table-bordered table-striped mb-0" id="datatable-tabletools">
 
                         <thead>
@@ -119,7 +66,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($admins as $admin)
+                            @foreach($this->admins as $admin)
                                 <tr wire:key="item-profile-{{ $admin->id }}">
 
                                     <td>{{ $admin->id }}</td>
@@ -130,6 +77,7 @@
                                     <td class="">
                                         @can('can edit', 'admin')
                                             <button onclick="sendMemEvent('{{$admin->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                            <!-- <button wire:click="$dispatch('edit-admins', { component: 'admin.adminform.admin', arguments: {user: 5}})"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button> -->
                                         @endcan
                                         @can('can delete', 'admin')
                                             <button onclick="sendDeleteEvent('{{ $admin->id }}')" 
@@ -143,11 +91,15 @@
                         </tbody>
                     </table>
                     
-                    <!-- </div> -->
+                    </div>
                     
                 </div>
             </section>
         </div>
+    </div>
+
+    <div x-show="isOpen">
+        @include('livewire.admin.create-admin')
     </div>
     
     <x-scriptvendor></x-scriptvendor>
@@ -166,7 +118,8 @@
     
     <script>
         function sendMemEvent(value) {
-            Livewire.dispatch('edit-admins', { id: value });
+            Livewire.dispatch('edit-admins', {id: value });
+            
         }
 
         
