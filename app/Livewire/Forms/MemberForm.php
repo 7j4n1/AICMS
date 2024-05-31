@@ -4,11 +4,13 @@ namespace App\Livewire\Forms;
 
 use Livewire\Form;
 use App\Models\Member;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Validate;
 
 class MemberForm extends Form
 {
+    #[Locked]
     public $id;
     #[Rule('required|numeric|min:1|unique:members,coopId')]
     public $coopId;
