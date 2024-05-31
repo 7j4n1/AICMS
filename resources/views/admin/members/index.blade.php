@@ -8,7 +8,12 @@
     
     {{-- Handle Browser dispatched Events --}}
     <script>
+        window.addEventListener('livewire:navigated', (event) => {
+            
+            initTable([0, 1, 2, 3, 4, 5, 6]);
+        });
         window.addEventListener('DOMContentLoaded', (event) => {
+            
             initTable([0, 1, 2, 3, 4, 5, 6]);
         });
         document.addEventListener('livewire:init', () => {

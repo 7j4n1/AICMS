@@ -2,31 +2,39 @@
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Admin\AdminForm\Admin as AdminFormAdmin;
 use App\Models\Admin;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Livewire\Forms\AdminForm;
+use Livewire\Attributes\Computed;
 
 class ListAdministrator extends Component
 {
-    protected $admins;
     public AdminForm $adminForm;
     public $isModalOpen = false;
     public $editingAdminId = null;
 
     public function render()
     {
-        $this->admins = Admin::query()
+        
+        return view('livewire.admin.list-administrator')
+            ->with(['session' => session()]);
+    }
+
+    #[Computed]
+    public function admins()
+    {
+        return Admin::query()
             ->orderBy('id', 'asc')
             ->get();
 
-        return view('livewire.admin.list-administrator')
-            ->with(['admins' => $this->admins, 'session' => session()]);
     }
 
     public function mount()
     {
         $this->adminForm = new AdminForm($this, 'adminForm');
+        $this->sendDispatchEvent();
     }
 
     public function resetForm()
@@ -60,7 +68,9 @@ class ListAdministrator extends Component
             return;
         }
 
-        $saved = $this->adminForm->save();
+        $this->adminForm->save();
+
+        unset($this->admins);
 
         session()->flash('success','New Admin details with Manager priviledges added successfully');
         $this->adminForm->resetForm();
@@ -73,6 +83,7 @@ class ListAdministrator extends Component
     #[On('edit-admins')]
     public function editOldAdmin($id)
     {
+        
         // $this->resetForm();
         $admin = Admin::find($id);
 
