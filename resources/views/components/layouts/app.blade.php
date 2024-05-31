@@ -41,7 +41,7 @@
         @stack('page-styles')
 
 		<!-- Head Libs -->
-		<script src="{{ asset('vendor/modernizr/modernizr.js') }}"></script>
+		<script src="{{ asset('vendor/modernizr/modernizr.js') }}" data-navigate-once></script>
 
 	</head>
 	<body class="{{ $bodyClass ?? "" }}">

@@ -18,7 +18,7 @@
                     
                     
                     <li>
-                        <a class="nav-link" href="{{route('dashboard')}}">
+                        <a class="nav-link" href="{{route('dashboard')}}" wire:navigate>
                             <i class="bx bx-home-alt" aria-hidden="true"></i>
                             <span>My Dashboard</span>
                         </a>                        
@@ -47,7 +47,7 @@
                         </a>
                         <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="{{route('members')}}">
+                                <a class="nav-link" href="{{route('members')}}" wire:navigate>
                                     List Members
                                 </a>
                             </li>
