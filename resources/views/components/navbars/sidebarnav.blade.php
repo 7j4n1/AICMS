@@ -35,6 +35,12 @@
 
                     @canany(['can edit', 'can delete'], 'admin')
                     <li>
+                        <a class="nav-link" href="{{route('business')}}">
+                            <i class="bx bx-home-alt" aria-hidden="true"></i>
+                            <span>Business Dashboard</span>
+                        </a>                        
+                    </li>
+                    <li>
                         <a class="nav-link" href="{{route('admins')}}">
                             <i class="bx bx-home-alt" aria-hidden="true"></i>
                             <span>Administrators</span>
