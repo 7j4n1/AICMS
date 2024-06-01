@@ -121,6 +121,16 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/generatelogins', [MemberController::class, 'generateLoginDetails'])->name('generateLogins');
     });
 
+    Route::group(['prefix' => 'admin/business'], function () {
+        Route::get('/dashboard', function () {
+            // return view('business.dashboard.index');
+            return "Business Dashboard";
+        })->name('business.dashboard');
+
+        Route::get('/categories', function() {
+            return view('business.items.category');
+        })->name('business.categories');
+    });
     
 });
 
