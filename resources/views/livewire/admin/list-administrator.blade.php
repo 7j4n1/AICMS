@@ -41,9 +41,6 @@
                         <div class="col-sm-6">
                             <div class="mb-3">
                                 <button type="button" x-show="! isOpen" x-on:click="isOpen = ! isOpen" class="btn btn-primary" >Create New Admin <i class="fas fa-plus"></i></button>
-                                <!-- <button type="button" x-show="isOpen" x-on:click="isOpen = ! isOpen" class="btn btn-danger transition duration-300" aria-label="Close"><i class="fas fa-close"></i> Cancel </button> -->
-                                <!-- <a class="btn btn-primary" href="{{route('new-admin')}}" wire:navigate>Create New Admin <i class="fas fa-plus"></i></a>
-                                <button type="button" wire:click="$dispatch('openModal', { component: 'admin.adminform.admin'})" class="btn btn-primary" >Create New Admin <i class="fas fa-plus"></i></button> -->
                             </div>
                         </div>
                         

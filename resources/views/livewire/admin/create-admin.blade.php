@@ -38,7 +38,6 @@
                         <div class="col-sm-6">
                             <div class="mb-3">
                                 <button type="button" x-show="isOpen" @click="$wire.toggleModalClose" class="btn btn-danger transition duration-300" aria-label="Close"><i class="fas fa-close"></i> Cancel </button>
-                                <!-- <a  class="btn btn-danger transition duration-300" href="{{route('admins')}}" aria-label="Close"><i class="fas fa-close"></i> Cancel</a> -->
                             </div>
                         </div>
                         
