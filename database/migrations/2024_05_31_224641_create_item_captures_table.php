@@ -22,6 +22,8 @@ return new class extends Migration
             $table->unsignedBigInteger('userId');
             $table->date('repaymentDate')->nullable();
             $table->unsignedBigInteger('category_id');
+            $table->decimal('loanPaid')->default(0);
+            $table->decimal('loanBalance')->default(0.00);
 
             $table->timestamps();
 
