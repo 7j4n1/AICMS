@@ -14,16 +14,20 @@ return new class extends Migration
     {
         Schema::create('item_captures', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
-            $table->foreign('coopId')->on('members')->references('coopId')->cascadeOnDelete();
+            $table->unsignedBigInteger('coopId');
             $table->bigInteger('quantity')->nullable();
             $table->date('buyingDate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->bigInteger('payment_timeframe')->nullable();
             $table->boolean('payment_status')->default(1);
-            $table->foreign('userId')->on('admins')->references('id');
+            $table->unsignedBigInteger('userId');
             $table->date('repaymentDate')->nullable();
-            $table->foreign('category_id')->on('item_categories')->references('id');
+            $table->unsignedBigInteger('category_id');
 
             $table->timestamps();
+
+            $table->foreign('coopId')->references('coopId')->on('members')->cascadeOnDelete();
+            $table->foreign('userId')->references('id')->on('admins');
+            $table->foreign('category_id')->references('id')->on('item_categories');
         });
     }
 
