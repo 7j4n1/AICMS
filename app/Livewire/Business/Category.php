@@ -24,7 +24,7 @@ class Category extends Component
     public function categories()
     {
         return ItemCategory::query()
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->get();
     }
 
