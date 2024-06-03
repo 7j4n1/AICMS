@@ -134,6 +134,10 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/items', function() {
             return view('business.items.item');
         })->name('business.items');
+
+        Route::get('/repayments', function() {
+            return view('business.items.repay');
+        })->name('business.repays');
     });
     
 });

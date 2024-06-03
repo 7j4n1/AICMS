@@ -76,7 +76,7 @@
                                     <td>{{ $itemcapture->payment_timeframe }}</td>
                                     <td>{{ $itemcapture->repaymentDate }}</td>
                                     <td>{{ $itemcapture->payment_status }}</td>
-                                    <td>{{ $itemcapture->loanPaid }}</td>
+                                    <td>{{ number_format($itemcapture->loanPaid, 2) }}</td>
                                     @canAny(['can edit', 'can delete'], 'admin')
                                     <td class="">
                                         @can('can delete', 'admin')
