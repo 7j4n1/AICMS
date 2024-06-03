@@ -36,4 +36,10 @@ class ItemCapture extends Model
     {
         return $this->hasMany(RepayCapture::class,'item_capture_id', 'id');
     }
+
+    // member
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'coopId', 'coopId');
+    }
 }
