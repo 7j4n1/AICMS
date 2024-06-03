@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('coopId');
             $table->uuid('item_capture_id');
             $table->decimal('amountToRepay')->default(0);
+            $table->decimal('loanBalance')->default(0);
             $table->date('repaymentDate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->decimal('serviceCharge')->default(0);
             $table->unsignedBigInteger('userId');

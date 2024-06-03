@@ -12,9 +12,9 @@ class RepayForm extends Form
 {
     #[Locked]
     public $id;
-    #[Validate('required|number|min:1|exists:members,coopId')]
+    #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $coopId;
-    #[Validate('required|number|min:1|exists:item_captures,id')]
+    #[Validate('required|uuid|exists:item_captures,id')]
     public $item_capture_id;
     #[Validate('required')]
     public $amountToRepay;
@@ -22,6 +22,8 @@ class RepayForm extends Form
     public $repaymentDate;
     #[Validate('required|numeric|min:0|max:99999999999.99')]
     public $serviceCharge=0;
+    #[Validate('required|numeric')]
+    public $loanBalance;
 
     public function boot()
     {
@@ -34,7 +36,8 @@ class RepayForm extends Form
                 if ($result === false) {
                     $validator->errors()->add('amountToRepay', 'The amount to repay must be a valid number.');
                 }else {
-                    if($item->loanBalance < $result){
+                    
+                    if($item && $item->loanBalance < $result){
                         $validator->errors()->add('amountToRepay', 'The amount to repay must not be more than the balance.');
                     }
                     
@@ -47,7 +50,7 @@ class RepayForm extends Form
         });
     }
 
-    public function save()
+    public function save($balance)
     {
         $this->validate();
 
@@ -56,8 +59,9 @@ class RepayForm extends Form
             $repayment = RepayCapture::create([
                 'coopId' => $this->coopId,
                 'item_capture_id' => $this->item_capture_id,
-                'amountToRepay' => $this->amountToRepay,
+                'amountToRepay' => $this->convertToPhpNumber($this->amountToRepay),
                 'repaymentDate' => $this->repaymentDate,
+                'loanBalance' => $balance,
                 'serviceCharge' => $this->serviceCharge,
                 'userId' => auth('admin')->user()->id,
             ]);
@@ -68,7 +72,7 @@ class RepayForm extends Form
 
             return $repayment;
         } catch (\Exception $e) {
-            return null;
+            throw $e;
         }
     }
 

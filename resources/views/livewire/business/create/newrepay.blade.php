@@ -3,7 +3,7 @@
         <div class="col">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">{{ $editingAdminId ? 'Edit Admin' : 'New Admin' }}</h2>
+                    <h2 class="card-title">{{ $editingRepayId ? 'Edit Repayment' : 'New Repayment' }}</h2>
                 </header>
                 <div class="card-body">
                     <div class="row">
@@ -47,47 +47,71 @@
                         <div class="bg-white rounded-lg w-1/2">
                             <div class="">
                                 <div class="bg-gray-200 p-3 flex justify-between items-center rounded-t-lg">
-                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingAdminId ? 'Edit Admin details' : 'Add new details' }}</h5>
+                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingRepayId ? 'Edit Repayment details' : 'Add new details' }}</h5>
                                     
                                 </div>
                                 <div class="p-5">
 
                                     {{-- Form starts --}}
-                                    <form wire:submit="{{ $editingAdminId ? 'updateAdmin' : 'saveAdmin' }}" class="row g-3">
+                                    <form wire:submit="{{ $editingRepayId ? 'updateRepay' : 'saveRepay' }}" class="row g-3">
 
-                                        {{-- Name --}}
+                                        {{-- Coop Id --}}
                                         <div class="col-md-6">
-                                            <label for="title">Full Name <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Full Name" wire:model.blur="adminForm.name" />
-                                            @error('adminForm.name') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <label for="title">Coop Id <span class="text-danger">*</span></label>
+                                            <select class="form-select" wire:model.live="repayForm.coopId">
+                                                <option value=""></option>
+                                                @foreach($this->getActiveItemCaptures as $item)
+                                                    <option value="{{ $item->coopId }}">{{ $item->coopId }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('repayForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
-                                            {{-- username --}}
+                                        @if($get_loan)
+                                        {{-- Loan Id --}}
                                         <div class="col-md-6">
-                                            <label for="username">Username <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="username" wire:model.blur="adminForm.username" />
-                                            @error('adminForm.username') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <label for="username">Loan ID </label>
+                                            <input type="text"  class="form-control" placeholder="loan Id" wire:model.blur="repayForm.item_capture_id" disabled />
+                                            @error('repayForm.item_capture_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                        {{-- Loan Details --}}
+                                        <div class="col-md-6">
+                                            <label for="username">Name </label>
+                                            <input type="text"  class="form-control" placeholder="name" value="{{$get_loan->member->surname ?? ''}}" disabled />
                                         </div>
 
-                                        @if(!$editingAdminId)
-                                        {{-- Password --}}
+                                        {{-- Loan Balance --}}
                                         <div class="col-md-6">
-                                            <label for="password">Password </label>
-                                            <input type="password"  class="form-control" placeholder="Password" wire:model.blur="adminForm.password" />
-                                            @error('adminForm.password') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-
-                                        {{-- Comfirm Password --}}
-                                        <div class="col-md-6">
-                                            <label for="password">Confirm Password </label>
-                                            <input type="password"  class="form-control" placeholder="Confirm Password" wire:model.blur="adminForm.password_confirmation" />
-                                            @error('adminForm.password_confirmation') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <label for="username">Balance</label>
+                                            <input type="text"  class="form-control" placeholder="Loan Balance" value="{{number_format($get_loan->loanBalance,2) ?? 0}}" disabled />
+                                            <input type="hidden"  class="form-control" placeholder="Loan Balance"  wire:model="repayForm.loanBalance" />
                                         </div>
 
                                         @endif
+                                        {{-- Amount --}}
+                                        <div class="col-md-6">
+                                            <label for="password">Repay Amount </label>
+                                            <input type="text" id="repayAmount"  class="form-control" placeholder="Amount" wire:model.blur="repayForm.amountToRepay" {{$get_loan ? '' : 'disabled'}}/>
+                                            @error('repayForm.amountToRepay') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
+                                        {{-- Repay Date --}}
+                                        <div class="col-md-6">
+                                            <label for="password">Repay Date </label>
+                                            <input type="date"  class="form-control" placeholder="Repay Date" wire:model.blur="repayForm.repaymentDate" />
+                                            @error('repayForm.repaymentDate') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
+                                        {{-- Service Charge --}}
+                                        <div class="col-md-6">
+                                            <label for="password">Service Charge </label>
+                                            <input type="text"  class="form-control" placeholder="Service Charge" wire:model.blur="repayForm.serviceCharge" />
+                                            @error('repayForm.serviceCharge') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
                                         <div class="text-end">
 
-                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingAdminId ? 'Update' : 'Add' }} Admin</button>
+                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingRepayId ? 'Update' : 'Add' }} Repayment</button>
                                         </div>
 
                                     </form>
