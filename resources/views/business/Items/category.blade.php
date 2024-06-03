@@ -12,7 +12,7 @@
     {{-- Handle Browser dispatched Events --}}
     <script>
         // window.addEventListener('livewire:navigated', (event) => {
-        //     initTable([0, 1, 2, 3]);
+        //     initTable([0, 1, 2, ]);
         // });
         document.addEventListener('livewire:init', () => {
             Livewire.on('on-openModal', () => {
