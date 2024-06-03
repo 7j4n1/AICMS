@@ -3,7 +3,7 @@
         <div class="col">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">{{ $editingAdminId ? 'Edit Admin' : 'New Admin' }}</h2>
+                    <h2 class="card-title">{{ $editingItemId ? 'Edit Item Loan Capture' : 'New Item' }}</h2>
                 </header>
                 <div class="card-body">
                     <div class="row">
@@ -47,47 +47,72 @@
                         <div class="bg-white rounded-lg w-1/2">
                             <div class="">
                                 <div class="bg-gray-200 p-3 flex justify-between items-center rounded-t-lg">
-                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingAdminId ? 'Edit Admin details' : 'Add new details' }}</h5>
+                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingItemId ? 'Edit Item Loan details' : 'Add new details' }}</h5>
                                     
                                 </div>
                                 <div class="p-5">
 
                                     {{-- Form starts --}}
-                                    <form wire:submit="{{ $editingAdminId ? 'updateAdmin' : 'saveAdmin' }}" class="row g-3">
+                                    <form wire:submit="{{ $editingItemId ? 'updateItem' : 'saveItem' }}" class="row g-3">
 
-                                        {{-- Name --}}
+                                        {{-- CoopId --}}
                                         <div class="col-md-6">
-                                            <label for="title">Full Name <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Full Name" wire:model.blur="adminForm.name" />
-                                            @error('adminForm.name') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <label for="title">Coop ID <span class="text-danger">*</span></label>
+                                            <input type="text"  class="form-control" placeholder="Coop ID" wire:model.blur="itemForm.coopId" />
+                                            @error('itemForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="title">Full Name</label>
+                                            <input type="text"  class="form-control"  value="{{$fullname}}" disabled/>
+                                        </div>
+                                        {{-- Categories --}}
+                                        <div class="col-md-6">
+                                            <label for="title">Select Item <span class="text-danger">*</span></label>
+                                            <select class="form-select" wire:model.live="itemForm.category_id">
+                                                <option value=""></option>
+                                                @foreach($this->itemcategories as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('itemForm.category_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                        {{-- Price --}}
+                                        <div class="col-md-6">
+                                            <label for="title">Amount <span class="text-danger">*</span></label>
+                                            <input type="text"  class="form-control" value="{{ number_format($categoryPrice, 2) }}" disabled />
+                                           
                                         </div>
                         
-                                            {{-- username --}}
+                                        {{-- Buying Date --}}
                                         <div class="col-md-6">
-                                            <label for="username">Username <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="username" wire:model.blur="adminForm.username" />
-                                            @error('adminForm.username') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <label for="username">Buying Date <span class="text-danger">*</span></label>
+                                            <input type="date"  class="form-control" placeholder="Buying Date (yyyy-m-d)" wire:model.live="itemForm.buyingDate" />
+                                            @error('itemForm.buyingDate') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
-                                        @if(!$editingAdminId)
-                                        {{-- Password --}}
+                                        {{-- Time Frame --}}
                                         <div class="col-md-6">
-                                            <label for="password">Password </label>
-                                            <input type="password"  class="form-control" placeholder="Password" wire:model.blur="adminForm.password" />
-                                            @error('adminForm.password') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <label for="title">Payment Duration <span class="text-danger">*</span></label>
+                                            <select class="form-select" wire:model.blur="itemForm.payment_timeframe">
+                                                <option value="">Select Duration</option>
+                                                <option value="3">3 Months</option>
+                                                <option value="6">6 Months</option>
+                                                <option value="12">12 Months</option>
+                                            </select>
+                                            @error('itemForm.payment_timeframe') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="title">Status <span class="text-danger">*</span></label>
+                                            <select class="form-select" wire:model.blur="itemForm.payment_status">
+                                                <option value="1">Active</option>
+                                                <option value="0">In Active</option>
+                                            </select>
+                                            @error('itemForm.payment_status') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
-                                        {{-- Comfirm Password --}}
-                                        <div class="col-md-6">
-                                            <label for="password">Confirm Password </label>
-                                            <input type="password"  class="form-control" placeholder="Confirm Password" wire:model.blur="adminForm.password_confirmation" />
-                                            @error('adminForm.password_confirmation') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-
-                                        @endif
                                         <div class="text-end">
 
-                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingAdminId ? 'Update' : 'Add' }} Admin</button>
+                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingItemId ? 'Update' : 'Add' }} Item</button>
                                         </div>
 
                                     </form>

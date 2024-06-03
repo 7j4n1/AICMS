@@ -13,15 +13,15 @@ class ItemForm extends Form
 {
     #[Locked]
     public $id;
-    #[Validate('required|number|min:1|exists:members,coopId')]
+    #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $coopId;
     #[Validate('required|date')]
     public $buyingDate;
-    #[Validate('required|number|min:1|max:366')]
+    #[Validate('required|numeric|min:3|max:12')]
     public $payment_timeframe;
     #[Validate('required|boolean')]
-    public $payment_status;
-    #[Validate('required|number|exists:item_categories,id')]
+    public $payment_status=1;
+    #[Validate('required|numeric|exists:item_categories,id')]
     public $category_id;
 
     public function save()
@@ -33,13 +33,14 @@ class ItemForm extends Form
             $item = ItemCapture::create([
                 'coopId' => $this->coopId,
                 'category_id' => $this->category_id,
+                'quantity' => 1, // default to '1' for now
                 'buyingDate' => $this->buyingDate,
                 'payment_timeframe' => $this->payment_timeframe,
                 'payment_status' => $this->payment_status,
                 'userId' => auth('admin')->user()->id,
-                'repaymentDate' => Carbon::parse($this->buyingDate)->addDays($this->payment_timeframe),
+                'repaymentDate' => Carbon::parse($this->buyingDate)->addMonths($this->payment_timeframe),
                 'loanPaid' => 0,
-                'loanBalance' => ItemCategory::find($this->category_id)->amount,
+                'loanBalance' => ItemCategory::find($this->category_id)->price,
             ]);
 
             return $item;
