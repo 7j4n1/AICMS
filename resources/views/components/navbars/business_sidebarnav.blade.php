@@ -33,12 +33,12 @@
                         </a>
                         <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="{{route('members')}}" wire:navigate>
+                                <a class="nav-link" href="{{route('business.categories')}}" wire:navigate>
                                     Categories
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="{{route('members')}}" wire:navigate>
+                                <a class="nav-link" href="{{route('business.items')}}" wire:navigate>
                                     Items Capture
                                 </a>
                             </li>

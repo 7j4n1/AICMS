@@ -130,6 +130,10 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/categories', function() {
             return view('business.items.category');
         })->name('business.categories');
+
+        Route::get('/items', function() {
+            return view('business.items.item');
+        })->name('business.items');
     });
     
 });
