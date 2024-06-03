@@ -31,7 +31,7 @@ class ItemCapture extends Component
     public function itemcaptures()
     {
         return ModelsItemCapture::query()
-            ->orderBy('id', 'desc')
+            ->orderBy('buyingDate', 'desc')
             ->limit(500)
             ->get();
     }
