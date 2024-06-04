@@ -146,6 +146,10 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/report/active-purchases', function() {
             return view('business.reports.active-payment');
         })->name('business.activepurchases');
+
+        Route::get('/report/repayment-defaulters', function() {
+            return view('business.reports.repayment-default');
+        })->name('business.repaymentDefaulters');
     });
     
 });

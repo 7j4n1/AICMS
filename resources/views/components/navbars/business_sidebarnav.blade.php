@@ -64,7 +64,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="{{ route('generalReport') }}">
+                                <a class="nav-link" href="{{ route('business.repaymentDefaulters') }}">
                                     Payment Defaulters
                                 </a>
                             </li>
