@@ -138,6 +138,14 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/repayments', function() {
             return view('business.items.repay');
         })->name('business.repays');
+
+        Route::get('/report/individual-history', function() {
+            return view('business.reports.individual-history');
+        })->name('business.individualReport');
+
+        Route::get('/report/active-purchases', function() {
+            return view('business.reports.active-payment');
+        })->name('business.activepurchases');
     });
     
 });

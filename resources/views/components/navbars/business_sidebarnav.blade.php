@@ -59,7 +59,7 @@
                         </a>
                         <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="{{ route('individualReport') }}">
+                                <a class="nav-link" href="{{ route('business.individualReport') }}">
                                     Individual History
                                 </a>
                             </li>
@@ -74,8 +74,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="{{route('defaulterLoansReport')}}">
-                                    Active Loans
+                                <a class="nav-link" href="{{route('business.activepurchases')}}">
+                                    Active Purchases
                                 </a>
                             </li>
                             
