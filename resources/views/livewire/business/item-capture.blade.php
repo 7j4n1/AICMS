@@ -6,7 +6,7 @@
         <div class="col">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">List of all loan items</h2>
+                    <h2 class="card-title">List of all Purchase items</h2>
                 </header>
                 <div class="card-body">
                     <div class="row">

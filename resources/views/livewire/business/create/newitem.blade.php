@@ -3,7 +3,7 @@
         <div class="col">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">{{ $editingItemId ? 'Edit Item Loan Capture' : 'New Item' }}</h2>
+                    <h2 class="card-title">{{ $editingItemId ? 'Edit Item purchase' : 'New Purchase' }}</h2>
                 </header>
                 <div class="card-body">
                     <div class="row">
@@ -47,7 +47,7 @@
                         <div class="bg-white rounded-lg w-1/2">
                             <div class="">
                                 <div class="bg-gray-200 p-3 flex justify-between items-center rounded-t-lg">
-                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingItemId ? 'Edit Item Loan details' : 'Add new details' }}</h5>
+                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingItemId ? 'Edit Purchase details' : 'Add new Purchase' }}</h5>
                                     
                                 </div>
                                 <div class="p-5">
