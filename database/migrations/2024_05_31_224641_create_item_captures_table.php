@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->unsignedBigInteger('coopId');
             $table->bigInteger('quantity')->nullable();
-            $table->date('buyingDate')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->date('buyingDate')->default(date('Y-m-d'));
             $table->bigInteger('payment_timeframe')->nullable();
             $table->boolean('payment_status')->default(1);
             $table->unsignedBigInteger('userId');

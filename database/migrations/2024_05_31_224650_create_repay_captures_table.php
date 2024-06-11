@@ -18,7 +18,7 @@ return new class extends Migration
             $table->uuid('item_capture_id');
             $table->decimal('amountToRepay')->default(0);
             $table->decimal('loanBalance')->default(0);
-            $table->date('repaymentDate')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->date('repaymentDate')->default(date('Y-m-d'));
             $table->decimal('serviceCharge')->default(0);
             $table->unsignedBigInteger('userId');
             $table->timestamps();
