@@ -31,6 +31,12 @@
                                 <span>Personal Ledger</span>
                             </a>
                         </li>
+                        <li>
+                            <a class="nav-link" href="{{ route('purchase.individualReport') }}">
+                                <i class="bx bx-cart-alt" aria-hidden="true"></i>
+                                <span>Purchase History</span>
+                            </a>
+                        </li>
                     @endif
 
                     @canany(['can edit', 'can delete'], 'admin')

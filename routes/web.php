@@ -81,6 +81,10 @@ Route::middleware('auth:admin')->group(function () {
             return view('admin.reports.defaulterloans_report');
         })->name('defaulterLoansReport');
 
+        Route::get('/report/purchase-history', function() {
+            return view('business.reports.my-history');
+        })->name('purchase.individualReport');
+
         Route::get('/report/individual_download/{id}/{beginning_date}/{ending_date}', [IndividualLedger::class, 'downloadLedger'])->name('individualReportDownload');
         Route::get('/report/general_download/{beginning_date}/{ending_date}/{from_number}/{to_number}', [GeneralLedger::class, 'downloadLedger'])->name('generalReportDownload');
 
@@ -142,6 +146,10 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/report/individual-history', function() {
             return view('business.reports.individual-history');
         })->name('business.individualReport');
+
+        Route::get('/report/annual-history', function() {
+            return view('business.reports.monthly-repayment');
+        })->name('business.generalReport');
 
         Route::get('/report/active-purchases', function() {
             return view('business.reports.active-payment');

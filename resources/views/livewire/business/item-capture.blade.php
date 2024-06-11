@@ -40,7 +40,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="mb-3">
-                                <button type="button" x-show="! isOpen" x-on:click="isOpen = ! isOpen" class="btn btn-primary" >New Loan Item <i class="fas fa-plus"></i></button>
+                                <button type="button" x-show="! isOpen" x-on:click="isOpen = ! isOpen" class="btn btn-primary" >New Item Capture <i class="fas fa-plus"></i></button>
                             </div>
                         </div>
                         

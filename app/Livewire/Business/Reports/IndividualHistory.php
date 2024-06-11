@@ -35,6 +35,10 @@ class IndividualHistory extends Component
 
     public function mount()
     {
+        $user = auth('admin')->check() && auth('admin')->user()->hasRole(['member'], 'admin');
+        if($user){
+            $this->coopId = auth('admin')->user()->coopId;
+        }
         $this->beginDate = now()->subDays(30)->format('Y-m-d');
         $this->endDate = now()->format('Y-m-d');
         // $this->sendDispatch();
@@ -43,6 +47,15 @@ class IndividualHistory extends Component
     #[Computed]
     public function itemcaptures()
     {
+        $user = auth('admin')->check() && auth('admin')->user()->hasRole(['member'], 'admin');
+        if($user){
+            $this->coopId = auth('admin')->user()->coopId;
+            // set the beginning to the first day of the month if null
+            $this->beginDate = ($this->beginDate == null) ? date('Y-m-01') : $this->beginDate;
+            // set the ending to the last day of the month if null
+            $this->endDate = ($this->endDate == null) ? date('Y-m-d') : $this->endDate;
+            
+        }
         // get all purchases made by the member
         return ItemCapture::query()
             ->where('coopId', $this->coopId)

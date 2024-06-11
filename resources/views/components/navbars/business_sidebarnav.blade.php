@@ -69,13 +69,13 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="{{ route('activeLoansReport') }}">
-                                    Repay Records(Annually)
+                                <a class="nav-link" href="{{route('business.activepurchases')}}">
+                                    Active Purchases
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="{{route('business.activepurchases')}}">
-                                    Active Purchases
+                                <a class="nav-link" href="{{ route('business.generalReport') }}">
+                                    Repay Records(Annually)
                                 </a>
                             </li>
                             
