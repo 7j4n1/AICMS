@@ -160,6 +160,7 @@
                                 <tr>
                                     <th>S/N</th>
                                     <th>Coop Id</th>
+                                    <th>Name</th>
                                     <th>Loan Amount</th>
                                     <th>Loan Date</th>
                                     <th>Guarantor1</th>
@@ -177,6 +178,7 @@
                                     <tr wire:key="item-profile-{{ $loan->id }}">
                                         <td>{{ $counter++ }}</td>
                                         <td>{{ $loan->coopId }}</td>
+                                        <td>{{ $loan->member->surname ?? '' }} {{ $loan->member->otherNames ?? '' }}</td>
                                         <td>{{ number_format($loan->loanAmount, 2) }}</td>
                                         <td>{{ $loan->loanDate }}</td>
                                         <td>{{ $loan->guarantor1 }}</td>

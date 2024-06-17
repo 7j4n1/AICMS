@@ -121,4 +121,9 @@ class LoanCapture extends Model
     {
         return $this->belongsTo(Member::class, 'guarantor4', 'coopId');
     }
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'coopId', 'coopId');
+    }
 }

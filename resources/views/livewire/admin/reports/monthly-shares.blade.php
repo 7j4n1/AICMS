@@ -58,6 +58,7 @@
                         <thead>
                             <!-- <th scope="col">Year</th> -->
                             <th scope="col">Coop ID</th>
+                            <th scope="col">Name</th>
                             @for ($i = 1; $i <= 12; $i++)
                                 <th scope="col">{{ date('M', mktime(0,0, 0, $i, 1)) }}</th>
                             @endfor
@@ -68,6 +69,12 @@
                             @foreach ($shares as $coopId => $share)
                                 <tr wire:key="item-monthlysharesledger-{{ $coopId }}">
                                     <td scope="row">{{ $coopId }}</td>
+                                    @php
+                                        $user = \App\Models\Member::where('coopId', $coopId)->first();
+                                        $surname = $user->surname ?? '';
+                                        $otherNames = $user->otherNames ?? '';
+                                    @endphp
+                                    <td scope="row">{{ $surname }} {{ $otherNames }}</td>
                                     @for ($i = 1; $i <= 12; $i++)
                                         <td scope="row">
                                             {{ number_format($share->firstWhere('month', $i)->shareAmount ?? 0, 2) }}

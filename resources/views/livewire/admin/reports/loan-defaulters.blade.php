@@ -65,6 +65,7 @@
                                     <th>Loan Date</th>
                                     <th>Def. Months</th>
                                     <th>Id</th>
+                                    <th>Name</th>
                                     <th>Loan Amount(&#8358;)</th>
                                     <th>Balance(&#8358;)</th>
                                     <th>Guarantor 1</th>
@@ -87,6 +88,7 @@
                                         @endphp
                                         <td>{{ $loan['diff'] }}</td>
                                         <td>{{ $loan['loan']->coopId }}</td>
+                                        <td>{{ $loan['loan']->member->surname ?? '' }} {{ $loan['loan']->member->otherNames ?? '' }}</td>
                                         <td>{{ number_format($loan['loan']->loanAmount, 2) }}</td>
                                         @php
                                             $balance = \App\Models\ActiveLoans::where('coopId', $loan['loan']->coopId)->first()->loanBalance ?? 0;

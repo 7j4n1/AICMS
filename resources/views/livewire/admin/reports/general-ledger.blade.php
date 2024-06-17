@@ -141,6 +141,7 @@
                                 <tr>
                                     <th>Date</th>
                                     <th>Id</th>
+                                    <th>Name</th>
                                     <th>Total Amount(&#8358;)</th>
                                     <th>Total Savings(&#8358;)</th>
                                     <th>Total Shares(&#8358;)</th>
@@ -155,6 +156,7 @@
                                     <tr wire:key="item-generalledger-{{ $ledger->id }}">
                                         <td>{{ date('d-M-Y',strtotime($beginning_date)) }} | {{date('d-M-Y', strtotime($ending_date))}}</td>    
                                         <td>{{ $ledger->coopId }}</td>
+                                        <td>{{ $ledger->member->surname }} {{ $ledger->member->otherNames }}</td>
                                         <td>{{ number_format($ledger->totalAmount, 2) }}</td>
                                         <td>{{ number_format($ledger->savingAmount, 2) }}</td>
                                         <td>{{ number_format($ledger->shareAmount, 2) }}</td>
