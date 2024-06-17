@@ -299,23 +299,32 @@
                 let split = parseFloat(splitOption);
                 let loan = parseFloat(loanAmount.value);
                 let admin = 0;
+                let other_amount = 0;
+                let amount_value = others.value.replace(/,/g, '');
+
+                if(Number(amount_value) > 0) {
+                    other_amount = parseFloat(amount_value);
+                }
 
                 if (total >= 10000) {
                     admin = 50;
                     adminCharge.value = admin;
 
                     total -= admin;
+                    total -= other_amount;
 
                     savingAmount.value = Number((total - loan) * (100 - split) / 100).toLocaleString('en-US');
                     shareAmount.value = Number((total - loan) * split / 100).toLocaleString('en-US');
-                    others.value = 0;
+                    // others.value = 0;
                 }else {
                     admin = 0;
                     adminCharge.value = admin;
 
+                    total -= other_amount;
+
                     savingAmount.value = Number((total - loan) * (100 - split) / 100).toLocaleString('en-US');
                     shareAmount.value = Number((total - loan) * split / 100).toLocaleString('en-US');
-                    others.value = 0;
+                    // others.value = 0;
                 }
 
             }
@@ -370,23 +379,29 @@
                 let total = parseFloat(totalAmount);
                 let split = parseFloat(splitOption);
                 let admin = 0;
+                let other_amount = 0;
+                let amount_value = others.value.replace(/,/g, '');
+
+                if(Number(amount_value) > 0) {
+                    other_amount = parseFloat(amount_value);
+                }
 
                 if (total >= 10000) {
                     admin = 50;
                     adminCharge.value = admin;
 
-                    savingAmount.value = Number((total - admin) * (100 - split) / 100).toLocaleString('en-US');
-                    shareAmount.value = Number((total - admin) * split / 100).toLocaleString('en-US');
+                    savingAmount.value = Number(((total - admin) - other_amount) * (100 - split) / 100).toLocaleString('en-US');
+                    shareAmount.value = Number(((total - admin) - other_amount) * split / 100).toLocaleString('en-US');
                     loanAmount.value = 0;
-                    others.value = 0;
+                    others.value = Number(other_amount).toLocaleString('en-US');
                 }else {
                     admin = 0;
                     adminCharge.value = admin;
 
-                    savingAmount.value = Number(total * (100 - split) / 100).toLocaleString('en-US');
-                    shareAmount.value = Number(total * split / 100).toLocaleString('en-US');;
+                    savingAmount.value = Number((total - other_amount) * (100 - split) / 100).toLocaleString('en-US');
+                    shareAmount.value = Number((total - other_amount) * split / 100).toLocaleString('en-US');;
                     loanAmount.value = 0;
-                    others.value = 0;
+                    others.value = Number(other_amount).toLocaleString('en-US');
                 }
 
 
@@ -414,7 +429,7 @@
             }  
             
             if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0) {
-                alert("All fields must be greater than zero..");
+                alert("All fields must be >= zero..");
                 return;
             }
 
@@ -463,6 +478,10 @@
             let otherAmount = document.getElementById('otherAmount');
             otherAmount.value = otherAmount.value.replace(/,/g, '');
             otherAmount.value = Number(otherAmount.value).toLocaleString('en-US');
+
+            let splitOption = document.getElementById('splitOption').value;
+            if(Number(splitOption) > 0)
+                calculatePercent();
         });
 
         // document.getElementById('savingAmount').addEventListener('blur', function() {
