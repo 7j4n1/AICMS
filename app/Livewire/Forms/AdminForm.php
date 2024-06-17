@@ -62,7 +62,7 @@ class AdminForm extends Form
             'password' => bcrypt($this->password),
         ]);
 
-        if($admin)
+        if(!$admin)
             return false;
 
         $admin->assignRole('manager');

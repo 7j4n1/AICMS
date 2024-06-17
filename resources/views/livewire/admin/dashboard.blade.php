@@ -103,7 +103,7 @@
         </div>
         
     </div>
-    @canany(['can edit', 'can delete'])
+    @canany(['can edit', 'can create'])
     <div class="row mb-3">
         <div class="col-xl-6">
             <h3>List of Members</h3>

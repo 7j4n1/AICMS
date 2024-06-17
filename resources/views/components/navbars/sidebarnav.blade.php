@@ -39,7 +39,7 @@
                         </li>
                     @endif
 
-                    @canany(['can edit', 'can delete'], 'admin')
+                    @canany(['can create','can edit'], 'admin')
                     <li>
                         <a class="nav-link" href="{{route('business.categories')}}" >
                             <i class="bx bx-home-alt" aria-hidden="true"></i>
