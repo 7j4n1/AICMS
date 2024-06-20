@@ -192,12 +192,33 @@
 
 
                     {{-- Payment Records Table --}}
-                    <!-- class="table-responsive"> -->
-                        <table class="table table-bordered table-striped mb-0" id="datatable-tabletools">
+                    <div class="container-fluid " style="margin-bottom: 10px;">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col-md-6">
+                                <div class="form-group d-flex">
+                                    <label for="datatable-tabletools_length" class="me-2">Records per page:</label>
+                                    <select name="datatable-tabletools_length" class="form-select form-select-sm w-auto" data-select2-id="1" wire:model.live="paginate">
+                                        <option value="10" data-select2-id="3">10</option>
+                                        <option value="25" data-select2-id="18">25</option>
+                                        <option value="50" data-select2-id="19">50</option>
+                                        <option value="100" data-select2-id="20">100</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group d-flex">
+                                    <label for="datatable-search" class="form-label me-2">Search:</label>
+                                    <input type="search" id="datatable-search" wire:model.live.debounce.300ms="search" class="form-control w-auto" placeholder="Search By CoopId/Date" aria-controls="datatable-tabletools">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped mb-0 dataTable no-footer" id="datatable-tabletools22">
 
                             <thead>
                                 <tr>
-                                    <th>S/N</th>
+                                    <!-- <th>S/N</th> -->
                                     <th>Coop Id</th>
                                     <th>Total Amount</th>
                                     <th>Savings</th>
@@ -212,11 +233,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $counter = 1; ?>
+                                <?php //$counter = 1; ?>
 
                                 @foreach($payments as $payment)
                                     <tr wire:key="item-profile-{{ $payment->id }}">
-                                        <td>{{ $counter++ }}</td>
+                                        <!-- <td>{{-- $counter++ --}}</td> -->
                                         <td>{{ $payment->coopId }}</td>
                                         <td>{{ number_format($payment->totalAmount, 2) }}</td>
                                         <td>{{ number_format($payment->savingAmount, 2) }}</td>
@@ -242,10 +263,10 @@
                             </tbody>
                         </table>
                         
-                    <!-- </div> -->
+                    </div>
                     <div class="row mt-4">
-                        <div class="col-sm-6 offset-5">
-                            {{-- $payments->links() --}}
+                        <div class="col-sm-12 dataTables_paginate paging_simple_numbers">
+                            {{ $payments->links() }}
                         </div>
                     </div>
                 </div>

@@ -22,7 +22,8 @@ class PaymentCapture extends Component
 
     public $prev_amount = 0;
 
-    private $paginate = 10;
+    public $paginate = 25;
+    public $search = '';
 
     
     public function render()
@@ -63,9 +64,10 @@ class PaymentCapture extends Component
             
 
         $this->payments = ModelsPaymentCapture::query()
+            ->orWhere('coopId', 'like', '%'.$this->search.'%')
+            ->orWhere('paymentDate', 'like', '%'.$this->search.'%')
             ->orderByDesc('paymentDate')
-            ->limit(100)
-            ->get();
+            ->paginate($this->paginate);
 
         return view('livewire.accounts.payment-capture',[
             'payments' => $this->payments

@@ -22,17 +22,19 @@ class LoanCapture extends Component
     public $isModalOpen = false;
     public $editingLoanId = null;
 
-    private $paginate = 10;
+    public $paginate = 25;
+    public $search = '';
 
 
     public function render()
     {
-        $this->loans = Cache::store('file')->remember('loans', now()->addHours(6), function () {
-            return ModelsLoanCapture::query()
-            ->orderByDesc('loanDate')->limit(100)->get();
-        });
+        $this->loans = ModelsLoanCapture::query()
+            ->orWhere('coopId', 'like', '%'.$this->search.'%')
+            ->orWhere('loanDate', 'like', '%'.$this->search.'%')
+            ->orderByDesc('loanDate')
+            ->paginate($this->paginate);
 
-        $memberIds = Cache::store('file')->remember('memberIds', now()->addHours(3), function () {
+        $memberIds = Cache::store('file')->remember('memberIds', now()->addMinutes(5), function () {
             return Member::query()
             ->orderBy('coopId', 'asc')
             ->get(['coopId']);
@@ -64,7 +66,7 @@ class LoanCapture extends Component
 
         $this->loanForm->save();
 
-        Cache::store('file')->forget('loans');
+        // Cache::store('file')->forget('loans');
         
         session()->flash('success','Loan details captured successfully');
 
@@ -128,7 +130,7 @@ class LoanCapture extends Component
 
         session()->flash('message','Loan details deleted successfully.');
 
-        Cache::store('file')->forget('loans');
+        // Cache::store('file')->forget('loans');
 
         $this->sendDispatchEvent();
     }
@@ -140,7 +142,7 @@ class LoanCapture extends Component
         $loan->completedLoan();
 
         session()->flash('message','Loan marked as completed successfully.');
-        Cache::store('file')->forget('loans');
+        // Cache::store('file')->forget('loans');
 
         $this->sendDispatchEvent();
     }
