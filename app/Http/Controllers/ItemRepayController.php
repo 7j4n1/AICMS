@@ -14,7 +14,7 @@ class ItemRepayController extends Controller
     // Display the import form
     public function index()
     {
-        return view('import_repay');
+        return view('import_business');
     }
     // Import excel file to database
     public function import(Request $request)
