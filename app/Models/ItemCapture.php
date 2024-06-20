@@ -15,13 +15,13 @@ class ItemCapture extends Model
 
     protected $fillable = [
         'coopId',
-        'category_id',
         'quantity',
         'buyingDate',
         'payment_timeframe',
         'payment_status',
         'userId',
         'repaymentDate',
+        'category_id',
         'loanPaid',
         'loanBalance'
     ];

@@ -17,9 +17,9 @@ class RepayCapture extends Model
         'coopId',
         'item_capture_id',
         'amountToRepay',
+        'loanBalance',
         'repaymentDate',
         'serviceCharge',
-        'loanBalance',
         'userId'
     ];
 
