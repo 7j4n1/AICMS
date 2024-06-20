@@ -168,7 +168,7 @@ Route::middleware('auth:admin')->group(function () {
         Route::post('/import/itemcaps', [ItemCaptureController::class, 'import'])->name('itemcap_import');
         Route::post('/import/itemrepays', [ItemRepayController::class, 'import'])->name('repaycap_import');
 
-        Route::get('/exports', function() {
+        Route::get('/exports/business_data', function() {
             return view('business_export');
         })->name('business_exports');
 
