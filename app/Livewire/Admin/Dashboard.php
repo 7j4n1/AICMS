@@ -6,7 +6,6 @@ use App\Models\ActiveLoans;
 use App\Models\Member;
 use Livewire\Component;
 use App\Models\PaymentCapture;
-use App\Models\PreviousLedger2023;
 use Livewire\WithPagination;
 
 class Dashboard extends Component

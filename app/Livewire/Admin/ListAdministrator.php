@@ -2,18 +2,25 @@
 
 namespace App\Livewire\Admin;
 
-use App\Livewire\Admin\AdminForm\Admin as AdminFormAdmin;
 use App\Models\Admin;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Livewire\Forms\AdminForm;
 use Livewire\Attributes\Computed;
+use Livewire\WithPagination;
 
 class ListAdministrator extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = "bootstrap";
+
     public AdminForm $adminForm;
     public $isModalOpen = false;
     public $editingAdminId = null;
+
+    public $paginate = 10;
+    public $search = '';
 
     public function render()
     {
@@ -26,8 +33,10 @@ class ListAdministrator extends Component
     public function admins()
     {
         return Admin::query()
+            ->orWhere('coopId', 'like', '%'.$this->search.'%')
+            ->orWhere('name', 'like', '%'.$this->search.'%')
             ->orderBy('id', 'asc')
-            ->get();
+            ->paginate($this->paginate);
 
     }
 
