@@ -168,6 +168,14 @@ Route::middleware('auth:admin')->group(function () {
         Route::post('/import/itemcaps', [ItemCaptureController::class, 'import'])->name('itemcap_import');
         Route::post('/import/itemrepays', [ItemRepayController::class, 'import'])->name('repaycap_import');
 
+        Route::get('/exports', function() {
+            return view('business_export');
+        })->name('business_exports');
+
+        Route::get('/export/categories', [CategoryController::class, 'export'])->name('cat_export');
+        Route::get('/export/itemcaps', [ItemCaptureController::class, 'export'])->name('itemcap_export');
+        Route::get('/export/itemrepays', [ItemRepayController::class, 'export'])->name('repaycap_export');
+
     });
     
 });
