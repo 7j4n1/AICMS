@@ -51,6 +51,25 @@
                             <span>Repayment Capture</span>
                         </a>
                     </li>
+                    <li class="nav-parent">
+                        <a class="nav-link" href="#">
+                            <i class="bx bx-cart-alt" aria-hidden="true"></i>
+                            <span>Imports/Export</span>
+                        </a>
+                        <ul class="nav nav-children">
+                            <li>
+                                <a class="nav-link" href="{{route('importBusinessData')}}">
+                                    Imports records
+                                </a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="{{route('business_exports')}}">
+                                    Export records
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </li>
                     
                     <li class="nav-parent">
                         <a class="nav-link" href="#">

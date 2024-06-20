@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\ItemCaptureController;
+use App\Http\Controllers\ItemRepayController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PaymentController;
 use App\Livewire\Admin\Reports\GeneralLedger;
@@ -158,6 +161,21 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/report/repayment-defaulters', function() {
             return view('business.reports.repayment-default');
         })->name('business.repaymentDefaulters');
+
+        Route::get('/import/business_data', [ItemCaptureController::class, 'index'])->name('importBusinessData');
+
+        Route::post('/import/categories', [CategoryController::class, 'import'])->name('cat_import');
+        Route::post('/import/itemcaps', [ItemCaptureController::class, 'import'])->name('itemcap_import');
+        Route::post('/import/itemrepays', [ItemRepayController::class, 'import'])->name('repaycap_import');
+
+        Route::get('/exports/business_data', function() {
+            return view('business_export');
+        })->name('business_exports');
+
+        Route::get('/export/categories', [CategoryController::class, 'export'])->name('cat_export');
+        Route::get('/export/itemcaps', [ItemCaptureController::class, 'export'])->name('itemcap_export');
+        Route::get('/export/itemrepays', [ItemRepayController::class, 'export'])->name('repaycap_export');
+
     });
     
 });
