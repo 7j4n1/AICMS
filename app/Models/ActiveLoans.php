@@ -37,4 +37,10 @@ class ActiveLoans extends Model
         // Refresh the object instance (optional)
         $this->refresh();
     }
+
+    // Get Member by Coop ID
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'coopId', 'coopId');
+    }
 }

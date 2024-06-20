@@ -84,6 +84,7 @@
                                     <th>Loan Date</th>
                                     <th>Repayment Date</th>
                                     <th>Id</th>
+                                    <th>Name</th>
                                     <th>Loan Amount(&#8358;)</th>
                                     <th>Total Paid(&#8358;)</th>
                                     <th>Balance(&#8358;)</th>
@@ -97,6 +98,7 @@
                                         <td>{{ date('M-Y',strtotime($activeLoan->loanDate)) }}</td>    
                                         <td>{{ date('M-Y',strtotime($activeLoan->repaymentDate)) }}</td>
                                         <td>{{ $activeLoan->coopId }}</td>
+                                        <td>{{ $activeLoan->member->surname }} {{$activeLoan->member->otherNames}}</td>
                                         <td>{{ number_format($activeLoan->loanAmount, 2) }}</td>
                                         <td>{{ number_format($activeLoan->loanPaid, 2) }}</td>
                                         <td>{{ number_format($activeLoan->loanBalance, 2) }}</td>
