@@ -64,6 +64,10 @@ Route::middleware('auth:admin')->group(function () {
             return view('admin.accounts.check');
         })->name('checkGuarantor');
 
+        Route::get('/annual-fees', function() {
+            return view('admin.accounts.annual-fee');
+        })->name('annualFees');
+
         Route::get('/report/individual-report', function() {
             return view('admin.reports.individual_report');
         })->name('individualReport');

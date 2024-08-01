@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use Exception;
 use Livewire\Form;
 use App\Models\ActiveLoans;
+use App\Models\LoanCapture;
 use App\Models\PaymentCapture;
 use Livewire\Attributes\Validate;
 
@@ -128,6 +129,11 @@ class PaymentForm extends Form
             if($activeLoan)
             {
                 $activeLoan->setPayment($this->convertToPhpNumber($this->loanAmount));
+
+                // check if the loan is paid off or not
+                if($activeLoan->loanBalance == 0 || ($activeLoan->loanPaid == $activeLoan->loanAmount) )
+                    $this->checkActiveLoanBalanceStatus($this->coopId);
+                
             }
         }
 
@@ -158,6 +164,16 @@ class PaymentForm extends Form
     public function convertToPhpNumber($number)
     {
         return (float)str_replace(',', '', $number);
+    }
+
+    public function checkActiveLoanBalanceStatus($coopId)
+    {
+        $loan = LoanCapture::where('coopId', $coopId)->first();
+
+        if($loan){
+            $loan->completedLoan();
+        }
+        
     }
 
 }

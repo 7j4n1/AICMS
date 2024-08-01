@@ -119,7 +119,12 @@
                         </ul>
                     </li>
                     <!-- if the authenticated user can edit and can delete -->
-                    
+                    <li>
+                        <a class="nav-link" href="{{ route('annualFees') }}">
+                            <i class="bx bx-cart-alt" aria-hidden="true"></i>
+                            <span>Annual Fees</span>
+                        </a>
+                    </li>
                     <li class="nav-parent">
                         <a class="nav-link" href="#">
                             <i class="bx bx-file" aria-hidden="true"></i>
