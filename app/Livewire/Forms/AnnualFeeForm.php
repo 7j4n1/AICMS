@@ -53,7 +53,7 @@ class AnnualFeeForm extends Form
                     ->groupBy('coopId');
             }])->get();
         
-        dd($selected_members);
+        // dd($selected_members);
         // $total_savings = $selected_members->sum(function ($member) {
         //                     return $member->payment_captures->first()->total_savings ?? 0;
         //                 });
@@ -61,6 +61,7 @@ class AnnualFeeForm extends Form
         try {
             foreach ($selected_members as $member) {
                 $capture = $member->payment_captures->first();
+                // dd($member, $member->payment_captures);
                 $savings = $capture->total_savings ?? 0;
 
                 $amount_fee = $this->convertToPhpNumber($this->amount);
@@ -76,6 +77,7 @@ class AnnualFeeForm extends Form
     
             }
         } catch (\Throwable $th) {
+            // dd($th->getMessage());
             return false;
         }
         

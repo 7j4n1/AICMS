@@ -82,7 +82,7 @@ class AnnualFeeCapture extends Component
         session()->flash('success','Annual Fee details captured successfully');
 
         $this->resetForm();
-        $this->sendDispatchEvent();
+        // $this->sendDispatchEvent();
             
     }
 
