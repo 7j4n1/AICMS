@@ -34,4 +34,10 @@ class Member extends Model
         return $this->hasOne(Admin::class, 'coopId', 'coopId');
     }
 
+    // create relationship with paymentcapture
+    public function payment_captures()
+    {
+        return $this->hasMany(PaymentCapture::class, 'coopId', 'coopId');
+    }
+
 }
