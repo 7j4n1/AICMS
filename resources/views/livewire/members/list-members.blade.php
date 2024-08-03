@@ -212,7 +212,7 @@
                     <!-- </div> -->
                     <div class="row mt-4">
                         <div class="col-sm-12">
-                            {{ $members->links() }}
+                        {{-- $members->links() --}}
                         </div>
                     </div>
                 </div>
@@ -257,7 +257,7 @@
                     <!-- </div> -->
                     <div class="row mt-4">
                         <div class="col-sm-12 ">
-                            {{ $members->links() }}
+                            {{-- $members->links() --}}
                         </div>
                     </div>
                 </div>

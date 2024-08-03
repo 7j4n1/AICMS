@@ -31,9 +31,13 @@ class ListMembers extends Component
   
     public function render()
     {
+        // $this->members = Member::query()
+        //     ->orderBy('coopId', 'asc')
+        //     ->paginate($this->paginate);
+
         $this->members = Member::query()
             ->orderBy('coopId', 'asc')
-            ->paginate($this->paginate);
+            ->get();
 
         // if($this->editingMemberId == null)
         //     $this->memberForm->coopId = Member::max('coopId') + 1;
