@@ -59,7 +59,7 @@
                         </a>
                         <ul class="nav nav-children">
                             <li>
-                                <a class="nav-link" href="{{route('members')}}" wire:navigate>
+                                <a class="nav-link" href="{{route('members')}}">
                                     List Members
                                 </a>
                             </li>
