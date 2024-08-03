@@ -23,10 +23,10 @@ class AnnualFeeCapture extends Component
         $this->annualFees = AnnualFee::query()
                     ->where('annual_year', $this->year)
                     ->get();
-        if($this->year)
-            $this->sendDispatchEvent();
+        // if($this->year)
+        //     $this->sendDispatchEvent();
 
-        return view('livewire.accounts.annual-fee-capture')->with(['years' => $years]);
+        return view('livewire.accounts.annual-fee-capture')->with(['years' => $years, 'session'=>session()]);
     }
 
     public function mount()
