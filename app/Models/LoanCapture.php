@@ -23,6 +23,7 @@ class LoanCapture extends Model
         'guarantor2',
         'guarantor3',
         'guarantor4',
+        'loan_type',
         'status',
         'userId',
         'repaymentDate'
@@ -37,6 +38,7 @@ class LoanCapture extends Model
                 'loanAmount' => $this->loanAmount,
                 'loanPaid' => 0,
                 'loanBalance' => $this->loanAmount,
+                'loan_type' => $this->loan_type,
                 'userId' => $this->userId,
                 'loanDate' => $this->loanDate,
                 'repaymentDate' => $this->repaymentDate,
@@ -59,6 +61,7 @@ class LoanCapture extends Model
                 'loanAmount' => $this->loanAmount,
                 'loanPaid' => 0,
                 'loanBalance' => $this->loanAmount,
+                'loan_type' => $this->loan_type,
                 'userId' => $this->userId,
                 'loanDate' => $this->loanDate,
                 'repaymentDate' => $this->repaymentDate,

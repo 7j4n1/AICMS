@@ -15,6 +15,7 @@ class CompletedLoans extends Model
         'loanPaid',
         'loanBalance',
         'userId',
+        'loan_type',
         'loanDate',
         'repaymentDate',
         'lastPaymentDate',

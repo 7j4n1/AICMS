@@ -20,6 +20,7 @@ class PaymentCapture extends Model
         'savingAmount',
         'totalAmount',
         'paymentDate',
+        'loan_type',
         'others',
         'shareAmount',
         'userId',

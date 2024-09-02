@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('userId')->nullable();
             $table->timestamps();
 
-            $table->foreign('coopId')->references('coopId')->on('members');
+            $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
         });
     }
 

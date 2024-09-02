@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::create('completed_loans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('coopId')->unique();
-            $table->unsignedDouble('loanAmount')->default(0.00);
-            $table->unsignedDouble('loanPaid')->default(0.00);
-            $table->unsignedDouble('loanBalance')->default(0.00);
+            $table->unsignedBigInteger('coopId')->nullable();
+            $table->string('loan_type')->nullable();
+            $table->decimal('loanAmount', 15, 2)->default(0.00);
+            $table->decimal('loanPaid', 15)->default(0.00);
+            $table->decimal('loanBalance', 15)->default(0.00);
             $table->date('loanDate')->nullable();
             $table->date('repaymentDate')->nullable();
             $table->date('lastPaymentDate')->nullable();
             $table->string('userId')->nullable();
             $table->timestamps();
 
-            $table->foreign('coopId')->references('coopId')->on('members');
+            $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
         });
     }
 

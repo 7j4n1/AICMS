@@ -19,6 +19,7 @@ class RepayCapture extends Model
         'amountToRepay',
         'loanBalance',
         'repaymentDate',
+        'loan_type',
         'serviceCharge',
         'userId'
     ];

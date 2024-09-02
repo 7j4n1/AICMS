@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
-            $table->unsignedBigInteger('coopId')->unique();
+            $table->unsignedBigInteger('coopId')->nullable();
             // create columns for other Member details
             $table->string('surname')->nullable();
             $table->string('otherNames')->nullable();

@@ -14,22 +14,23 @@ return new class extends Migration
     {
         Schema::create('item_captures', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
-            $table->unsignedBigInteger('coopId');
+            $table->unsignedBigInteger('coopId')->nullable();
             $table->bigInteger('quantity')->nullable();
             $table->date('buyingDate')->default(date('Y-m-d'));
             $table->bigInteger('payment_timeframe')->nullable();
             $table->boolean('payment_status')->default(1);
             $table->unsignedBigInteger('userId');
             $table->date('repaymentDate')->nullable();
-            $table->unsignedBigInteger('category_id');
+            $table->string('loan_type')->default('normal');
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->decimal('loanPaid')->default(0);
             $table->decimal('loanBalance')->default(0.00);
 
             $table->timestamps();
 
-            $table->foreign('coopId')->references('coopId')->on('members')->cascadeOnDelete();
-            $table->foreign('userId')->references('id')->on('admins');
-            $table->foreign('category_id')->references('id')->on('item_categories');
+            $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
+            $table->foreign('userId')->references('id')->on('admins')->nullOnDelete();
+            $table->foreign('category_id')->references('id')->on('item_categories')->nullOnDelete();
         });
     }
 

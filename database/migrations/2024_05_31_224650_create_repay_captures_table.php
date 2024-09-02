@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('repay_captures', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
-            $table->unsignedBigInteger('coopId');
+            $table->unsignedBigInteger('coopId')->nullable();
             $table->uuid('item_capture_id');
             $table->decimal('amountToRepay')->default(0);
             $table->decimal('loanBalance')->default(0);
@@ -23,9 +23,9 @@ return new class extends Migration
             $table->unsignedBigInteger('userId');
             $table->timestamps();
 
-            $table->foreign('item_capture_id')->on('item_captures')->references('id')->cascadeOnDelete();
-            $table->foreign('coopId')->on('members')->references('coopId')->cascadeOnDelete();
-            $table->foreign('userId')->references('id')->on('admins');
+            $table->foreign('item_capture_id')->on('item_captures')->references('id')->nullOnDelete();
+            $table->foreign('coopId')->on('members')->references('coopId')->nullOnDelete();
+            $table->foreign('userId')->references('id')->on('admins')->nullOnDelete();
         });
     }
 

@@ -15,6 +15,7 @@ class ActiveLoans extends Model
         'loanAmount',
         'loanPaid',
         'loanBalance',
+        'loan_type',
         'userId',
         'loanDate',
         'repaymentDate',

@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('active_loans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('coopId')->nullable();
-            $table->unsignedDouble('loanAmount')->default(0.00);
-            $table->unsignedDouble('loanPaid')->default(0.00);
-            $table->unsignedDouble('loanBalance')->default(0.00);
+            $table->string('type')->nullable();
+            $table->decimal('loanAmount')->default(0.00);
+            $table->decimal('loanPaid')->default(0.00);
+            $table->decimal('loanBalance')->default(0.00);
+            $table->string('loan_type')->default('normal');
             $table->date('loanDate');
             $table->date('repaymentDate')->nullable();
             $table->date('lastPaymentDate')->nullable();
