@@ -24,7 +24,12 @@ class PaymentCapture extends Model
         'others',
         'shareAmount',
         'userId',
-        'adminCharge'
+        'adminCharge',
+        'hajj_savings',
+        'special_savings',
+        'ileya_savings',
+        'school_fees_savings',
+        'kids_savings'
     ];
 
     public function updateLoan($prev_amount)

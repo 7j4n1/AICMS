@@ -2,36 +2,17 @@
 
 namespace App\Livewire\Admin\Reports;
 
+use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\LoanCapture;
-use Carbon\Carbon;
 
-class LoanDefaulters extends Component
+class SpecialLoanDefaulters extends Component
 {
     public function render()
     {
-        // Get all the loan defaults from LoanCapture where the status is 1 and the repaymentDate loan date is already due
-        // associate the Member model to the LoanCapture model based on guarantor1, guarantor2, guarantor3, guarantor4
-        // return the view with the loans.
-        // $loans = LoanCapture::query()
-        //     ->where('status', 1)
-        //     ->where('repaymentDate', '<', date('Y-m-d'))
-        //     ->orderBy('repaymentDate', 'desc')
-        //     ->get();
-
-        // $total_loans = $loans->sum('loanAmount') ?? 0;
-        
-        // $total_balance = 0;
-
-        // foreach ($loans as $loan) {
-        //     $balance = ActiveLoans::where('coopId', $loan->coopId)->first()->loanBalance ?? 0;
-        //     $getCurrentOutloan = PreviousLedger2023::where('coopId', $loan->coopId)->first()->loanAmount ?? 0;
-        //     $total_balance += $balance;
-        //     $total_balance -= $getCurrentOutloan;
-        // }
+       
         $result_query = $this->checkLoanDefaulters();
-
-        return view('livewire.admin.reports.loan-defaulters')
+        return view('livewire.admin.reports.special-loan-defaulters')
             ->with(['loans' => $result_query[0], 'total_loans' => $result_query[2], 'total_balance' => $result_query[1]]);
     }
 
@@ -53,7 +34,7 @@ class LoanDefaulters extends Component
 
 
         $loans = LoanCapture::query()
-            ->where('loan_type', 'normal')
+            ->where('loan_type', 'special')
             ->where('status', 1) // Filter ongoing loans only
             ->with('activeLoan') // eager loading related loan balance
             ->orderBy('repaymentDate', 'asc')
@@ -82,20 +63,6 @@ class LoanDefaulters extends Component
                 $total_balance += $balance;
                 $total_loans += $loan->loanAmount;
             }
-
-            // check for lastPaymentDate
-            // $lastPaymentDate = Carbon::parse($loan->lastPaymentDate);
-            // $diff = $currentDate->diffInMonths($lastPaymentDate);
-            // // check if not in the defaulters list array, then add to the defaulters list array
-            // $newLoan = [
-            //     'loan' => $loan,
-            //     'diff' => $diff
-            // ];
-            // if ($diff >= 2 && !in_array($newLoan, $defaulters_list)) {
-            //     $defaulters_list[] = $newLoan;
-            //     $total_balance += $balance;
-            //     $total_loans += $loan->loanAmount ?? 0;
-            // }
 
         }
 

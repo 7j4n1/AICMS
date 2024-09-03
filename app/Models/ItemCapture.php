@@ -19,6 +19,7 @@ class ItemCapture extends Model
         'buyingDate',
         'payment_timeframe',
         'payment_status',
+        'loan_type',
         'userId',
         'repaymentDate',
         'category_id',

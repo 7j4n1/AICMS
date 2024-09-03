@@ -24,12 +24,15 @@ class LoanCapture extends Component
 
     public $paginate = 25;
     public $search = '';
+    public $loanType = 'Normal';
 
 
     public function render()
     {
         $this->loans = ModelsLoanCapture::query()
             ->orWhere('coopId', 'like', '%'.$this->search.'%')
+            ->orWhere('loan_type', $this->loanType)
+            ->orWhere('loan_type', 'like', '%'.$this->search.'%')
             ->orWhere('loanDate', 'like', '%'.$this->search.'%')
             ->orderByDesc('loanDate')
             ->paginate($this->paginate);

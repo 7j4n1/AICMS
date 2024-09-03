@@ -67,6 +67,15 @@
                                             </select>
                                             @error('loanForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <label for="loan_type" class="form-label">Loan Type</label>
+                                            <select class="form-select" wire:model.live="loanForm.loan_type" id="loan_type">
+                                                <option value="normal">Normal</option>
+                                                <option value="special">Special</option>
+                                            </select>
+                                            @error('loanForm.loan_type') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
                         
                                             {{-- Amount --}}
                                         <div class="col-md-6">
@@ -155,7 +164,7 @@
                     {{-- Loan Records Table --}}
                     <div class="container-fluid " style="margin-bottom: 10px;">
                         <div class="row align-items-center justify-content-between">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group d-flex">
                                     <label for="datatable-tabletools_length" class="me-2">Records per page:</label>
                                     <select name="datatable-tabletools_length" class="form-select form-select-sm w-auto" data-select2-id="1" wire:model.live="paginate">
@@ -166,7 +175,16 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-group d-flex">
+                                    <label for="datatable-tabletools_length" class="me-2">Records per page:</label>
+                                    <select name="datatable-tabletools_length" class="form-select form-select-sm w-auto" data-select2-id="1" wire:model.live="loanType">
+                                        <option value="normal" data-select2-id="3">Normal</option>
+                                        <option value="special" data-select2-id="18">Special</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group d-flex">
                                     <label for="datatable-search" class="form-label me-2">Search:</label>
                                     <input type="search" id="datatable-search" wire:model.live.debounce.300ms="search" class="form-control w-auto" placeholder="Search By CoopId/Loan Date" aria-controls="datatable-tabletools">
@@ -183,6 +201,7 @@
                                     <th>Coop Id</th>
                                     <th>Name</th>
                                     <th>Loan Amount</th>
+                                    <th>Type</th>
                                     <th>Loan Date</th>
                                     <th>Guarantor1</th>
                                     <th>Guarantor2</th>
@@ -201,6 +220,7 @@
                                         <td>{{ $loan->coopId }}</td>
                                         <td>{{ $loan->member->surname ?? '' }} {{ $loan->member->otherNames ?? '' }}</td>
                                         <td>{{ number_format($loan->loanAmount, 2) }}</td>
+                                        <td>{{ $loan->loan_type }}</td>
                                         <td>{{ $loan->loanDate }}</td>
                                         <td>{{ $loan->guarantor1 }}</td>
                                         <td>{{ $loan->guarantor2 }}</td>

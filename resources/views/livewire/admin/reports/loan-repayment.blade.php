@@ -11,6 +11,16 @@
         <div class="col-md-3 mb-2">
             <!-- Date Range input type -->
             <div class="form-group">
+                <label for="beginning_date">Loan Type</label>
+                <select name="datatable-tabletools_length" class="form-select form-select-sm w-auto" data-select2-id="1" wire:model.live="loanType">
+                    <option value="normal" data-select2-id="3">Normal</option>
+                    <option value="special" data-select2-id="18">Special</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <!-- Date Range input type -->
+            <div class="form-group">
                 <label for="daterange">To Date</label>
                 <input type="date" name="daterange" id="daterange1" class="form-control" wire:model.live="ending_date">
             </div>

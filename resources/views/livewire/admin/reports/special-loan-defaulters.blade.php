@@ -4,7 +4,7 @@
         <div class="col">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">Loan Repayment(Defaulters) Report</h2>
+                    <h2 class="card-title">Special Loan Repayment(Defaulters) Report</h2>
                 </header>
                 <div class="card-body">
                     <div class="row mb-3">

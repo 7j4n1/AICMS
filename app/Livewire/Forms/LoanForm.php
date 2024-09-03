@@ -14,6 +14,8 @@ class LoanForm extends Form
     public $coopId;
     #[Validate('required')]
     public $loanAmount;
+    #[Validate('required')]
+    public $loan_type;
     #[Validate('required|date')]
     public $loanDate;
     #[Validate('required|numeric|min:1|exists:members,coopId')]
@@ -41,7 +43,7 @@ class LoanForm extends Form
         $this->withValidator(function ($validator){
             $validator->after(function ($validator){
                 $coopId = $this->coopId;
-                $loan = ActiveLoans::where('coopId', $coopId)->first();
+                $loan = ActiveLoans::where('coopId', $coopId)->where('loan_type', $this->loan_type)->first();
                 if($loan)
                     $validator->errors()->add('coopId', 'Loan exists for the Coop ID.');
 
@@ -58,17 +60,20 @@ class LoanForm extends Form
     public function save()
     {
         $this->validate();
+        $duration = ($this->loan_type == "normal") ? 0 : 1;
+        $durationPeriod = ($duration == 0) ? date('Y-m-d', strtotime($this->loanDate. ' + 540 days')) : date('Y-m-d', strtotime($this->loanDate. ' + 90 days'));
         $loan = LoanCapture::create([
             'coopId' => $this->coopId,
             'loanAmount' => $this->convertToPhpNumber($this->loanAmount),
             'loanDate' => $this->loanDate,
+            'loan_type' => $this->loan_type,
             'guarantor1' => $this->guarantor1,
             'guarantor2' => $this->guarantor2,
             'guarantor3' => $this->guarantor3,
             'guarantor4' => $this->guarantor4,
             'status' => $this->status,
             'userId' => auth('admin')->user()->id,
-            'repaymentDate' => date('Y-m-d', strtotime($this->loanDate. ' + 540 days'))
+            'repaymentDate' => $durationPeriod
         ]);
 
         if(!$loan)
@@ -93,6 +98,7 @@ class LoanForm extends Form
         $this->guarantor3 = '';
         $this->guarantor4 = '';
         $this->status = 1;
+        $this->loan_type = "normal";
     }
 
     /**

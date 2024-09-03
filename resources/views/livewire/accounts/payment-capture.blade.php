@@ -113,7 +113,7 @@
                                             @error('paymentForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
-                                        <div class="col-md-6">
+                                        {{-- <div class="col-md-6">
                                             <label for="splitOption" class="form-label">Split Option</label>
                                             <select class="form-select" wire:model.live="paymentForm.splitOption" id="splitOption">
                                                 <option value="0">0</option>
@@ -121,7 +121,7 @@
                                                     <option value="{{ $perc*10 }}">{{ $perc*10 }}</option>
                                                 @endforeach
                                             </select>
-                                        </div>
+                                        </div> --}}
 
                                         <input type="hidden" value="{{ $prev_amount}}" id="prevAmount" />
                                         
@@ -131,7 +131,16 @@
                                             <input type="text" id="totalAmount" class="form-control" placeholder="Total Amount" wire:model.live="paymentForm.totalAmount" />
                                             @error('paymentForm.totalAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
-                        
+
+                                        <div class="col-md-6">
+                                            <label for="loan_type" class="form-label">Loan Type</label>
+                                            <select class="form-select" wire:model.live="paymentForm.loan_type" id="loan_type">
+                                                <option value="normal">Normal</option>
+                                                <option value="special">Special</option>
+                                            </select>
+                                        </div>
+
+
                                             {{-- Loan Amount --}}
                                         <div class="col-md-6">
                                             <label for="loanAmount">Loan Amount <span class="text-danger">*</span></label>
@@ -152,6 +161,34 @@
                                             <label for="shareAmount">Shares Amount <span class="text-danger">*</span></label>
                                             <input type="text" id="shareAmount" class="form-control" placeholder="Shares Amount" wire:model.live="paymentForm.shareAmount"  />
                                             @error('paymentForm.shareAmount') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
+                                        {{-- Hajj Savings --}}
+                                        <div class="col-md-6">
+                                            <label for="hajj_savings">Hajj Saving<span class="text-danger">*</span></label>
+                                            <input type="text" id="hajj_savings" class="form-control" placeholder="Hajj Saving Amount" wire:model.live="paymentForm.hajj_savings"  />
+                                            @error('paymentForm.hajj_savings') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
+                                        {{-- Ileya Savings --}}
+                                        <div class="col-md-6">
+                                            <label for="ileya_savings">Ileya Saving<span class="text-danger">*</span></label>
+                                            <input type="text" id="ileya_savings" class="form-control" placeholder="Ileya Saving Amount" wire:model.live="paymentForm.ileya_savings"  />
+                                            @error('paymentForm.ileya_savings') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
+                                        {{-- School Fees Savings --}}
+                                        <div class="col-md-6">
+                                            <label for="school_fees_savings">School Fee Saving<span class="text-danger">*</span></label>
+                                            <input type="text" id="school_fees_savings" class="form-control" placeholder="SchoolFees Saving Amount" wire:model.live="paymentForm.school_fees_savings"  />
+                                            @error('paymentForm.school_fees_savings') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
+                                        {{-- Kids Savings --}}
+                                        <div class="col-md-6">
+                                            <label for="kids_savings">Kids Saving<span class="text-danger">*</span></label>
+                                            <input type="text" id="kids_savings" class="form-control" placeholder="Kids Saving Amount" wire:model.live="paymentForm.kids_savings"  />
+                                            @error('paymentForm.kids_savings') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         <div class="col-md-6">

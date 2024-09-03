@@ -15,10 +15,10 @@ return new class extends Migration
         Schema::create('payment_captures', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->unsignedBigInteger('coopId');
-            $table->double('splitOption')->default(0.00);
-            $table->double('loanAmount')->default(0.00);
-            $table->double('savingAmount')->default(0.00);
-            $table->double('totalAmount')->default(0.00);
+            $table->decimal('splitOption', 15, 2)->default(0.00);
+            $table->decimal('loanAmount', 15, 2)->default(0.00);
+            $table->decimal('savingAmount', 15, 2)->default(0.00);
+            $table->decimal('totalAmount', 15, 2)->default(0.00);
             $table->date('paymentDate')->nullable();
             $table->decimal('hajj_savings', 15, 2)->default(0.00);
             $table->decimal('special_savings', 15, 2)->default(0.00);
@@ -26,12 +26,12 @@ return new class extends Migration
             $table->decimal('school_fees_savings', 15, 2)->default(0.00);
             $table->decimal('kids_savings', 15, 2)->default(0.00);
             $table->decimal('others', 15, 2)->default(0.00);
-            $table->double('shareAmount')->default(0.00);
+            $table->decimal('shareAmount', 15, 2)->default(0.00);
             $table->unsignedBigInteger('adminCharge')->default(0);
             $table->string('loan_type')->default('normal');
             $table->string('userId')->nullable();
 
-            $table->foreign('coopId')->references('coopId')->on('members');
+            $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
 
             $table->timestamps();
         });

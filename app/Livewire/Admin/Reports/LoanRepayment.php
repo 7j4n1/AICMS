@@ -9,9 +9,11 @@ class LoanRepayment extends Component
 {
     public $beginning_date;
     public $ending_date;
+    public $loanType = 'normal';
     public function render()
     {
         $activeLoans = ActiveLoans::query()
+            ->where('loan_type', $this->loanType)
             ->whereBetween('lastPaymentDate', [$this->beginning_date, $this->ending_date])->get();
         
         $total_loans = $activeLoans->sum('loanAmount') ?? 0;
