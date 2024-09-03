@@ -88,6 +88,10 @@ Route::middleware('auth:admin')->group(function () {
             return view('admin.reports.defaulterloans_report');
         })->name('defaulterLoansReport');
 
+        Route::get('/report/special-loan-defaulter-report', function() {
+           return view('admin.reports.specialdefaulterloans_report'); 
+        })->name('specialDefaulterLoansReport');
+
         Route::get('/report/purchase-history', function() {
             return view('business.reports.my-history');
         })->name('purchase.individualReport');

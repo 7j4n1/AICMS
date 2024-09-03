@@ -12,12 +12,14 @@ class GeneralLedger extends Component
 {
     public $beginning_date;
     public $ending_date;
+    public $loanType = 'normal';
 
     public function render()
     {
         $ledgers = PaymentCapture::query()
+            ->where('loan_type', $this->loanType)
             ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
-            ->selectRaw('coopId, sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others')
+            ->selectRaw('coopId, sum(loanAmount) as loanAmount, sum(savingAmount) as savingAmount, sum(totalAmount) as totalAmount, sum(shareAmount) as shareAmount, sum(adminCharge) as adminCharge, sum(others) as others, SUM(hajj_savings) as hajj, SUM(ileya_savings) as ileya, SUM(school_fees_savings) as school, SUM(kid_savings) as kids')
             ->groupBy('coopId')->get();
 
         $preledgers = PreviousLedger2023::query()
@@ -39,6 +41,14 @@ class GeneralLedger extends Component
         $total_admin += $preledgers->sum('adminCharge') ?? 0;
         $total_others += $preledgers->sum('others') ?? 0;
 
+        $total_hajj = $ledgers->sum('hajj') ?? 0;
+        $total_ileya = $ledgers->sum('ileya') ?? 0;
+        $total_schoolfees = $ledgers->sum('school') ?? 0;
+        $total_kids = $ledgers->sum('kids') ?? 0;
+
+        $total_targets = $total_hajj + $total_ileya + $total_kids + $total_schoolfees;
+
+
         if($this->beginning_date == null)
             $this->beginning_date = date('Y-m-d');
         else
@@ -49,7 +59,9 @@ class GeneralLedger extends Component
 
         return view('livewire.admin.reports.general-ledger')->with(['ledgers' => $ledgers, 
             'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
-            'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others]);
+            'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others,
+            'total_target' => $total_targets
+        ]);
     }
 
     public function searchResult()
@@ -70,7 +82,7 @@ class GeneralLedger extends Component
         // and specified the number of records to be returned based on the $from_number and $to_number
         $ledgers = PaymentCapture::query()
                 ->whereBetween('paymentDate', [$beginning_date, $ending_date])
-                ->selectRaw('coopId, SUM(loanAmount) as loanAmount, SUM(savingAmount) as savingAmount, SUM(totalAmount) as totalAmount, SUM(shareAmount) as shareAmount, SUM(adminCharge) as adminCharge, SUM(others) as others')
+                ->selectRaw('coopId, SUM(loanAmount) as loanAmount, SUM(savingAmount) as savingAmount, SUM(totalAmount) as totalAmount, SUM(shareAmount) as shareAmount, SUM(adminCharge) as adminCharge, SUM(others) as others, SUM(hajj_savings) as hajj, SUM(ileya_savings) as ileya, SUM(school_fees_savings) as school, SUM(kid_savings) as kids')
                 ->groupBy('coopId')
                 ->limit($to_number)
                 ->offset($from_number)
@@ -89,6 +101,13 @@ class GeneralLedger extends Component
         $total_share = $ledgers->sum('shareAmount') ?? 0;
         $total_admin = $ledgers->sum('adminCharge') ?? 0;
         $total_others = $ledgers->sum('others') ?? 0;
+        $total_hajj = $ledgers->sum('hajj') ?? 0;
+        $total_ileya = $ledgers->sum('ileya') ?? 0;
+        $total_schoolfees = $ledgers->sum('school') ?? 0;
+        $total_kids = $ledgers->sum('kids') ?? 0;
+
+        $total_targets = $total_hajj + $total_ileya + $total_kids + $total_schoolfees;
+
 
 
 
@@ -97,7 +116,7 @@ class GeneralLedger extends Component
             $html = View::make('admin.reports.generalexport_view', ['ledgers' => $ledgers, 
                 'beginning_date' => $beginning_date, 'ending_date' => $ending_date, 'total_loan' => $total_loan,
                 'total_saving' => $total_saving, 'total_total' => $total_total, 'total_share' => $total_share,
-                'total_admin' => $total_admin, 'total_others' => $total_others
+                'total_admin' => $total_admin, 'total_others' => $total_others, 'total_target' => $total_targets
             ]);
 
             $pdf = new Dompdf();

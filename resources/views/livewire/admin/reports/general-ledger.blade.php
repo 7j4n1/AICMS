@@ -11,6 +11,16 @@
         <div class="col-md-3 mb-2">
             <!-- Date Range input type -->
             <div class="form-group">
+                <label for="loanType">Loan Type</label>
+                <select name="datatable-tabletools_length" class="form-select form-select-sm w-auto" data-select2-id="1" wire:model.live="loanType">
+                    <option value="normal" data-select2-id="3">Normal</option>
+                    <option value="special" data-select2-id="18">Special</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <!-- Date Range input type -->
+            <div class="form-group">
                 <label for="daterange">To Date</label>
                 <input type="date" name="daterange" id="daterange1" class="form-control" wire:model.live="ending_date">
             </div>
@@ -161,14 +171,45 @@
                                         <td>{{ number_format($ledger->savingAmount, 2) }}</td>
                                         <td>{{ number_format($ledger->shareAmount, 2) }}</td>
                                         <td>{{ number_format($ledger->loanAmount, 2) }}</td>
-                                        <td>{{ number_format($ledger->others, 2) }}</td>
+                                        <td>{{ number_format($ledger->others, 2) }}</td>ss
                                         <td>{{ number_format($ledger->adminCharge, 2) }}</td>
                                     </tr>
                                 @endforeach
                                 
                             </tbody>
                         </table>
-                        
+                    
+                        {{-- Payment Records Table --}}
+                    <!-- class="table-responsive"> -->
+                        <table class="table table-bordered table-striped mb-0" id="datatable-tabletools2">
+
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>T. Hajj(&#8358;)</th>
+                                    <th>T. Ileya(&#8358;)</th>
+                                    <th>T. SchoolF.(&#8358;)</th>
+                                    <th>T. Kids(&#8358;)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach($ledgers as $ledger)
+                                    <tr wire:key="item-generalledger-{{ $ledger->id }}">
+                                        <td>{{ date('d-M-Y',strtotime($beginning_date)) }} | {{date('d-M-Y', strtotime($ending_date))}}</td>    
+                                        <td>{{ $ledger->coopId }}</td>
+                                        <td>{{ $ledger->member->surname }} {{ $ledger->member->otherNames }}</td>
+                                        <td>{{ number_format($ledger->hajj, 2) }}</td>
+                                        <td>{{ number_format($ledger->ileya, 2) }}</td>
+                                        <td>{{ number_format($ledger->school, 2) }}</td>
+                                        <td>{{ number_format($ledger->kids, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                                
+                            </tbody>
+                        </table>
                     <!-- </div> -->
                     <div class="row mt-4">
                         <div class="col-sm-6 offset-5">

@@ -152,6 +152,11 @@
                                 </a>
                             </li>
                             <li>
+                                <a class="nav-link" href="{{route('specialDefaulterLoansReport')}}">
+                                    Special Defaulters Reports
+                                </a>
+                            </li>
+                            <li>
                                 <a class="nav-link" href="{{ Route('sharesReport') }}">
                                     Shares Reports(Yearly)
                                 </a>

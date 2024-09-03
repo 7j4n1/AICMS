@@ -143,12 +143,12 @@
                     <tr class="active">
                         <th>Date</th>
                         <th>ID</th>
-                        <th>Total Amount(#)</th>
-                        <th>Total Savings(#)</th>
-                        <th>Total Shares(#)</th>
+                        <th>T.Amount(#)</th>
+                        <th>T.Savings(#)</th>
+                        <th>T.Shares(#)</th>
                         <th>Paid Loans(#)</th>
-                        <th>Total Others(#)</th>
-                        <th>Total Admin(#)</th>
+                        <th>T.Others(#)</th>
+                        <th>T.Admin(#)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -162,6 +162,33 @@
                             <td>{{ number_format($ledger->loanAmount, 2) }}</td>
                             <td>{{ number_format($ledger->others, 2) }}</td>
                             <td>{{ number_format($ledger->adminCharge, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <p><h2>Special Savings Total</h2></p>
+
+            <table class="table table-striped table-bordered table-responsive">
+                <thead>
+                    <tr class="active">
+                        <th>Date</th>
+                        <th>ID</th>
+                        <th>T.Hajj(#)</th>
+                        <th>T.Ileya(#)</th>
+                        <th>T.School-Fees(#)</th>
+                        <th>T.Kids(#)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($ledgers as $ledger)
+                        <tr wire:key="item-generalledger-{{ $ledger->id }}">
+                            <td>{{ date('d-M-Y',strtotime($beginning_date)) }} | {{date('d-M-Y', strtotime($ending_date))}}</td>    
+                            <td>{{ $ledger->coopId }}</td>
+                            <td>{{ number_format($ledger->hajj, 2) }}</td>
+                            <td>{{ number_format($ledger->ileya, 2) }}</td>
+                            <td>{{ number_format($ledger->school, 2) }}</td>
+                            <td>{{ number_format($ledger->kids, 2) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

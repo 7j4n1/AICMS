@@ -111,6 +111,16 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row row-no-gutters">
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <div class="rounded">
+                                        <div class="p-2 text-capitalize">Total Targets Savings</div>
+                                        <div class="panel-title p-2"><span class="text-bold">NGN {{number_format($total_target, 2)}}</span></div>
+                                    </div>
+                                </div>
+                                
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -171,6 +181,31 @@
                             <td>{{ number_format($ledger->loanAmount, 2) }}</td>
                             <td>{{ number_format($ledger->others, 2) }}</td>
                             <td>{{ number_format($ledger->adminCharge, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <p><h2>Special Savings records</h2></p>
+
+            <table class="table table-striped table-bordered table-responsive">
+                <thead>
+                    <tr class="active">
+                        <th>Date</th>
+                        <th>Hajj (#)</th>
+                        <th>Ileya(#)</th>
+                        <th>School Fees(#)</th>
+                        <th>Kid Savings(#)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($ledgers as $ledger)
+                        <tr wire:key="item-individualledger-{{ $ledger->id }}">
+                            <td>{{ date("d-m-Y", strtotime($ledger->paymentDate)) }}</td>
+                            <td>{{ number_format($ledger->hajj_savings, 2) }}</td>
+                            <td>{{ number_format($ledger->school_fees_savings, 2) }}</td>
+                            <td>{{ number_format($ledger->school_fees_savings, 2) }}</td>
+                            <td>{{ number_format($ledger->kid_savings, 2) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

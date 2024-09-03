@@ -50,6 +50,12 @@ class IndividualLedger extends Component
         $total_share = $ledgers->sum('shareAmount') ?? 0;
         $total_admin = $ledgers->sum('adminCharge') ?? 0;
         $total_others = $ledgers->sum('others') ?? 0;
+        $total_hajj = $ledgers->sum('hajj_savings') ?? 0;
+        $total_ileya = $ledgers->sum('ileya_savings') ?? 0;
+        $total_schoolfees = $ledgers->sum('school_fees_savings') ?? 0;
+        $total_kids = $ledgers->sum('kid_savings') ?? 0;
+
+        $total_targets = $total_hajj + $total_ileya + $total_kids + $total_schoolfees;
 
         $isActive = ActiveLoans::where('coopId', $this->coopId)->first();
 
@@ -66,7 +72,7 @@ class IndividualLedger extends Component
         return view('livewire.admin.reports.individual-ledger')->with(['ledgers' => $ledgers, 'session' => session(), 'memberIds' => $memberIds,
         'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
         'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others,
-        'csrf_token' => $this->csrf_token
+        'csrf_token' => $this->csrf_token, 'total_target' => $total_targets
         ]);
     }
 
@@ -113,13 +119,19 @@ class IndividualLedger extends Component
             $total_share = $dataTotals->sum('shareAmount') ?? 0;
             $total_admin = $dataTotals->sum('adminCharge') ?? 0;
             $total_others = $dataTotals->sum('others') ?? 0;
+            $total_hajj = $dataTotals->sum('hajj_savings') ?? 0;
+            $total_ileya = $dataTotals->sum('ileya_savings') ?? 0;
+            $total_schoolfees = $dataTotals->sum('school_fees_savings') ?? 0;
+            $total_kids = $dataTotals->sum('kid_savings') ?? 0;
+
+            $total_targets = $total_hajj + $total_ileya + $total_kids + $total_schoolfees;
 
             $html = View::make('admin.reports.report_view', ['ledgers' => $ledgers, 
                 'dataTotals' => $dataTotals, 'memberId' => $memberId, 'isOnLoan' => $isOnLoan,
                 'beginning_date' => $beginning_date, 'ending_date' => $ending_date,
                 'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
                 'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others,
-                'balance' => $balance
+                'balance' => $balance, 'total_target' => $total_targets
             ]);
 
             $pdf = new Dompdf();
