@@ -34,9 +34,17 @@ class PaymentForm extends Form
     // #[Validate('required|numeric|min:0')]
     #[Validate('required')]
     public $savingAmount = 0;
-    // #[Validate('required|numeric|min:0')]
     #[Validate('required')]
     public $totalAmount = 0;
+    // #[Validate('required|numeric|min:0')]
+    #[Validate('required')]
+    public $hajj_savings = 0;
+    #[Validate('required')]
+    public $ileya_savings = 0;
+    #[Validate('required')]
+    public $school_fees_savings = 0;
+    #[Validate('required')]
+    public $kids_savings = 0;
     #[Validate('required|date')]
     public $paymentDate;
     // #[Validate('required|numeric|min:0')]
@@ -47,6 +55,8 @@ class PaymentForm extends Form
     public $shareAmount = 0;
     #[Validate('numeric|min:0')]
     public $adminCharge = 0;
+    #[Validate('required')]
+    public $loan_type = 'normal';
 
 
     // rules
@@ -77,7 +87,7 @@ class PaymentForm extends Form
             $validator->after(function ($validator){
 
                 // check if the coopId has an active loan
-                $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
+                $activeLoan = ActiveLoans::where('coopId', $this->coopId)->where('loan_type', $this->loan_type)->first();
                 if($activeLoan)
                 {
                     if($this->convertToPhpNumber($this->loanAmount) > $activeLoan->loanBalance)
@@ -112,8 +122,13 @@ class PaymentForm extends Form
             'savingAmount' => $this->convertToPhpNumber($this->savingAmount),
             'totalAmount' => $this->convertToPhpNumber($this->totalAmount),
             'paymentDate' => $this->paymentDate,
+            'hajj_savings' => $this->convertToPhpNumber($this->hajj_savings),
+            'ileya_savings' => $this->convertToPhpNumber($this->ileya_savings),
+            'school_fees_savings' => $this->convertToPhpNumber($this->school_fees_savings),
+            'kids_savings' => $this->convertToPhpNumber($this->kids_savings),
             'others' => $this->convertToPhpNumber($this->others),
             'shareAmount' => $this->convertToPhpNumber($this->shareAmount),
+            'loan_type' => $this->loan_type,
             'userId' => auth('admin')->user()->id,
             'adminCharge' => $this->adminCharge,
         ]);
@@ -125,14 +140,14 @@ class PaymentForm extends Form
             
         // throw new Exception("Create a payment successfully.");
         if(($this->convertToPhpNumber($this->loanAmount) >= 1) && !is_null($this->convertToPhpNumber($this->loanAmount))){
-            $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
+            $activeLoan = ActiveLoans::where('coopId', $this->coopId)->where('loan_type', $this->loan_type)->first();
             if($activeLoan)
             {
                 $activeLoan->setPayment($this->convertToPhpNumber($this->loanAmount));
 
                 // check if the loan is paid off or not
                 if($activeLoan->loanBalance == 0 || ($activeLoan->loanPaid == $activeLoan->loanAmount) )
-                    $this->checkActiveLoanBalanceStatus($this->coopId);
+                    $this->checkActiveLoanBalanceStatus($this->coopId, $this->loan_type);
                 
             }
         }
@@ -166,9 +181,9 @@ class PaymentForm extends Form
         return (float)str_replace(',', '', $number);
     }
 
-    public function checkActiveLoanBalanceStatus($coopId)
+    public function checkActiveLoanBalanceStatus($coopId, $type)
     {
-        $loan = LoanCapture::where('coopId', $coopId)->first();
+        $loan = LoanCapture::where('coopId', $coopId)->where('loan_type', $type)->first();
 
         if($loan){
             $loan->completedLoan();

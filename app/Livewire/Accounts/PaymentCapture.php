@@ -65,6 +65,7 @@ class PaymentCapture extends Component
 
         $this->payments = ModelsPaymentCapture::query()
             ->orWhere('coopId', 'like', '%'.$this->search.'%')
+            ->orWhere('loan_type', 'like', '%'.$this->search.'%')
             ->orWhere('paymentDate', 'like', '%'.$this->search.'%')
             ->orderByDesc('paymentDate')
             ->paginate($this->paginate);
@@ -85,7 +86,7 @@ class PaymentCapture extends Component
     }
 
     #[On('save-payments')]
-    public function savePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge)
+    public function savePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge, $hajj, $ileya, $school, $kids, $loanType)
     {
         $this->paymentForm->coopId = $id;
         $this->paymentForm->totalAmount = $totalAmount;
@@ -95,6 +96,11 @@ class PaymentCapture extends Component
         $this->paymentForm->shareAmount = $shareAmount;
         $this->paymentForm->others = $others;
         $this->paymentForm->adminCharge = $adminCharge;
+        $this->paymentForm->hajj_savings = $hajj;
+        $this->paymentForm->ileya_savings = $ileya;
+        $this->paymentForm->school_fees_savings = $school;
+        $this->paymentForm->kids_savings = $kids;
+        $this->paymentForm->loan_type = $loanType;
 
 
         $this->paymentForm->validate();
@@ -134,12 +140,17 @@ class PaymentCapture extends Component
         $this->paymentForm->fill([
             'coopId' => $payment->coopId,
             'splitOption' => $payment->splitOption,
-            'loanAmount' => number_format($payment->loanAmount),
-            'savingAmount' => number_format($payment->savingAmount),
-            'totalAmount' => number_format($payment->totalAmount),
+            'loanAmount' => number_format($payment->loanAmount, 2),
+            'savingAmount' => number_format($payment->savingAmount, 2),
+            'totalAmount' => number_format($payment->totalAmount,2),
             'paymentDate' => $payment->paymentDate,
-            'others' => number_format($payment->others),
-            'shareAmount' => number_format($payment->shareAmount),
+            'others' => number_format($payment->others, 2),
+            'shareAmount' => number_format($payment->shareAmount, 2),
+            'hajj_savings' => number_format($payment->hajj_savings, 2),
+            'ileya_savings' => number_format($payment->ileya_savings, 2),
+            'school_fees_savings' => number_format($payment->school_fees_savings, 2),
+            'kids_savings' => number_format($payment->kids_savings, 2),
+            'loan_type' => $payment->loan_type,
             'userId' => $payment->userId,
             'adminCharge' => $payment->adminCharge,
         ]);
@@ -153,7 +164,7 @@ class PaymentCapture extends Component
     }
 
     #[On('update-payments')]
-    public function updatePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge, $prevAmount)
+    public function updatePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge, $prevAmount, $hajj, $ileya, $school, $kids, $loanType)
     {
         $this->paymentForm->coopId = $id;
         $this->paymentForm->totalAmount = $this->paymentForm->convertToPhpNumber($totalAmount);
@@ -163,6 +174,11 @@ class PaymentCapture extends Component
         $this->paymentForm->shareAmount = $this->paymentForm->convertToPhpNumber($shareAmount);
         $this->paymentForm->others = $this->paymentForm->convertToPhpNumber($others);
         $this->paymentForm->adminCharge = $adminCharge;
+        $this->paymentForm->hajj_savings = $this->paymentForm->convertToPhpNumber($hajj);
+        $this->paymentForm->ileya_savings = $this->paymentForm->convertToPhpNumber($ileya);
+        $this->paymentForm->school_fees_savings = $this->paymentForm->convertToPhpNumber($school);
+        $this->paymentForm->kids_savings = $this->paymentForm->convertToPhpNumber($kids);
+        $this->paymentForm->loan_type = $loanType;
 
         $this->validate();
 

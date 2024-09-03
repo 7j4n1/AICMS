@@ -245,7 +245,7 @@
                             <div class="col-md-6">
                                 <div class="form-group d-flex">
                                     <label for="datatable-search" class="form-label me-2">Search:</label>
-                                    <input type="search" id="datatable-search" wire:model.live.debounce.300ms="search" class="form-control w-auto" placeholder="Search By CoopId/Date" aria-controls="datatable-tabletools">
+                                    <input type="search" id="datatable-search" wire:model.live.debounce.300ms="search" class="form-control w-auto" placeholder="Search By CoopId/Date/Type" aria-controls="datatable-tabletools">
                                 </div>
                             </div>
                         </div>
@@ -259,10 +259,14 @@
                                     <th>Coop Id</th>
                                     <th>Total Amount</th>
                                     <th>Savings</th>
+                                    <th>Type</th>
                                     <th>Shares</th>
                                     <th>Loans</th>
                                     <th>Others</th>
-                                    <th>Split</th>
+                                    <th>Hajj</th>
+                                    <th>Ileya</th>
+                                    <th>School</th>
+                                    <th>Kids</th>
                                     <th>Capture Date</th>
                                     @canAny(['can edit', 'can delete'], 'admin')
                                         <th>Actions</th>
@@ -278,10 +282,14 @@
                                         <td>{{ $payment->coopId }}</td>
                                         <td>{{ number_format($payment->totalAmount, 2) }}</td>
                                         <td>{{ number_format($payment->savingAmount, 2) }}</td>
+                                        <td>{{ $payment->loan_type }}</td>
                                         <td>{{ number_format($payment->shareAmount, 2) }}</td>
                                         <td>{{ number_format($payment->loanAmount, 2) }}</td>
                                         <td>{{ number_format($payment->others, 2) }}</td>
-                                        <td>{{ $payment->splitOption }}</td>
+                                        <td>{{ number_format($payment->hajj_savings, 2) }}</td>
+                                        <td>{{ number_format($payment->ileya_savings, 2) }}</td>
+                                        <td>{{ number_format($payment->school_fees_savings, 2) }}</td>
+                                        <td>{{ number_format($payment->kids_savings, 2) }}</td>
                                         <td>{{ $payment->paymentDate }}</td>
                                         @canany(['can edit', 'can delete'], 'admin')
                                             <td class="">
@@ -348,6 +356,10 @@
             let shareAmount = document.getElementById('shareAmount');
             let others = document.getElementById('otherAmount');
             let adminCharge = document.getElementById('adminCharge');
+            let hajj = document.getElementById('hajj_savings');
+            let ileya = document.getElementById('ileya_savings');
+            let school = document.getElementById('school_fees_savings');
+            let kids = document.getElementById('kids_savings');
 
             if (isNaN(Number(totalAmount))) {
                 alert("Total Amount cannot be empty..")
@@ -397,24 +409,36 @@
             let shareAmount = document.getElementById('shareAmount').value.replace(/,/g, '');
             let others = document.getElementById('otherAmount').value.replace(/,/g, '');
             let adminCharge = document.getElementById('adminCharge').value;
+            let hajj = document.getElementById('hajj_savings').value.replace(/,/g, '');
+            let ileya = document.getElementById('ileya_savings').value.replace(/,/g, '');
+            let school = document.getElementById('school_fees_savings').value.replace(/,/g, '');
+            let kids = document.getElementById('kids_savings').value.replace(/,/g, '');
+            let loanType = document.getElementById('loan_type').value;
 
-            if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '') {
+
+            if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '' ||
+                hajj === '' || ileya === '' || school === '' || kids === ''
+            ) {
                 alert("All fields are required..");
                 return;
-            }else if(isNaN(Number(totalAmount)) || isNaN(Number(loanAmount)) || isNaN(Number(savingAmount)) || isNaN(Number(shareAmount)) || isNaN(Number(others)) || isNaN(adminCharge)) {
+            }else if(isNaN(Number(totalAmount)) || isNaN(Number(loanAmount)) || isNaN(Number(savingAmount)) || isNaN(Number(shareAmount)) || isNaN(Number(others)) || isNaN(adminCharge)
+        || isNaN(Number(hajj)) || isNaN(Number(ileya)) || isNaN(Number(school)) || isNaN(Number(kids))) {
                 alert("All fields must be numbers..");
                 return;
             } 
             
-            if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0) {
+            if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0 ||
+                hajj < 0 || ileya < 0 || school < 0 || kids < 0
+            ) {
                 alert("All fields must be greater than zero..");
                 return;
             }
 
-            if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)) !== Number(totalAmount)) {
+            if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)
+            + Number(hajj) + Number(ileya) + Number(school) + Number(kids)) !== Number(totalAmount)) {
                 alert("Your computation cannot be greater than the TOTAL.");
             }else{
-                Livewire.dispatch('save-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge});
+                Livewire.dispatch('save-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge, hajj: hajj, ileya: ileya, school: school, kids: kids, loanType: loanType});
             }
 
             
@@ -477,24 +501,34 @@
             let others = document.getElementById('otherAmount').value.replace(/,/g, '');
             let adminCharge = document.getElementById('adminCharge').value;
             let prevAmount = document.getElementById('prevAmount').value;
+            let hajj = document.getElementById('hajj_savings').value.replace(/,/g, '');
+            let ileya = document.getElementById('ileya_savings').value.replace(/,/g, '');
+            let school = document.getElementById('school_fees_savings').value.replace(/,/g, '');
+            let kids = document.getElementById('kids_savings').value.replace(/,/g, '');
+            let loanType = document.getElementById('loan_type').value;
 
-            if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '') {
+
+            if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '' ||
+            hajj === '' || ileya === '' || school === '' || kids === '') {
                 alert("All fields are required..");
                 return;
-            }else if(isNaN(Number(totalAmount)) || isNaN(Number(loanAmount)) || isNaN(Number(savingAmount)) || isNaN(Number(shareAmount)) || isNaN(Number(others)) || isNaN(adminCharge)) {
+            }else if(isNaN(Number(totalAmount)) || isNaN(Number(loanAmount)) || isNaN(Number(savingAmount)) || isNaN(Number(shareAmount)) || isNaN(Number(others)) || isNaN(adminCharge)
+            || isNaN(Number(hajj)) || isNaN(Number(ileya)) || isNaN(Number(school)) || isNaN(Number(kids))) {
                 alert("All fields must be numbers..");
                 return;
             }  
             
-            if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0) {
+            if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0 ||
+            hajj < 0 || ileya < 0 || school < 0 || kids < 0) {
                 alert("All fields must be >= zero..");
                 return;
             }
 
-            if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)) !== Number(totalAmount)) {
+            if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)
+            + Number(hajj) + Number(ileya) + Number(school) + Number(kids)) !== Number(totalAmount)) {
                 alert("Your computation cannot be greater than the TOTAL.");
             }else{
-                Livewire.dispatch('update-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge, prevAmount: prevAmount});
+                Livewire.dispatch('update-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge, prevAmount: prevAmount, hajj: hajj, ileya: ileya, school: school, kids: kids, loanType: loanType});
             }
 
             
@@ -540,6 +574,12 @@
             let splitOption = document.getElementById('splitOption').value;
             if(Number(splitOption) > 0)
                 calculatePercent();
+        });
+
+        document.getElementById('shareAmount').addEventListener('input', function() {
+            let shareAmount = document.getElementById('shareAmount');
+            shareAmount.value = shareAmount.value.replace(/,/g, '');
+            shareAmount.value = Number(shareAmount.value).toLocaleString('en-US');
         });
 
         // document.getElementById('savingAmount').addEventListener('blur', function() {
