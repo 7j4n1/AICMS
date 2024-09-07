@@ -5,7 +5,7 @@
 		<!-- Basic -->
 		<meta charset="UTF-8">
 
-		<title>{{ $title ?? "Admin Dashboard" }} | Al-Birru</title>
+		<title>{{ $title ?? "Admin Dashboard" }} | Al-Hisab</title>
 
 		<meta name="keywords" content="cooperative, islamic, society, Al-birru" />
 		<meta name="description" content="Al-Birr Islamic Cooperative Multipurpose society">
