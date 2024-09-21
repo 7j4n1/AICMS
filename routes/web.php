@@ -99,6 +99,7 @@ Route::middleware('auth:admin')->group(function () {
 
         Route::post('/import/members', [ImportController::class, 'import'])->name('newImport');
         Route::post('/import/loans', [ImportController::class, 'importLoan'])->name('newImportLoan');
+        Route::post('/import/prev_payments', [ImportController::class, 'importLoanFromCsv'])->name('newImportPrevLoan');
 
         Route::get('/import/getprev_loans', [ImportController::class, 'loadAllLoan'])->name('getPrevLoans');
         Route::post('/import/ledgers/prev_ledger_2023', [HomeController::class, 'setLastLedger'])->name('lastledger2023');

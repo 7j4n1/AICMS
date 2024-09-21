@@ -26,11 +26,11 @@ return new class extends Migration
             $table->string('userId')->nullable();
             $table->date('repaymentDate')->nullable();
 
-            $table->foreign('coopId')->references('coopId')->on('members');
-            $table->foreign('guarantor1')->references('coopId')->on('members');
-            $table->foreign('guarantor2')->references('coopId')->on('members');
-            $table->foreign('guarantor3')->references('coopId')->on('members');
-            $table->foreign('guarantor4')->references('coopId')->on('members');
+            $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
+            $table->foreign('guarantor1')->references('coopId')->on('members')->nullOnDelete();
+            $table->foreign('guarantor2')->references('coopId')->on('members')->nullOnDelete();
+            $table->foreign('guarantor3')->references('coopId')->on('members')->nullOnDelete();
+            $table->foreign('guarantor4')->references('coopId')->on('members')->nullOnDelete();
             
             $table->timestamps();
         });

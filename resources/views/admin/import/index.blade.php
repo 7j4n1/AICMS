@@ -28,20 +28,20 @@
   <button type="submit" class="btn btn-primary">Import Data</button>
 </form>
 
-{{--<h2>Import Loan CSV file for previous year</h2>--}}
-{{--<form method="POST" action="{{ route('newImportLoan') }}" enctype="multipart/form-data">
+<h2>Import Previous Loan CSV file</h2>
+<form method="POST" action="{{ route('newImportPrevLoan') }}" enctype="multipart/form-data">
   @csrf
 
   <div class="form-group">
-    <label for="csvfile">Loan CSV File:</label>
+    <label for="csvfile">Prev Loan CSV File:</label>
     <input type="file" name="csvfile" id="csvfile" class="form-control">
   </div>
 
   <button type="submit" class="btn btn-primary">Import Loans</button>
-</form> --}}
+</form>
 
-<h2>Import 2023 Ledger CSV file</h2>
-<form method="POST" action="{{ route('lastledger2023') }}" enctype="multipart/form-data">
+{{-- <h2>Import 2023 Ledger CSV file</h2> --}}
+{{-- <form method="POST" action="{{ route('lastledger2023') }}" enctype="multipart/form-data">
   @csrf
 
   <div class="form-group">
@@ -50,16 +50,16 @@
   </div>
 
   <button type="submit" class="btn btn-primary">Import Data for 2023</button>
-</form>
+</form> --}}
 
 
-<h2>Load Previous Loans</h2>
+{{-- <h2>Load Previous Loans</h2>
 
 <div class="row mt-4">
   <div class="col-sm-6">
     <a class="btn btn-success" href="{{route('getPrevLoans')}}" target="_blank">Click here to load previous Loans</a>
   </div>
-</div>
+</div> --}}
 
 <x-scriptvendor></x-scriptvendor>
 @endsection

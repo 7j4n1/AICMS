@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('annual_fees', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('coopId');
+            $table->unsignedBigInteger('coopId')->nullable();
             $table->decimal('annual_savings')->default(0.00);
             $table->decimal('annual_fee')->default(0.00);
             $table->decimal('total_savings')->default(0.00);
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('userId')->nullable();
             $table->timestamps();
 
-            $table->foreign('coopId')->references('coopId')->on('members');
+            $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
         });
     }
 

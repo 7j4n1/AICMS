@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('payment_captures', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
-            $table->unsignedBigInteger('coopId');
+            $table->unsignedBigInteger('coopId')->nullable();
             $table->unsignedDouble('splitOption')->default(0.00);
             $table->unsignedDouble('loanAmount')->default(0.00);
             $table->unsignedDouble('savingAmount')->default(0.00);
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('adminCharge')->default(0);
             $table->string('userId')->nullable();
 
-            $table->foreign('coopId')->references('coopId')->on('members');
+            $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
 
             $table->timestamps();
         });

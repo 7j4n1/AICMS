@@ -68,10 +68,11 @@
                         </thead>
                         <tbody>
                             @foreach($this->itemcaptures as $itemcapture)
+                                
                                 <tr wire:key="item-profile-{{ $itemcapture->id }}">
                                     <td>{{ $itemcapture->coopId }}</td>
-                                    <td>{{ $itemcapture->category->name }}</td>
-                                    <td>{{ number_format($itemcapture->category->price, 2) }}</td>
+                                    <td>{{ $itemcapture->category->name ?? ''}}</td>
+                                    <td>{{ number_format($itemcapture->category->price ?? 0, 2) }}</td>
                                     <td>{{ $itemcapture->buyingDate }}</td>
                                     <td>{{ $itemcapture->payment_timeframe }}</td>
                                     <td>{{ $itemcapture->repaymentDate }}</td>
