@@ -63,13 +63,13 @@ class HomeController extends Controller
                   'userId' => auth('admin')->user()->id, // Retrieve admin id
                   'adminCharge' => 0,
                   'totalAmount' => $total,
-                  'paymentDate' => date('Y-m-d', strtotime('2023-12-31')),
+                  'paymentDate' => date('Y-m-d', strtotime($row[7])),
                   ];
                   
                   // update the member activeloans balance with the new loan amount
                   $activeLoan = ActiveLoans::where('coopId', $coop)->first();
                   if($activeLoan) {
-                    $paymentDate = date('Y-m-d', strtotime('2023-12-31'));
+                    $paymentDate = date('Y-m-d', strtotime($row[7]));
                     if($activeLoan->loanAmount >= $loan){
                       // $activeLoan->loanPaid = (float)$activeLoan->loanAmount - (float)$loan;
                       // $activeLoan->loanBalance = (float)$loan;
@@ -92,13 +92,13 @@ class HomeController extends Controller
               // PreviousLedger2023::insert($dataArray);
               ModelsPaymentCapture::insert($dataArray);
 
-              return redirect()->route('importMembers')->with('success', '2023 Ledger CSV data imported successfully!');
+              return redirect()->route('importMembers')->with('success', 'Ledger CSV data imported successfully!');
             } else {
-              return redirect()->route('importMembers')->with('error', 'No data found in the 2023_ledger CSV file.');
+              return redirect()->route('importMembers')->with('error', 'No data found in the ledger CSV file.');
             }
         }
       
-        return redirect()->route('importMembers')->with(['error' => 'No ledger_2023 csv file selected...']); // View for uploading the CSV file
+        return redirect()->route('importMembers')->with(['error' => 'No ledger csv file selected...']); // View for uploading the CSV file
     }
 
     public function setPaymentDate()
