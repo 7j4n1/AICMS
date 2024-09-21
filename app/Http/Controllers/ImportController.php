@@ -31,6 +31,8 @@ class ImportController extends Controller
             // Skip header row (optional)
             if ($csv->fgets()) { // Read and discard the first line (assuming header)
             }
+
+            $updateFlag = 0;
       
             $dataArray = [];
             while (!$csv->eof()) {
@@ -40,9 +42,7 @@ class ImportController extends Controller
                 $uniqueId = $row[0]; // Replace with your actual unique field index
       
                 // Check if record already exists
-                $existingRecord = DB::table('members')
-                  ->where('coopId', $uniqueId)
-                  ->first();
+                $existingRecord = Member::where('coopId', $uniqueId)->first();
       
                 if (!$existingRecord) {
                   // Insert new record
@@ -68,12 +68,35 @@ class ImportController extends Controller
                         'userId' => auth('admin')->user()->id, // Retrieve admin id
                         ];
                     }
+                }else {
+                  // Update existing record
+                  $year = null;
+                  if (!empty($row[11])) {
+                      $year = $row[11];
+                  }
+
+                  $existingRecord->update([
+                    'surname' => $row[1],
+                        'otherNames' => $row[2],
+                        'occupation' => $row[3],
+                        'gender' => $row[4],
+                        'religion' => $row[5],
+                        'phoneNumber' => $row[6],
+                        'accountNumber' => $row[7],
+                        'bankName' => $row[8],
+                        'nextOfKinName' => $row[9],
+                        'nextOfKinPhoneNumber' => $row[10],
+                        'yearJoined' => $year,
+                        'userId' => auth('admin')->user()->id, // Retrieve admin id
+                  ]);
+                  // increase the update flag
+                  $updateFlag++;
                 }
               }
             }
       
             // Insert new records (if any)
-            if (!empty($dataArray)) {
+            if (!empty($dataArray) || $updateFlag > 0) {
               Member::insert($dataArray);
               return redirect()->route('importMembers')->with('success', 'CSV data imported successfully!');
             } else {
