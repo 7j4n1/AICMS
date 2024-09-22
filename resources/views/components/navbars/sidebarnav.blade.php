@@ -159,6 +159,12 @@
                             
                         </ul>
                     </li>
+                    <li>
+                        <a class="nav-link" href="{{route('backup.index')}}">
+                        <i class='bx bx-data' aria-hidden="true"></i>
+                            <span>Backup</span>
+                        </a>                        
+                    </li>
                     @endcanany
                 </ul>
             </nav>

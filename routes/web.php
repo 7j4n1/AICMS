@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ItemCaptureController;
@@ -132,6 +133,14 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/export/payments', [PaymentController::class, 'export'])->name('exportLedgers');
 
         Route::get('/generatelogins', [MemberController::class, 'generateLoginDetails'])->name('generateLogins');
+    });
+
+
+    Route::group(['prefix' => 'admin/backup'], function () {
+        Route::get('/', [DatabaseController::class, 'index'])->name('backup.index');
+        Route::get('/new', [DatabaseController::class, 'backup'])->name('backup.new');
+        Route::get('/download/{file}', [DatabaseController::class, 'download'])->name('backup.download');
+        Route::get('/clear/{file}', [DatabaseController::class, 'delete'])->name('backup.delete');
     });
 
     Route::group(['prefix' => 'admin/business'], function () {
