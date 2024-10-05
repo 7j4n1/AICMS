@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\HomeController;
@@ -191,6 +192,8 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/export/itemcaps', [ItemCaptureController::class, 'export'])->name('itemcap_export');
         Route::get('/export/itemrepays', [ItemRepayController::class, 'export'])->name('repaycap_export');
 
+        Route::get('/previous/import', [BusinessController::class, 'index'])->name('prev_repay_import');
+        Route::post('/previous/upload', [BusinessController::class, 'importBusinessLoanFromCsv'])->name('prev_repay_upload');
     });
     
 });

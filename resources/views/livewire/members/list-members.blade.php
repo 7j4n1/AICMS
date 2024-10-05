@@ -161,11 +161,22 @@
                         </div>
                     </div>
 
-
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Search Members..." wire:model.live="search">
+                        </div>
+                        {{--<div class="col-md-3 text-right">
+                            <select wire:model="paginate" class="form-control">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>--}}
+                    </div>
 
                     {{-- Members Table --}}
-                    <!-- <div class="table-responsive"> -->
-                        <table class="table table-bordered table-responsive table-striped mb-0" id="datatable-tabletools">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-responsive table-striped mb-0" >
 
                             <thead>
                                 <tr>
@@ -182,7 +193,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($members as $mem)
+                               @foreach($members as $mem)
                                     <tr wire:key="item-profile-{{ $mem->id }}">
 
                                         <td>{{ $mem->coopId }}</td>
@@ -209,10 +220,10 @@
                             </tbody>
                         </table>
                         
-                    <!-- </div> -->
+                    </div>
                     <div class="row mt-4">
                         <div class="col-sm-12">
-                        {{-- $members->links() --}}
+                        {{ $members->links() }}
                         </div>
                     </div>
                 </div>
@@ -226,8 +237,8 @@
                     <h2 class="card-title">Other Details</h2>
                 </header>
                 <div class="card-body">
-                    <!-- <div  class="table-responsive"> -->
-                        <table class="table table-bordered table-responsive table-striped mb-0" id="datatable-tabletools2">
+                    <div  class="table-responsive">
+                        <table class="table table-bordered table-responsive table-striped mb-0" >
 
                             <thead>
                                 <tr>
@@ -254,12 +265,12 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    <!-- </div> -->
-                    <div class="row mt-4">
-                        <div class="col-sm-12 ">
-                            {{-- $members->links() --}}
-                        </div>
                     </div>
+                    {{--<div class="row mt-4">
+                        <div class="col-sm-12 ">
+                            $members->links()
+                        </div>
+                    </div>--}}
                 </div>
             </section>
         </div>

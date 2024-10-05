@@ -67,6 +67,11 @@
                                     Export records
                                 </a>
                             </li>
+                            <li>
+                                <a class="nav-link" href="{{route('prev_repay_import')}}">
+                                    Previous records
+                                </a>
+                            </li>
                             
                         </ul>
                     </li>

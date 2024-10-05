@@ -31,18 +31,13 @@ class ListMembers extends Component
   
     public function render()
     {
-        // $this->members = Member::query()
-        //     ->orderBy('coopId', 'asc')
-        //     ->paginate($this->paginate);
-
         $this->members = Member::query()
-            ->orderBy('coopId', 'asc')
-            ->get();
-
-        // if($this->editingMemberId == null)
-        //     $this->memberForm->coopId = Member::max('coopId') + 1;
-
-        // $this->sendDispatchEvent();
+        ->when($this->search, function ($query) {
+            $query->where('surname', 'like', "%{$this->search}%")
+                  ->orWhere('otherNames', 'like', "%{$this->search}%")
+                  ->orWhere('coopId', 'like', "%{$this->search}%");
+        })->orderBy('coopId', 'asc')
+        ->paginate($this->paginate);
 
         return view('livewire.members.list-members', [
             'members' => $this->members,
@@ -87,6 +82,14 @@ class ListMembers extends Component
 
         $saved = $this->memberForm->save();
 
+        if(!$saved)
+        {
+            session()->flash('error','Member details not saved.');
+            $this->isModalOpen = true;
+            return;
+        }
+
+        
         session()->flash('success','Member details added successfully');
         $this->memberForm->resetForm();
         $this->isModalOpen = false;
