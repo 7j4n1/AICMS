@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Accounts;
 
+use App\Models\Member;
 use Livewire\Component;
 use App\Models\ActiveLoans;
 use Livewire\Attributes\On;
@@ -22,44 +23,14 @@ class PaymentCapture extends Component
 
     public $prev_amount = 0;
 
-    public $paginate = 25;
+    public $paginate = 10;
     public $search = '';
+
 
     
     public function render()
     {
-        // if($this->paymentForm->splitOption >= 0 && $this->paymentForm->totalAmount > 0) {
-        //     // subtract the loan amount from the total amount to get the saving amount and shares amount
-        //     $remainBal = $this->paymentForm->totalAmount - $this->paymentForm->loanAmount;
-        //     // calculate the percentage of the share amount and saving amount based on the splitOption which is a percentage
-        //     $this->paymentForm->shareAmount = ($this->paymentForm->splitOption / 100) * $remainBal;
-        //     $this->paymentForm->savingAmount = $remainBal - $this->paymentForm->shareAmount;
-            
-        // }
         
-            
-            // $total = $this->paymentForm->totalAmount;
-            // if($total > 0){
-            //     $loan = $this->paymentForm->loanAmount;
-            //     $split = $this->paymentForm->splitOption;
-            //     $charge = $this->paymentForm->adminCharge;
-                
-            //     // $saving = $total - $loan;
-            //     // $share = $total - $saving;
-            //     if ($split > 0) {
-            //         $remainBalance = $total - $loan;
-            //         if($charge > 0)
-            //             $remainBalance = $remainBalance - $charge;
-            //         if($this->paymentForm->others > 0)
-            //             $remainBalance = $remainBalance - $this->paymentForm->others;
-            //         $share = ($split / 100) * $remainBalance;
-            //         $saving = $remainBalance - $share;
-                    
-            //         $this->paymentForm->savingAmount = $saving;
-            //         $this->paymentForm->shareAmount = $share;
-            //     }
-                
-            // }
         $activeLoan = ActiveLoans::where('coopId', $this->paymentForm->coopId)->first();
             
 
@@ -71,15 +42,24 @@ class PaymentCapture extends Component
 
         return view('livewire.accounts.payment-capture',[
             'payments' => $this->payments
-        ])->with(['session' => session(), 'activeLoan' => $activeLoan]);
+        ])->with(['session' => session(), 'activeLoan' => $activeLoan,
+            'fullname' => $this->getMemberInfo()]);
     }
 
-    public function mount()
+    public function mount() : void
     {
         $this->paymentForm = new PaymentForm($this, 'paymentForm');        
     }
 
-    public function resetForm()
+    public function getMemberInfo(): string
+    {
+        $member = Member::where('coopId', $this->paymentForm->coopId)->first();
+
+        // if member is found return the member full name else return empty string
+        return $member ? $member->surname.' '.$member->otherNames : 'User not found';
+    }
+
+    public function resetForm(): void
     {
         $this->paymentForm->resetForm();
     }

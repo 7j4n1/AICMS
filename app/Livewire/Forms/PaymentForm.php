@@ -11,18 +11,7 @@ use Livewire\Attributes\Validate;
 
 class PaymentForm extends Form
 {
-    // protected $rules = [
-    //     'coopId' => 'required|numeric|min:1|exists:members,coopId',
-    //     'splitOption' => 'required|numeric|min:0',
-    //     'loanAmount' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
-    //     'savingAmount' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
-    //     'totalAmount' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
-    //     'paymentDate' => 'required|date',
-    //     'others' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
-    //     'shareAmount' => ['required', 'regex:/^(?<!\d)(?:(?:\d{1,3}(?:,\d{3})*)|\d+)(?:\.\d{2})?$/'],
-    //     'adminCharge' => 'numeric|min:0',
-    // ];
-
+   
     public $id;
     #[Validate('required|numeric|min:1|exists:members,coopId')]
     public $coopId;
@@ -47,7 +36,7 @@ class PaymentForm extends Form
     public $shareAmount = 0;
     #[Validate('numeric|min:0')]
     public $adminCharge = 0;
-
+    public $otherSavingsType = '';
 
     // rules
 
@@ -93,6 +82,20 @@ class PaymentForm extends Form
                     }
                 }
 
+                if($this->convertToPhpNumber($this->totalAmount) < 100){
+                    $validator->errors()->add('totalAmount', 'The total amount must be greater than 100.');
+                }
+
+                // all the sum of the amount fields must not be greater than the total amount
+                $savingAmount = $this->convertToPhpNumber($this->savingAmount);
+                $loanAmount = $this->convertToPhpNumber($this->loanAmount);
+                $others = $this->convertToPhpNumber($this->others);
+                $shareAmount = $this->convertToPhpNumber($this->shareAmount);
+                $adminCharge = $this->convertToPhpNumber($this->adminCharge);
+
+                if(($loanAmount + $savingAmount + $others + $shareAmount + $adminCharge) > $this->convertToPhpNumber($this->totalAmount)){
+                    $validator->errors()->add('totalAmount', 'The sum of the amount fields must not be greater than the total amount.');
+                }
     //             if(($this->loanAmount + $this->savingAmount + $this->others + $this->shareAmount + $this->adminCharge) != $this->totalAmount){
     //                 $validator->errors()->add('totalAmount', 'Your computation cannot be greater than the TOTAL.');
     //             }
@@ -116,6 +119,7 @@ class PaymentForm extends Form
             'shareAmount' => $this->convertToPhpNumber($this->shareAmount),
             'userId' => auth('admin')->user()->id,
             'adminCharge' => $this->adminCharge,
+            'otherSavingsType' => $this->otherSavingsType,
         ]);
 
         if(!$payment){
@@ -151,6 +155,7 @@ class PaymentForm extends Form
         $this->others = 0;
         $this->shareAmount = 0;
         $this->adminCharge = 0;
+        $this->otherSavingsType = '';
         $this->resetErrorBag();
     }
 

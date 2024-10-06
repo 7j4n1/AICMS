@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedDouble('totalAmount')->default(0.00);
             $table->date('paymentDate')->nullable();
             $table->unsignedDouble('others')->default(0.00);
+            $table->string('otherSavingsType')->nullable();
             $table->unsignedDouble('shareAmount')->default(0.00);
             $table->unsignedBigInteger('adminCharge')->default(0);
             $table->string('userId')->nullable();

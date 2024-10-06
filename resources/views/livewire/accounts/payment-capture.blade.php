@@ -107,11 +107,28 @@
                                     <form wire:submit="{{ $editingPaymentId ? 'updatePayment' : 'savePayment' }}" class="row g-3">
 
                                         {{-- CoopId --}}
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <label for="title">Coop ID <span class="text-danger">*</span></label>
                                             <input type="text" id="coopId" class="form-control" placeholder="Coop ID" wire:model.live="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
                                             @error('paymentForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <label for="title">Full Name:</label>
+                                            <input type="text" id="fullname" class="form-control" placeholder="Full Name" value="{{$fullname}}" readonly />
+                                        </div>
+                                        @if($activeLoan)
+                                        <!-- Loan Status & Balance -->
+                                        <div class="col-md-6">
+                                            <label for="title">Loan Balance: </label>
+                                            <input type="text" id="loanBalance" class="form-control" placeholder="Full Name" value="&#8358; {{ ($activeLoan ? number_format($activeLoan->loanBalance, 2) : number_format(0, 2)) }}" readonly />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="title">Loan Status:</label>
+                                            <input type="text" id="loanStatus" class="form-control" placeholder="Full Name" value="{{ ($activeLoan ? 'On Loan' : '-')}}" readonly />
+                                        </div>
+                                        @endif
 
                                         <div class="col-md-6">
                                             <label for="splitOption" class="form-label">Split Option</label>
@@ -128,7 +145,7 @@
                                             {{-- Amount --}}
                                         <div class="col-md-6">
                                             <label for="totalAmount">Total Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="totalAmount" class="form-control" placeholder="Total Amount" wire:model.live="paymentForm.totalAmount" />
+                                            <input type="text" id="totalAmount" class="form-control" placeholder="Total Amount" wire:model.blur="paymentForm.totalAmount" />
                                             @error('paymentForm.totalAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
@@ -152,6 +169,20 @@
                                             <label for="shareAmount">Shares Amount <span class="text-danger">*</span></label>
                                             <input type="text" id="shareAmount" class="form-control" placeholder="Shares Amount" wire:model.live="paymentForm.shareAmount"  />
                                             @error('paymentForm.shareAmount') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <!-- Other Savings Type Dropdown -->
+                                            <div class="form-group">
+                                                <label for="otherSavingsType">Other Savings Type</label>
+                                                <select id="otherSavingsType" class="form-control" wire:model="paymentForm.otherSavingsType">
+                                                    <option value="">Select Savings Type</option>
+                                                    <option value="special">Special savings</option>
+                                                    <option value="hajj">Hajj</option>
+                                                    <option value="ileya">Ileya</option>
+                                                    <!-- Add more options as needed -->
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-6">
@@ -302,55 +333,6 @@
             }
         }
 
-        function loanChange()
-        {
-            let totalAmount = document.getElementById('totalAmount').value.replace(/,/g, '');
-            let loanAmount = document.getElementById('loanAmount');
-            let splitOption = document.getElementById('splitOption').value;
-            let savingAmount = document.getElementById('savingAmount');
-            let shareAmount = document.getElementById('shareAmount');
-            let others = document.getElementById('otherAmount');
-            let adminCharge = document.getElementById('adminCharge');
-
-            if (isNaN(Number(totalAmount))) {
-                alert("Total Amount cannot be empty..")
-            }
-            else {
-                let total = parseFloat(totalAmount);
-                let split = parseFloat(splitOption);
-                let loan = parseFloat(loanAmount.value);
-                let admin = 0;
-                let other_amount = 0;
-                let amount_value = others.value.replace(/,/g, '');
-
-                if(Number(amount_value) > 0) {
-                    other_amount = parseFloat(amount_value);
-                }
-
-                if (total >= 10000) {
-                    admin = 50;
-                    adminCharge.value = admin;
-
-                    total -= admin;
-                    total -= other_amount;
-
-                    savingAmount.value = Number((total - loan) * (100 - split) / 100).toLocaleString('en-US');
-                    shareAmount.value = Number((total - loan) * split / 100).toLocaleString('en-US');
-                    // others.value = 0;
-                }else {
-                    admin = 0;
-                    adminCharge.value = admin;
-
-                    total -= other_amount;
-
-                    savingAmount.value = Number((total - loan) * (100 - split) / 100).toLocaleString('en-US');
-                    shareAmount.value = Number((total - loan) * split / 100).toLocaleString('en-US');
-                    // others.value = 0;
-                }
-
-            }
-        }
-
         function sendDataAfterValidation() {
             let coopId = document.getElementById('coopId').value;
             let totalAmount = document.getElementById('totalAmount').value.replace(/,/g, '');
@@ -384,50 +366,88 @@
         }
 
         function calculatePercent() {
-            let totalAmount = document.getElementById('totalAmount').value.replace(/,/g, '');
-            let loanAmount = document.getElementById('loanAmount');
-            let splitOption = document.getElementById('splitOption').value;
-            let savingAmount = document.getElementById('savingAmount');
-            let shareAmount = document.getElementById('shareAmount');
-            let others = document.getElementById('otherAmount');
-            let adminCharge = document.getElementById('adminCharge');
+            let totalAmount = parseFloat(document.getElementById('totalAmount').value.replace(/,/g, ''));
+            let loanAmount = parseFloat(document.getElementById('loanAmount').value.replace(/,/g, ''));
+            let splitOption = parseFloat(document.getElementById('splitOption').value);
+            let others = parseFloat(document.getElementById('otherAmount').value.replace(/,/g, ''));
+            let adminCharge = 0;
 
             // convert total amount to number
-            if (isNaN(Number(totalAmount))) {
-                alert("Total Amount cannot be empty..")
+            if (isNaN(totalAmount)) {
+                alert("Total Amount cannot be empty..");
+                return;
             }
-            else {
-                let total = parseFloat(totalAmount);
-                let split = parseFloat(splitOption);
-                let admin = 0;
-                let other_amount = 0;
-                let amount_value = others.value.replace(/,/g, '');
 
-                if(Number(amount_value) > 0) {
-                    other_amount = parseFloat(amount_value);
-                }
-
-                if (total >= 10000) {
-                    admin = 50;
-                    adminCharge.value = admin;
-
-                    savingAmount.value = Number(((total - admin) - other_amount) * (100 - split) / 100).toLocaleString('en-US');
-                    shareAmount.value = Number(((total - admin) - other_amount) * split / 100).toLocaleString('en-US');
-                    loanAmount.value = 0;
-                    others.value = Number(other_amount).toLocaleString('en-US');
-                }else {
-                    admin = 0;
-                    adminCharge.value = admin;
-
-                    savingAmount.value = Number((total - other_amount) * (100 - split) / 100).toLocaleString('en-US');
-                    shareAmount.value = Number((total - other_amount) * split / 100).toLocaleString('en-US');;
-                    loanAmount.value = 0;
-                    others.value = Number(other_amount).toLocaleString('en-US');
-                }
-
-
+            // Admin charge computation logic
+            if (totalAmount >= 10000) {
+                adminCharge = 50;
             }
+
+            // calculate the remaining total after charges
+            let remainingTotal = totalAmount - adminCharge - others;
+
+            // calculate the savings and shares based on the split option
+            let savingAmount = (remainingTotal - loanAmount) * (100 - splitOption) / 100;
+            let shareAmount = (remainingTotal - loanAmount) * splitOption / 100;
+
+            // Update input fields with the computed values
+            document.getElementById('adminCharge').value = adminCharge;
+            document.getElementById('savingAmount').value = savingAmount.toLocaleString('en-US');
+            document.getElementById('shareAmount').value = shareAmount.toLocaleString('en-US');
         
+        }
+
+        // When saving amount is changed, calculate the share and savings amount
+        function recalculateFromSavings()
+        {
+            let totalAmount = parseFloat(document.getElementById('totalAmount').value.replace(/,/g, ''));
+            let loanAmount = parseFloat(document.getElementById('loanAmount').value.replace(/,/g, ''));
+            let savingAmount = parseFloat(document.getElementById('savingAmount').value.replace(/,/g, ''));
+            let shareAmount = parseFloat(document.getElementById('shareAmount').value.replace(/,/g, ''));
+            let others = parseFloat(document.getElementById('otherAmount').value.replace(/,/g, ''));
+            let adminCharge = parseFloat(document.getElementById('adminCharge').value);
+
+            // convert total amount to number
+            if (isNaN(totalAmount)) {
+                alert("Total Amount cannot be empty..");
+                return;
+            }
+
+            // calculate the remaining total after charges
+            let remainingTotal = totalAmount - adminCharge - loanAmount - others;
+
+            // calculate the savings and shares based on the split option
+            let newShareAmount = remainingTotal - savingAmount;
+
+            // Update input fields with the computed values
+            document.getElementById('shareAmount').value = newShareAmount.toLocaleString('en-US');
+            document.getElementById('otherAmount').value = others.toLocaleString('en-US');
+        }
+
+        // When share amount is changed, calculate the savings and loan amount
+        function recalculateFromShares()
+        {
+            let totalAmount = parseFloat(document.getElementById('totalAmount').value.replace(/,/g, ''));
+            let loanAmount = parseFloat(document.getElementById('loanAmount').value.replace(/,/g, ''));
+            let shareAmount = parseFloat(document.getElementById('shareAmount').value.replace(/,/g, ''));
+            let others = parseFloat(document.getElementById('otherAmount').value.replace(/,/g, ''));
+            let adminCharge = parseFloat(document.getElementById('adminCharge').value);
+
+            // convert total amount to number
+            if (isNaN(totalAmount)) {
+                alert("Total Amount cannot be empty..");
+                return;
+            }
+
+            // calculate the remaining total after charges
+            let remainingTotal = totalAmount - adminCharge - loanAmount - others;
+
+            // calculate the savings and shares
+            let newSavingAmount = remainingTotal - shareAmount;
+
+            // Update input fields with the computed values
+            document.getElementById('savingAmount').value = newSavingAmount.toLocaleString('en-US');
+            document.getElementById('otherAmount').value = others.toLocaleString('en-US');
         }
 
         function UpdateDataAfterValidation() {
@@ -464,71 +484,23 @@
         }
 
 
-        // subtract the loan amount from the total amount to get the saving amount and shares amount based on the split option changes
-        // and each value changes events
-        document.getElementById('splitOption').addEventListener('change', function() {
-            calculatePercent();
-        });
+        // Event listener for the split option
+        document.getElementById('splitOption').addEventListener('change', calculatePercent);
 
         // Add an input event on totalAmount id
-        document.getElementById('totalAmount').addEventListener('input', function() {
-            let total = document.getElementById('totalAmount');
-            total.value = total.value.replace(/,/g, '');
-            total.value = Number(total.value).toLocaleString('en-US');
-            calculatePercent();
-        });
+        document.getElementById('totalAmount').addEventListener('input', calculatePercent);
+        // Add an input event on loanAmount id
+        document.getElementById('loanAmount').addEventListener('input', calculatePercent);
+        // Add an input event on savingAmount id
+        document.getElementById('otherAmount').addEventListener('input', calculatePercent);
 
-        document.getElementById('loanAmount').addEventListener('input', function() {
-            let total = document.getElementById('loanAmount');
-            total.value = total.value.replace(/,/g, '');
-            total.value = Number(total.value).toLocaleString('en-US');
-            loanChange();
-        });
-
-        document.getElementById('savingAmount').addEventListener('input', function() {
-            let savingAmount = document.getElementById('savingAmount');
-            savingAmount.value = savingAmount.value.replace(/,/g, '');
-            savingAmount.value = Number(savingAmount.value).toLocaleString('en-US');
-        });
-        document.getElementById('shareAmount').addEventListener('input', function() {
-            let shareAmount = document.getElementById('shareAmount');
-            shareAmount.value = shareAmount.value.replace(/,/g, '');
-            shareAmount.value = Number(shareAmount.value).toLocaleString('en-US');
-        });
-        document.getElementById('otherAmount').addEventListener('input', function() {
-            let otherAmount = document.getElementById('otherAmount');
-            otherAmount.value = otherAmount.value.replace(/,/g, '');
-            otherAmount.value = Number(otherAmount.value).toLocaleString('en-US');
-
-            let splitOption = document.getElementById('splitOption').value;
-            if(Number(splitOption) > 0)
-                calculatePercent();
-        });
-
-        // document.getElementById('savingAmount').addEventListener('blur', function() {
-        //     let savingAmount = document.getElementById('savingAmount');
-        //     savingAmount.value = Number(savingAmount.value).toLocaleString('en-US');
-        // });
-        // document.getElementById('shareAmount').addEventListener('blur', function() {
-        //     let shareAmount = document.getElementById('shareAmount');
-        //     shareAmount.value = Number(shareAmount.value).toLocaleString('en-US');
-        // });
-        // document.getElementById('otherAmount').addEventListener('blur', function() {
-        //     let otherAmount = document.getElementById('otherAmount');
-        //     otherAmount.value = Number(otherAmount.value).toLocaleString('en-US');
-        // });
-
-        // // add event listener to the total amount on loss of focus
-        // document.getElementById('totalAmount').addEventListener('blur', function() {
-        //     let total = document.getElementById('totalAmount');
-        //     total.value = Number(total.value).toLocaleString('en-US');
-        // });
-
-        // document.getElementById('loanAmount').addEventListener('blur', function() {
-        //     let total = document.getElementById('loanAmount');
-        //     total.value = Number(total.value).toLocaleString('en-US');
-        // });
-
+        
+        // Event listener for user manipulations of the savings and shares
+        // Add an input event on savingAmount id
+        document.getElementById('savingAmount').addEventListener('input', recalculateFromSavings);
+        // Add an input event on shareAmount id
+        document.getElementById('shareAmount').addEventListener('input', recalculateFromShares);
+        
 
     </script>
     
