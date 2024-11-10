@@ -61,8 +61,8 @@
                                             <!-- <input type="text"  class="form-control" placeholder="Coop ID" wire:model.live="loanForm.coopId" {{ $editingLoanId ? 'disabled' : '' }}/> -->
                                             <select class="form-select" wire:model.live="loanForm.coopId" {{ $editingLoanId ? 'disabled' : '' }}>
                                                 <option value=""></option>
-                                                @foreach($memberIds as $memberId)
-                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @foreach($this->getMembersId as $memberId)
+                                                    <option value="{{ $memberId }}">{{ $memberId }}</option>
                                                 @endforeach
                                             </select>
                                             @error('loanForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
@@ -88,8 +88,8 @@
                                             
                                             <select class="form-select" wire:model.live="loanForm.guarantor1">
                                                 <option value=""></option>
-                                                @foreach($memberIds as $memberId)
-                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @foreach($this->getMembersId as $memberId)
+                                                    <option value="{{ $memberId }}">{{ $memberId }}</option>
                                                 @endforeach
                                             </select>
                                             @error('loanForm.guarantor1') <span class="text-danger">{{ $message }}</span> @enderror
@@ -100,8 +100,8 @@
                                             <label for="guarantor2" class="form-label">Guarantor 2 </label>
                                             <select class="form-select" wire:model="loanForm.guarantor2">
                                                 <option value=""></option>
-                                                @foreach($memberIds as $memberId)
-                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @foreach($this->getMembersId as $memberId)
+                                                    <option value="{{ $memberId }}">{{ $memberId }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -111,8 +111,8 @@
                                             <label for="guarantor3" class="form-label">Guarantor 3 </label>
                                             <select class="form-select" wire:model="loanForm.guarantor3">
                                                 <option value=""></option>
-                                                @foreach($memberIds as $memberId)
-                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @foreach($this->getMembersId as $memberId)
+                                                    <option value="{{ $memberId }}">{{ $memberId }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -122,8 +122,8 @@
                                             <label for="guarantor4" class="form-label">Guarantor 4 </label>
                                             <select class="form-select" wire:model="loanForm.guarantor4">
                                                 <option value=""></option>
-                                                @foreach($memberIds as $memberId)
-                                                    <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                                                @foreach($this->getMembersId as $memberId)
+                                                    <option value="{{ $memberId }}">{{ $memberId }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -138,7 +138,7 @@
 
                                         <div class="text-end">
 
-                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingLoanId ? 'Update' : 'Add' }} Member</button>
+                                            <button type="submit" class="btn btn-success transition duration-300">{{ $editingLoanId ? 'Update' : 'Add' }} Loan</button>
                                         </div>
 
 
@@ -189,6 +189,8 @@
                                     <th>Guarantor3</th>
                                     <th>Guarantor4</th>
                                     <th>Status</th>
+                                    <th>Edit Dates</th>
+                                    <th>Edited By</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -207,6 +209,8 @@
                                         <td>{{ $loan->guarantor3 }}</td>
                                         <td>{{ $loan->guarantor4 }}</td>
                                         <td>{{ $loan->status }}</td>
+                                        <td>{{ json_encode($loan->editDates) }}</td>
+                                        <td>{{ json_encode($loan->editedBy) }}</td>
                                         <td class="">
                                             @if($loan->status == 1)
                                                 <button onclick="sendCompleteEvent('{{$loan->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Complete</button>

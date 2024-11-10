@@ -2,14 +2,15 @@
 
 namespace App\Livewire\Accounts;
 
+use App\Models\Member;
 use Livewire\Component;
+use App\Models\ActiveLoans;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Livewire\Forms\LoanForm;
-use App\Models\ActiveLoans;
+use Illuminate\Support\Facades\DB;
 use App\Models\LoanCapture as ModelsLoanCapture;
-use App\Models\Member;
-use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Computed;
 
 class LoanCapture extends Component
 {
@@ -33,13 +34,15 @@ class LoanCapture extends Component
             ->orderBy('coopId', 'asc')
             ->paginate($this->paginate);
 
-        $memberIds = Cache::store('file')->remember('memberIds', now()->addMinutes(5), function () {
-            return Member::query()
-            ->orderBy('coopId', 'asc')
-            ->get(['coopId']);
-        });
+        return view('livewire.accounts.loan-capture')->with(['session' => session(),
+            'loans' => $this->loans]);
+    }
 
-        return view('livewire.accounts.loan-capture')->with(['session' => session(),'loans' => $this->loans, 'memberIds' => $memberIds]);
+    #[Computed(false, 3600, true)]
+    public function getMembersId()
+    {
+        return Member::query()->orderBy('coopId')->pluck('coopId')->toArray();
+
     }
 
     public function mount()
@@ -98,45 +101,81 @@ class LoanCapture extends Component
 
     public function updateLoan()
     {
+        // start transaction
+        DB::beginTransaction();
 
-        if(!$this->getErrorBag()->isEmpty())
-        {
-            $this->isModalOpen = true;
-            return;
+        try{
+
+            if(!$this->getErrorBag()->isEmpty())
+            {
+                $this->isModalOpen = true;
+                return;
+            }
+
+            $loan = ModelsLoanCapture::find($this->editingLoanId);
+
+            
+
+            $this->loanForm->loanAmount = $this->loanForm->convertToPhpNumber($this->loanForm->loanAmount); 
+            // get the previous loan amount
+            $prev_amount = $loan->loanAmount;
+            $loan->update($this->loanForm->toArray());
+            // updat the repayment date
+            $loan->repaymentDate = date('Y-m-d', strtotime($loan->loanDate. ' + 540 days'));
+            // update the edit dates
+            $loan->updateEditDates($prev_amount);
+            // update the active loan amount
+            $loan->updateActiveLoanAmount();
+            // save the changes
+            $loan->save();
+
+            // Commit the transaction
+            DB::commit();
+
+            $this->editingLoanId = null;
+
+            session()->flash('message','Loan details updated successfully');
+
+            $this->loanForm->resetForm();
+
+            $this->isModalOpen = false;
+
+            $this->sendDispatchEvent();
+
+        } catch(\Exception $e){
+            // Rollback the transaction if anything goes wrong
+            DB::rollBack();
+
+            session()->flash('error','Error updating loan details.');
         }
-
-        $loan = ModelsLoanCapture::find($this->editingLoanId);
-
-        $this->loanForm->loanAmount = $this->loanForm->convertToPhpNumber($this->loanForm->loanAmount); 
-        $loan->update($this->loanForm->toArray());
-        // update the edit dates
-        $loan->updateEditDates();
-        // save the changes
-        $loan->save();
-
-        $this->editingLoanId = null;
-
-        session()->flash('message','Loan details updated successfully');
-
-        $this->loanForm->resetForm();
-
-        $this->isModalOpen = false;
-
-        $this->sendDispatchEvent();
     }
 
     #[On('delete-loans')]
     public function deleteOldLoan($id) {
-        $loan = ModelsLoanCapture::find($id);
-        ActiveLoans::where('coopId', $loan->coopId)->first()->delete();
+        // start transaction
+        DB::beginTransaction();
 
-        $loan->delete();
+        try{
+            $loan = ModelsLoanCapture::find($id);
+            ActiveLoans::where('coopId', $loan->coopId)->first()->delete();
 
-        session()->flash('message','Loan details deleted successfully.');
+            $loan->delete();
 
-        // Cache::store('file')->forget('loans');
+            // Commit the transaction
+            DB::commit();
 
-        $this->sendDispatchEvent();
+            session()->flash('message','Loan details deleted successfully.');
+
+            // Cache::store('file')->forget('loans');
+
+            $this->sendDispatchEvent();
+        } catch(\Exception $e){
+            // Rollback the transaction if anything goes wrong
+            DB::rollBack();
+
+            session()->flash('error','Error deleting loan details.');
+        }
+
     }
 
     #[On('complete-loans')]

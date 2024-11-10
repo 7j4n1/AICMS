@@ -37,7 +37,7 @@ class LoanCapture extends Model
         'editedBy' => 'array'
     ];
 
-    public function updateEditDates()
+    public function updateEditDates($prev_amount=null)
     {
         // get the current edit dates or initialize an empty array
         $dates = $this->editDates ?? [];
@@ -52,7 +52,7 @@ class LoanCapture extends Model
         $amounts = $this->editAmounts ?? [];
 
         // add the current loan amount to the beginning of the array
-        array_unshift($amounts, $this->loanAmount);
+        array_unshift($amounts, $prev_amount ?? $this->loanAmount);
 
         // keep only the last 3 edit amounts
         $this->editAmounts = array_slice($amounts, 0, 3);
@@ -65,6 +65,39 @@ class LoanCapture extends Model
         // keep only the last 3 edited by
         $this->editedBy = array_slice($editedBy, 0, 3);
 
+    }
+
+    public function updateActiveLoanAmount()
+    {
+        // Wrap in a database transaction
+        DB::transaction(function() {
+            
+            $activeLoan = $this->activeLoan()->first();
+            if($activeLoan)
+            {
+                // update the loan amount to the new amount
+                $activeLoan->loanAmount = $this->loanAmount;
+
+                // update loan balance
+                $activeLoan->loanBalance = $activeLoan->loanAmount - $activeLoan->loanPaid;
+                // update loan date
+                $activeLoan->loanDate = $this->loanDate;
+                // update repayment date
+                $activeLoan->repaymentDate = $this->repaymentDate;
+
+                // Save the loan updates
+                $activeLoan->save();
+
+                // check if the loan is paid off or not
+                if($activeLoan->loanBalance <= 0){
+                    $this->completedLoan(); // mark the loan as completed
+                    // mark status as 0
+                    $this->status = DB::raw('0');
+                }
+                    
+            }
+            
+        });
     }
 
 

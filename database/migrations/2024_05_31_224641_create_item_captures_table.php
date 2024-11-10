@@ -24,6 +24,9 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id')->nullable();
             $table->decimal('loanPaid')->default(0);
             $table->decimal('loanBalance')->default(0.00);
+            // $table->string('userId')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
 
             $table->timestamps();
 

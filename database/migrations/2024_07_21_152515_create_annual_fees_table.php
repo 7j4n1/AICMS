@@ -20,6 +20,8 @@ return new class extends Migration
             $table->year('annual_year');
             $table->string('status')->default('pending');
             $table->string('userId')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
             $table->timestamps();
 
             $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();

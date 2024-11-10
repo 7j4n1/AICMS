@@ -19,6 +19,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('coopId')->nullable();
+            $table->string('userId')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

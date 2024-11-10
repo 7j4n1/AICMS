@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('guarantor4')->nullable();
             $table->string('status')->default(0);
             $table->string('userId')->nullable();
+            $table->string('userId')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
             $table->date('repaymentDate')->nullable();
 
             $table->timestamps();

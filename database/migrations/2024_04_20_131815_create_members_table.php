@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('nextOfKinPhoneNumber')->nullable();
             $table->year('yearJoined')->nullable();
             $table->string('userId')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
             $table->timestamps();
         });
     }

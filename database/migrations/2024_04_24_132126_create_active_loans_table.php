@@ -21,6 +21,8 @@ return new class extends Migration
             $table->date('repaymentDate')->nullable();
             $table->date('lastPaymentDate')->nullable();
             $table->string('userId')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
 
             $table->timestamps();
         });

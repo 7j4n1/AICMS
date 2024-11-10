@@ -25,6 +25,8 @@ return new class extends Migration
             $table->unsignedDouble('shareAmount')->default(0.00);
             $table->unsignedBigInteger('adminCharge')->default(0);
             $table->string('userId')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
 
             $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
 
