@@ -30,8 +30,10 @@ class RoleAndPermissionSeeder extends Seeder
             Permission::create(['guard_name' => 'admin', 'name' => 'can delete']);
         if(!Permission::where('name', 'can view')->first())
             Permission::create(['guard_name' => 'admin', 'name' => 'can view']);
-        if(!Permission::where('name', 'can view only')->first())
-            Permission::create(['guard_name' => 'admin', 'name' => 'can view only']);
+        // if(!Permission::where('name', 'can view only')->first())
+        //     Permission::create(['guard_name' => 'admin', 'name' => 'can view only']);
+        if(!Permission::where('name', 'can only view')->first())
+            Permission::create(['guard_name' => 'user', 'name' => 'can only view']);
         
 
         // Create a superadmin role for users authenticating with the admin guard:
@@ -43,13 +45,13 @@ class RoleAndPermissionSeeder extends Seeder
         // $superadminRole = Role::create(['guard_name' => 'admin', 'name' => 'super-admin'])
         //     ->syncPermissions(['can edit', 'can create', 'can delete', 'can view']);
         if(!Role::where('name', 'manager')->first()){
-            $managerRole = Role::create(['guard_name' => 'admin', 'name' => 'manager'])
-            ->syncPermissions(['can create', 'can view']);
+            $managerRole = Role::create(['guard_name' => 'admin', 'name' => 'manager']);
+            $managerRole->syncPermissions(['can create', 'can view', 'can edit']);
         }
         // member role
         if(!Role::where('name', 'member')->first()){
-            $memberRole = Role::create(['guard_name' => 'admin', 'name' => 'member'])
-            ->syncPermissions(['can view only']);
+            $memberRole = Role::create(['guard_name' => 'user', 'name' => 'member']);
+            $memberRole->syncPermissions(['can only view']);
         }
         
         $user = \App\Models\Admin::where('username', 'superadmin')->first();

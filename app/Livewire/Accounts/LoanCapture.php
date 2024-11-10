@@ -30,8 +30,7 @@ class LoanCapture extends Component
     {
         $this->loans = ModelsLoanCapture::query()
             ->orWhere('coopId', 'like', '%'.$this->search.'%')
-            ->orWhere('loanDate', 'like', '%'.$this->search.'%')
-            ->orderByDesc('loanDate')
+            ->orderBy('coopId', 'asc')
             ->paginate($this->paginate);
 
         $memberIds = Cache::store('file')->remember('memberIds', now()->addMinutes(5), function () {
@@ -108,7 +107,12 @@ class LoanCapture extends Component
 
         $loan = ModelsLoanCapture::find($this->editingLoanId);
 
+        $this->loanForm->loanAmount = $this->loanForm->convertToPhpNumber($this->loanForm->loanAmount); 
         $loan->update($this->loanForm->toArray());
+        // update the edit dates
+        $loan->updateEditDates();
+        // save the changes
+        $loan->save();
 
         $this->editingLoanId = null;
 

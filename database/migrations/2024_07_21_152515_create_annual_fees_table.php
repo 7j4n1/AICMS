@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('annual_fee')->default(0.00);
             $table->decimal('total_savings')->default(0.00);
             $table->year('annual_year');
+            $table->string('status')->default('pending');
             $table->string('userId')->nullable();
             $table->timestamps();
 

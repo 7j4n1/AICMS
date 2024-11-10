@@ -9,6 +9,7 @@ use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Livewire\Forms\PaymentForm;
 use App\Models\PaymentCapture as ModelsPaymentCapture;
+use Illuminate\Support\Facades\DB;
 
 class PaymentCapture extends Component
 {
@@ -135,38 +136,55 @@ class PaymentCapture extends Component
     #[On('update-payments')]
     public function updatePayment($id,$totalAmount, $loanAmount, $splitOption, $savingAmount, $shareAmount, $others, $adminCharge, $prevAmount)
     {
-        $this->paymentForm->coopId = $id;
-        $this->paymentForm->totalAmount = $this->paymentForm->convertToPhpNumber($totalAmount);
-        $this->paymentForm->loanAmount = $this->paymentForm->convertToPhpNumber($loanAmount);
-        $this->paymentForm->splitOption = $splitOption;
-        $this->paymentForm->savingAmount = $this->paymentForm->convertToPhpNumber($savingAmount);
-        $this->paymentForm->shareAmount = $this->paymentForm->convertToPhpNumber($shareAmount);
-        $this->paymentForm->others = $this->paymentForm->convertToPhpNumber($others);
-        $this->paymentForm->adminCharge = $adminCharge;
+        // start transaction
+        DB::beginTransaction();
 
-        $this->validate();
+        try{
 
-        if(!$this->getErrorBag()->isEmpty())
+        
+            $this->paymentForm->coopId = $id;
+            $this->paymentForm->totalAmount = $this->paymentForm->convertToPhpNumber($totalAmount);
+            $this->paymentForm->loanAmount = $this->paymentForm->convertToPhpNumber($loanAmount);
+            $this->paymentForm->splitOption = $splitOption;
+            $this->paymentForm->savingAmount = $this->paymentForm->convertToPhpNumber($savingAmount);
+            $this->paymentForm->shareAmount = $this->paymentForm->convertToPhpNumber($shareAmount);
+            $this->paymentForm->others = $this->paymentForm->convertToPhpNumber($others);
+            $this->paymentForm->adminCharge = $adminCharge;
+
+            $this->validate();
+
+            if(!$this->getErrorBag()->isEmpty())
+            {
+                $this->isModalOpen = true;
+                return;
+            }
+
+            $payment = ModelsPaymentCapture::find($this->editingPaymentId);
+
+            $payment->update($this->paymentForm->toArray());
+
+            // update the loan based on the previous amount and new
+            $payment->updateLoan($prevAmount, $this->paymentForm->convertToPhpNumber($loanAmount));
+
+            // Commit the transaction
+            DB::commit();
+
+            $this->editingPaymentId = null;
+
+            session()->flash('message','Payment details updated successfully');
+
+            $this->paymentForm->resetForm();
+
+            $this->isModalOpen = false;
+
+            $this->sendDispatchEvent();
+        } catch(\Exception $e)
         {
-            $this->isModalOpen = true;
-            return;
+            // Rollback the transaction if anything goes wrong
+            DB::rollBack();
+
+            session()->flash('error','Error updating payment.');
         }
-
-        $payment = ModelsPaymentCapture::find($this->editingPaymentId);
-
-        $payment->update($this->paymentForm->toArray());
-
-        $payment->updateLoan($prevAmount);
-
-        $this->editingPaymentId = null;
-
-        session()->flash('message','Payment details updated successfully');
-
-        $this->paymentForm->resetForm();
-
-        $this->isModalOpen = false;
-
-        $this->sendDispatchEvent();
     }
 
     #[On('delete-payments')]

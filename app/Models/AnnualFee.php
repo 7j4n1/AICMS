@@ -15,6 +15,7 @@ class AnnualFee extends Model
         'annual_fee',
         'total_savings',
         'userId',
+        'status',
         'annual_year'
     ];
 }

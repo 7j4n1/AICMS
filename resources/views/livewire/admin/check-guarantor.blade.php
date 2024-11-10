@@ -7,8 +7,8 @@
                 <label for="coopId">CoopId</label>
                 <select class="form-select" wire:model.live="coopId">
                     <option value=""></option>
-                    @foreach($memberIds as $memberId)
-                        <option value="{{ $memberId->coopId }}">{{ $memberId->coopId }}</option>
+                    @foreach($this->getAllIds as $memberId)
+                        <option value="{{ $memberId }}">{{ $memberId }}</option>
                     @endforeach
                 </select>
             </div>
@@ -107,7 +107,7 @@
                                             <div class="summary">
                                                 <h4 class="title">Guarantees</h4>
                                                 <div class="info">
-                                                    <strong class="amount">{{$guarantees->count()}}</strong>
+                                                    <strong class="amount">{{$guarantees ? $guarantees->count() : 0}}</strong>
                                                 </div>
                                             </div>
                                             <div class="summary-footer">
@@ -175,9 +175,9 @@
                                         
                                         <div class="widget-summary-col">
                                             <div class="summary">
-                                                <h4 class="title">Loan Status</h4>
+                                                <h4 class="title">Full name</h4>
                                                 <div class="info">
-                                                    <strong class="amount">{{($guarantor_records->count()) > 0 ? 'Yes' : 'No'}}</strong>
+                                                    <strong class="amount">{{ $full_name }}</strong>
                                                 </div>
                                             </div>
                                             <div class="summary-footer">
@@ -187,7 +187,27 @@
                                 </div>
                             </section>
                         </div>
-                        
+
+                        <div class="col-xl-4">
+                            <section class="card card-featured-left card-featured-secondary">
+                                <div class="card-body">
+                                    <div class="widget-summary">
+                                        
+                                        <div class="widget-summary-col">
+                                            <div class="summary">
+                                                <h4 class="title">Loan Status</h4>
+                                                <div class="info">
+                                                    <strong class="amount">{{($guarantor_records && $guarantor_records->count()) > 0 ? 'Yes' : 'No'}}</strong>
+                                                </div>
+                                            </div>
+                                            <div class="summary-footer">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
                         
                     </div>
                     

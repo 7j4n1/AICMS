@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Models\ActiveLoans;
 use Livewire\Form;
 use App\Models\LoanCapture;
+use App\Models\PaymentCapture;
 use Livewire\Attributes\Validate;
 
 class LoanForm extends Form
@@ -41,9 +42,25 @@ class LoanForm extends Form
         $this->withValidator(function ($validator){
             $validator->after(function ($validator){
                 $coopId = $this->coopId;
-                $loan = ActiveLoans::where('coopId', $coopId)->first();
-                if($loan)
-                    $validator->errors()->add('coopId', 'Loan exists for the Coop ID.');
+                
+                
+                // if($loan)
+                //     $validator->errors()->add('coopId', 'Loan exists for the Coop ID.');
+                
+                // Check if loan amount exceeds savings
+                // Retrieve member's savings
+                $memberSavings = PaymentCapture::query()->where('coopId', $coopId)->sum('savingAmount');
+                
+                // Calculate maximum loan eligibility based on savings x2
+                $maxLoanEligibility = $memberSavings * 2;
+
+                // Sum of existing active loans
+                $existingLoanTotal = ActiveLoans::where('coopId', $coopId)->sum('loanBalance');
+
+                // Check if adding the new loan exceeds twice the savings
+                if(($this->convertToPhpNumber($this->loanAmount) + $existingLoanTotal) > $maxLoanEligibility) {
+                    $validator->errors()->add('loanAmount', 'Total loan amount (existing + requested) exceeds twice the member’s savings.');
+                }
 
                 if($this->guarantor1 == $this->guarantor2 || $this->guarantor1 == $this->guarantor3 || $this->guarantor1 == $this->guarantor4)
                     $validator->errors()->add('guarantor1', 'Guarantor 1 cannot be the same as Guarantor 2, 3 or 4');

@@ -7,6 +7,7 @@ use App\Models\Member;
 use Illuminate\Http\Request;
 use App\Exports\MembersExport;
 use App\Imports\MembersImport;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
@@ -53,12 +54,12 @@ class MemberController extends Controller
     public function generateLoginDetails()
     {
         set_time_limit(0);
-        Member::whereDoesntHave('admin')->chunk(100, function ($members) {
+        Member::whereDoesntHave('user')->chunk(100, function ($members) {
             DB::beginTransaction();
             try {
                 foreach ($members as $member) {
                     
-                    Admin::create([
+                    User::create([
                         'name' => $member->surname ?? 'User',
                         'username' => 'albirru'.$member->coopId,
                         'password' => Hash::make('password@'.$member->coopId),
@@ -86,10 +87,10 @@ class MemberController extends Controller
         try {
             foreach ($members as $member) {
                 // check if the member already has login details
-                if (Admin::where('username', $member->coopId)->exists()) {
+                if (User::where('username', $member->coopId)->exists()) {
                     continue;
                 }
-                $user = Admin::create([
+                $user = User::create([
                     'name' => $member->surname ?? 'User',
                     'username' => $member->coopId,
                     'password' => bcrypt('password@'.$member->coopId),

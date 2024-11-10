@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class PaymentCapture extends Model
 {
@@ -27,16 +28,33 @@ class PaymentCapture extends Model
         'otherSavingsType'
     ];
 
-    public function updateLoan($prev_amount)
+    public function updateLoan($prev_amount, $newAmount)
     {
         $loan = ActiveLoans::where('coopId', $this->coopId)->first();
         if($loan)
         {
-            $prevBalance = $loan->loanPaid - (float)$prev_amount;
-            $newLoanPaid = $prevBalance + (float)$this->loanAmount;
+            // calculate the balance after reverting the original payment
+            $revertedBalance = (float)$loan->loanBalance + (float)$prev_amount;
+            
+            // prevent overpayment
+            if($newAmount > $revertedBalance)
+            {
+                throw new Exception("The repayment amount exceeds the remaining loan balance.");
+            }
 
-            $loan->loanPaid = $newLoanPaid;
-            $loan->remainingBalance = $loan->loanAmount - $newLoanPaid;
+            // revert the original payment effect
+            $loan->loanPaid -= (float)$prev_amount;
+            $loan->loanBalance += (float)$prev_amount;
+
+            // Apply the new payment
+            $loan->loanPaid += (float)$newAmount;
+            $loan->loanBalance = $loan->loanAmount - $loan->loanPaid;
+
+            // check if the loan is paid off or not
+            // if($loan->loanBalance <= 0)
+            //     $this->checkActiveLoanBalanceStatus($this->coopId);
+
+            // Save the loan updates
             $loan->save();
         }
         

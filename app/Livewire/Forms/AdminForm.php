@@ -18,6 +18,7 @@ class AdminForm extends Form
     public $password;
     #[Validate('required|string|min:6|max:255')]
     public $password_confirmation;
+    public $role = 'manager';
 
     
     /**
@@ -65,7 +66,7 @@ class AdminForm extends Form
         if(!$admin)
             return false;
 
-        $admin->assignRole('manager');
+        $admin->assignRole($this->role);
         
         return true;
     }

@@ -4,10 +4,12 @@ namespace App\Livewire\Forms;
 
 use Exception;
 use Livewire\Form;
+use App\Models\AnnualFee;
 use App\Models\ActiveLoans;
 use App\Models\LoanCapture;
 use App\Models\PaymentCapture;
 use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\DB;
 
 class PaymentForm extends Form
 {
@@ -179,6 +181,71 @@ class PaymentForm extends Form
             $loan->completedLoan();
         }
         
+    }
+
+    /**
+     * Deduct pending annual fees from available shareAmount for the member across all years.
+     *
+     * @param int $coopId
+     * @param float $shareAmount
+     * @return void
+     */
+    public function deductPendingAnnualFees($coopId, $shareAmount)
+    {
+        // Start a database transaction
+        DB::beginTransaction();
+        try {
+            // Retrieve pending annual fees for the member in chunks to optimize memory usage
+            AnnualFee::where('coopId', $coopId)
+                ->where('annual_fee', '<', 0) // Pending annual fees
+                ->orderBy('annual_year', 'asc')
+                ->select(['id', 'annual_fee', 'annual_savings', 'total_savings'])
+                ->chunkById(20, function ($pendingFees) use (&$shareAmount) {
+                    // Collect batch updates for efficiency
+                    $updates = [];
+
+                    // Deduct pending annual fees from the share amount
+                    foreach ($pendingFees as $annualFee) {
+                        if ($shareAmount <= 0) {
+                            break; // No more share amount to deduct
+                        }
+
+                        // Calculate deduction amount
+                        $amount_due = $this->convertToPhpNumber($annualFee->annual_fee);
+                        $deductible_amount = min($amount_due, $shareAmount);
+
+                        // Prepare update data for batch update
+                        $updates[] = [
+                            'id' => $annualFee->id,
+                            'annual_savings' => $deductible_amount,
+                            'total_savings' => $annualFee->total_savings - $deductible_amount,
+                        ];
+
+                        // Update share amount by the deducted amount
+                        $shareAmount -= $deductible_amount;
+
+                    }
+
+                    // Batch update pending annual fees using the single query
+                    if (!empty($updates)) {
+                        $query = AnnualFee::query();
+                        $query->getConnection()->transaction(function () use ($query, $updates) {
+                            $query->upsert($updates, ['id'], ['annual_savings', 'total_savings']);
+                        });
+                    }
+
+            });
+
+            // Commit the transaction
+            DB::commit();
+
+        } catch (\Exception $th) {
+            // Rollback the transaction on error
+            DB::rollBack();
+
+            // Re-throw the exception
+            throw $th;
+        }
     }
 
 }

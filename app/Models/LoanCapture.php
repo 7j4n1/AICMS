@@ -25,13 +25,69 @@ class LoanCapture extends Model
         'guarantor4',
         'status',
         'userId',
-        'repaymentDate'
+        'repaymentDate',
+        'editDates',
+        'editAmounts',
+        'editedBy'
     ];
+
+    protected $casts = [
+        'editDates' => 'array',
+        'editAmounts' => 'array',
+        'editedBy' => 'array'
+    ];
+
+    public function updateEditDates()
+    {
+        // get the current edit dates or initialize an empty array
+        $dates = $this->editDates ?? [];
+
+        // add the current date to the beginning of the array
+        array_unshift($dates, now());
+
+        // keep only the last 3 edit dates
+        $this->editDates = array_slice($dates, 0, 3);
+
+        // get the current edit amounts or initialize an empty array
+        $amounts = $this->editAmounts ?? [];
+
+        // add the current loan amount to the beginning of the array
+        array_unshift($amounts, $this->loanAmount);
+
+        // keep only the last 3 edit amounts
+        $this->editAmounts = array_slice($amounts, 0, 3);
+
+        // get the current edited by or initialize an empty array
+        $editedBy = $this->editedBy ?? [];
+        // add the current user to the beginning of the array
+        array_unshift($editedBy, auth('admin')->user()->name);
+
+        // keep only the last 3 edited by
+        $this->editedBy = array_slice($editedBy, 0, 3);
+
+    }
+
+
+    // Method to check if loan can be approved based on savings
+    public function canApplyForLoan($requestedAmount) : bool
+    {
+        // Calculate total savings amount
+        $totalSavings = PaymentCapture::where('coopId', $this->coopId)
+                        ->sum('savingAmount');
+        
+        // Check if requested loan amount exceeds savings
+        return $requestedAmount <= $totalSavings;
+    }
 
     public function scopeAddToActiveLoan()
     {
         // Wrap in a database transaction
         DB::transaction(function() {
+            // Check if loan can be approved based on savings
+            // if (!$this->canApplyForLoan($this->loanAmount)) {
+            //     throw new Exception("Loan amount exceeds available savings.");
+            // }
+
             $activeLoan = ActiveLoans::create([
                 'coopId' => $this->coopId,
                 'loanAmount' => $this->loanAmount,
@@ -54,6 +110,10 @@ class LoanCapture extends Model
     {
         // Wrap in a database transaction
         DB::transaction(function() {
+            // Check if loan can be approved based on savings
+            // if (!$this->canApplyForLoan($this->loanAmount)) {
+            //     throw new Exception("Loan amount exceeds available savings.");
+            // }
             $activeLoan = ActiveLoans::create([
                 'coopId' => $this->coopId,
                 'loanAmount' => $this->loanAmount,

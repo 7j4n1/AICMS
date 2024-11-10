@@ -7,8 +7,20 @@ use Livewire\Attributes\Validate;
 
 class LoginForm extends Form
 {
-    #[Validate('required|string|exists:admins,username')]
+    #[Validate('required|string')]
     public $username;
+
+    public function validateUsername()
+    {
+        $this->validate([
+            'username' => 'required|string',
+        ]);
+
+        if (!\App\Models\Admin::where('username', $this->username)->exists() && 
+            !\App\Models\User::where('username', $this->username)->exists()) {
+            $this->addError('username', 'The provided username does not exist.');
+        }
+    }
     #[Validate('required|string')]
     public $password;
 
@@ -30,8 +42,11 @@ class LoginForm extends Form
 
         // Authenticate user against the admin guard
         if (!auth()->guard('admin')->attempt($credentials)) {
-            $this->addError('password', 'The provided credentials are incorrect.');
-            return false;
+            // Authenticate user against the user guard
+            if (!auth()->guard('user')->attempt($credentials)) {
+                $this->addError('password', 'The provided credentials are incorrect.');
+                return false;
+            }
         }
 
         // start session for the logged in user

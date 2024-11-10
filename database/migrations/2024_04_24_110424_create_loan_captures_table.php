@@ -25,6 +25,9 @@ return new class extends Migration
             $table->boolean('status')->default(0);
             $table->string('userId')->nullable();
             $table->date('repaymentDate')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editAmounts')->nullable();
+            $table->json('editedBy')->nullable();
 
             $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
             $table->foreign('guarantor1')->references('coopId')->on('members')->nullOnDelete();

@@ -49,15 +49,11 @@ class AnnualFeeForm extends Form
             ->where('yearJoined', '<', $this->year)
             ->with(['payment_captures' => function ($query) {
                 $query->whereYear('paymentDate', $this->year)
-                    ->selectRaw('coopId, SUM(savingAmount) as total_savings')
+                    ->selectRaw('coopId, SUM(shareAmount) as total_savings')
                     ->groupBy('coopId');
             }])->get();
         
-        // dd($selected_members);
-        // $total_savings = $selected_members->sum(function ($member) {
-        //                     return $member->payment_captures->first()->total_savings ?? 0;
-        //                 });
-
+        
         try {
             foreach ($selected_members as $member) {
                 $capture = $member->payment_captures->first();
@@ -68,7 +64,7 @@ class AnnualFeeForm extends Form
     
                 AnnualFee::create([
                     'annual_year' => $this->year,
-                    'annual_fee' => ($amount_fee < $savings) ? $amount_fee : 0,
+                    'annual_fee' => ($amount_fee < $savings) ? $amount_fee : ((-1) * $amount_fee),
                     'coopId' => $member->coopId,
                     'annual_savings' => $savings,
                     'total_savings' => $savings - (($amount_fee < $savings) ? $amount_fee : 0),

@@ -83,7 +83,15 @@
                                             <input type="password"  class="form-control" placeholder="Confirm Password" wire:model.blur="adminForm.password_confirmation" />
                                             @error('adminForm.password_confirmation') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
-
+                                        
+                                        {{-- Choose Role --}}
+                                        <div class="col-md-6">
+                                            <label for="yearJoined" class="form-label">Select Role: </label>
+                                            <select class="form-select" wire:model="adminForm.role">
+                                                <option value="manager">Sub-Admin</option>
+                                                <option value="member">Member</option>
+                                            </select>
+                                        </div>
                                         @endif
                                         <div class="text-end">
 
