@@ -63,7 +63,7 @@ class RepayForm extends Form
                 'repaymentDate' => $this->repaymentDate,
                 'loanBalance' => $balance,
                 'serviceCharge' => $this->serviceCharge,
-                'userId' => auth('admin')->user()->id,
+                'userId' => auth('admin')->user()->name,
             ]);
 
             if($repayment){

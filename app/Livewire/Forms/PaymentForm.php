@@ -119,7 +119,7 @@ class PaymentForm extends Form
             'paymentDate' => $this->paymentDate,
             'others' => $this->convertToPhpNumber($this->others),
             'shareAmount' => $this->convertToPhpNumber($this->shareAmount),
-            'userId' => auth('admin')->user()->id,
+            'userId' => auth('admin')->user()->name,
             'adminCharge' => $this->adminCharge,
             'otherSavingsType' => $this->otherSavingsType,
         ]);

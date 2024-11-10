@@ -68,7 +68,7 @@ class AnnualFeeForm extends Form
                     'coopId' => $member->coopId,
                     'annual_savings' => $savings,
                     'total_savings' => $savings - (($amount_fee < $savings) ? $amount_fee : 0),
-                    'userId' => auth('admin')->user()->id,
+                    'userId' => auth('admin')->user()->name,
                 ]);
     
             }
