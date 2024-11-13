@@ -8,9 +8,9 @@
     
     {{-- Handle Browser dispatched Events --}}
     <script>
-        window.addEventListener('DOMContentLoaded', (event) => {
-            initTable([0, 1, 2, 3, 4]);
-        });
+        // window.addEventListener('DOMContentLoaded', (event) => {
+        //     // initTable([0, 1, 2, 3, 4]);
+        // });
         document.addEventListener('livewire:init', () => {
             window.setTimeout(function() {
                 $(".auto-close").fadeTo(500, 0).slideUp(500, function(){

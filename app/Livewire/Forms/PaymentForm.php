@@ -109,41 +109,60 @@ class PaymentForm extends Form
 
     public function save()
     {
-        $this->validate();
-        $payment = PaymentCapture::create([
-            'coopId' => $this->coopId,
-            'splitOption' => $this->splitOption,
-            'loanAmount' => $this->convertToPhpNumber($this->loanAmount),
-            'savingAmount' => $this->convertToPhpNumber($this->savingAmount),
-            'totalAmount' => $this->convertToPhpNumber($this->totalAmount),
-            'paymentDate' => $this->paymentDate,
-            'others' => $this->convertToPhpNumber($this->others),
-            'shareAmount' => $this->convertToPhpNumber($this->shareAmount),
-            'userId' => auth('admin')->user()->name,
-            'adminCharge' => $this->adminCharge,
-            'otherSavingsType' => $this->otherSavingsType,
-        ]);
+        
+        try{
 
-        if(!$payment){
-            // throw new Exception("Failed to create a payment.");
+            $this->validate();
+            // Start a database transaction
+            DB::beginTransaction();
+        
+
+            $payment = PaymentCapture::create([
+                'coopId' => $this->coopId,
+                'splitOption' => $this->splitOption,
+                'loanAmount' => $this->convertToPhpNumber($this->loanAmount),
+                'savingAmount' => $this->convertToPhpNumber($this->savingAmount),
+                'totalAmount' => $this->convertToPhpNumber($this->totalAmount),
+                'paymentDate' => $this->paymentDate,
+                'others' => $this->convertToPhpNumber($this->others),
+                'shareAmount' => $this->convertToPhpNumber($this->shareAmount),
+                'userId' => auth('admin')->user()->name,
+                'adminCharge' => $this->adminCharge,
+                'otherSavingsType' => $this->otherSavingsType,
+            ]);
+
+            if(!$payment){
+                // throw new Exception("Failed to create a payment.");
+                return false;
+            }
+            
+            // throw new Exception("Create a payment successfully.");
+            if(($this->convertToPhpNumber($this->loanAmount) >= 1) && !is_null($this->convertToPhpNumber($this->loanAmount))){
+                $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
+                if($activeLoan)
+                {
+                    $activeLoan->setPayment($this->convertToPhpNumber($this->loanAmount));
+
+                    // check if the loan is paid off or not
+                    if($activeLoan->loanBalance == 0 || ($activeLoan->loanPaid == $activeLoan->loanAmount) )
+                        $this->checkActiveLoanBalanceStatus($this->coopId);
+                    
+                }
+            }
+
+            // Deduct pending annual fees from available shareAmount for the member across all years
+            $this->deductPendingAnnualFees($this->coopId, $this->convertToPhpNumber($this->shareAmount));
+
+            // commit the transaction
+            DB::commit();
+
+            return true;
+        } catch (\Exception $th) {
+            // rollback the transaction
+            DB::rollBack();
+
             return false;
         }
-            
-        // throw new Exception("Create a payment successfully.");
-        if(($this->convertToPhpNumber($this->loanAmount) >= 1) && !is_null($this->convertToPhpNumber($this->loanAmount))){
-            $activeLoan = ActiveLoans::where('coopId', $this->coopId)->first();
-            if($activeLoan)
-            {
-                $activeLoan->setPayment($this->convertToPhpNumber($this->loanAmount));
-
-                // check if the loan is paid off or not
-                if($activeLoan->loanBalance == 0 || ($activeLoan->loanPaid == $activeLoan->loanAmount) )
-                    $this->checkActiveLoanBalanceStatus($this->coopId);
-                
-            }
-        }
-
-        return true;
     }
 
     public function resetForm()
@@ -184,13 +203,13 @@ class PaymentForm extends Form
     }
 
     /**
-     * Deduct pending annual fees from available shareAmount for the member across all years.
+     * Deduct pending annual fees from available savingAmount for the member across all years.
      *
      * @param int $coopId
-     * @param float $shareAmount
+     * @param float $savingAmount
      * @return void
      */
-    public function deductPendingAnnualFees($coopId, $shareAmount)
+    public function deductPendingAnnualFees($coopId, $savingAmount)
     {
         // Start a database transaction
         DB::beginTransaction();
@@ -200,19 +219,19 @@ class PaymentForm extends Form
                 ->where('annual_fee', '<', 0) // Pending annual fees
                 ->orderBy('annual_year', 'asc')
                 ->select(['id', 'annual_fee', 'annual_savings', 'total_savings'])
-                ->chunkById(20, function ($pendingFees) use (&$shareAmount) {
+                ->chunkById(20, function ($pendingFees) use (&$savingAmount) {
                     // Collect batch updates for efficiency
                     $updates = [];
 
                     // Deduct pending annual fees from the share amount
                     foreach ($pendingFees as $annualFee) {
-                        if ($shareAmount <= 0) {
+                        if ($savingAmount <= 0) {
                             break; // No more share amount to deduct
                         }
 
                         // Calculate deduction amount
                         $amount_due = $this->convertToPhpNumber($annualFee->annual_fee);
-                        $deductible_amount = min($amount_due, $shareAmount);
+                        $deductible_amount = min($amount_due, $savingAmount);
 
                         // Prepare update data for batch update
                         $updates[] = [
@@ -222,7 +241,7 @@ class PaymentForm extends Form
                         ];
 
                         // Update share amount by the deducted amount
-                        $shareAmount -= $deductible_amount;
+                        $savingAmount -= $deductible_amount;
 
                     }
 

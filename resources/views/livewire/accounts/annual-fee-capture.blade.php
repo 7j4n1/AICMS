@@ -68,6 +68,7 @@
                                 <th>Savings</th>
                                 <th>Fee</th>
                                 <th>Balance</th>
+                                <th>Created-By</th>
                                 {{-- @canAny(['can edit', 'can delete'], 'admin')
                                 <th>Actions</th>
                                 @endcanany --}}
@@ -81,6 +82,7 @@
                                     <td>{{ number_format($fee->annual_savings, 2) }}</td>
                                     <td>{{ number_format($fee->annual_fee, 2) }}</td>
                                     <td>{{ number_format($fee->total_savings, 2) }}</td>
+                                    <td>{{ $fee->userId }}</td>
                                     {{-- @canAny(['can edit', 'can delete'], 'admin')
                                     <td class="">
                                         @can('can delete', 'admin')

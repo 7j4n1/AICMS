@@ -189,8 +189,9 @@
                                     <th>Guarantor3</th>
                                     <th>Guarantor4</th>
                                     <th>Status</th>
-                                    <th>Edit Dates</th>
-                                    <th>Edited By</th>
+                                    <th>Created-By</th>
+                                    <th>Edited-By</th>
+                                    <th>Modified</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -209,8 +210,8 @@
                                         <td>{{ $loan->guarantor3 }}</td>
                                         <td>{{ $loan->guarantor4 }}</td>
                                         <td>{{ $loan->status }}</td>
+                                        <td>{{ $loan->userId }}</td><td>{{ json_encode($loan->editedBy) }}</td>
                                         <td>{{ json_encode($loan->editDates) }}</td>
-                                        <td>{{ json_encode($loan->editedBy) }}</td>
                                         <td class="">
                                             @if($loan->status == 1)
                                                 <button onclick="sendCompleteEvent('{{$loan->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Complete</button>

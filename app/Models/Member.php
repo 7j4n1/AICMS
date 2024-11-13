@@ -46,6 +46,12 @@ class Member extends Model
         return $this->hasMany(PaymentCapture::class, 'coopId', 'coopId');
     }
 
+    // create relationship with annualfee
+    public function annual_fees()
+    {
+        return $this->hasMany(AnnualFee::class, 'coopId', 'coopId');
+    }
+
     // update the edit dates
     public function updateEditDates()
     {

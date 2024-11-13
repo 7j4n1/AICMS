@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('password');
             $table->string('role')->default('member');
             $table->rememberToken();
+
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use Livewire\Form;
 use App\Models\Member;
 use App\Models\AnnualFee;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 
 class AnnualFeeForm extends Form
@@ -42,23 +43,34 @@ class AnnualFeeForm extends Form
 
     public function save()
     {
-        $this->validate();
-
-        // Optimized query
-        $selected_members = Member::query()
-            ->where('yearJoined', '<', $this->year)
-            ->with(['payment_captures' => function ($query) {
-                $query->whereYear('paymentDate', $this->year)
-                    ->selectRaw('coopId, SUM(shareAmount) as total_savings')
-                    ->groupBy('coopId');
-            }])->get();
-        
-        
         try {
+            $this->validate();
+
+            DB::beginTransaction();
+            // Optimized query
+            $selected_members = Member::query()
+                ->where('yearJoined', '<', $this->year)
+                ->with(['payment_captures' => function ($query) {
+                    $query->selectRaw('coopId, SUM(savingAmount) as total_savings')
+                        ->groupBy('coopId');
+                }, 'annual_fees' => function ($query) {
+                    $query->selectRaw('coopId, SUM(annual_fee) as total_annual_fee')
+                        ->where('annual_fee', '>', 0)
+                        ->groupBy('coopId');
+                    
+                }])->get();
+            
+        
+            
             foreach ($selected_members as $member) {
                 $capture = $member->payment_captures->first();
-                // dd($member, $member->payment_captures);
                 $savings = $capture->total_savings ?? 0;
+
+                // Check if the member has already paid the annual fee
+                $annual_fee = $member->annual_fees->first();
+                $previous_annual_fee = $annual_fee ? $annual_fee->total_annual_fee : 0;
+                
+                $savings -= $previous_annual_fee;
 
                 $amount_fee = $this->convertToPhpNumber($this->amount);
     
@@ -72,8 +84,12 @@ class AnnualFeeForm extends Form
                 ]);
     
             }
+
+            DB::commit();
+
         } catch (\Throwable $th) {
             // dd($th->getMessage());
+            DB::rollBack();
             return false;
         }
         
