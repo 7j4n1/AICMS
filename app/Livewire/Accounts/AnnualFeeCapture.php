@@ -4,6 +4,7 @@ namespace App\Livewire\Accounts;
 
 use App\Livewire\Forms\AnnualFeeForm;
 use App\Models\AnnualFee;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -23,9 +24,12 @@ class AnnualFeeCapture extends Component
         $this->annualFees = AnnualFee::query()
                     ->where('annual_year', $this->year)
                     ->get();
-        if($this->annualFees && $this->year)
-            $this->sendDispatchEvent();
 
+        if($this->annualFees->count() > 0)
+        {
+            $this->sendDispatchEvent();
+        }
+        
         return view('livewire.accounts.annual-fee-capture')->with(['years' => $years, 'session'=>session()]);
     }
 
@@ -66,12 +70,10 @@ class AnnualFeeCapture extends Component
             return;
         }
 
-        $this->isModalOpen = false;
-        session()->flash('success','Annual Fee details captured successfully');
-
         $this->resetForm();
-        // $this->sendDispatchEvent();
-            
+
+        session()->flash('success','Annual Fee details captured successfully');
+     
     }
 
     public function resetForm()
@@ -83,6 +85,41 @@ class AnnualFeeCapture extends Component
     public function sendDispatchEvent()
     {
         $this->dispatch('on-openModal');
+    }
+
+    public function deleteAnnualYear()
+    {
+        try {
+
+            // start transaction
+            DB::beginTransaction();
+    
+            $annualFees = $this->annualFees;
+    
+            if($annualFees->count() > 0)
+            {
+                // delete all annual fees for the year
+                $annualFees->each(function($fee){
+                    $fee->delete();
+                });
+            }
+
+            DB::commit();
+    
+            session()->flash('success','Annual Fee for '.$this->year.' deleted successfully');
+            
+            $this->sendDispatchEvent();
+
+        } catch (\Throwable $th) {
+            
+            // rollback transaction
+            DB::rollBack();
+
+            session()->flash('error','Annual Fee for '.$this->year.' not deleted');
+
+        }
+
+        
     }
 
 }

@@ -53,11 +53,6 @@ class AnnualFeeForm extends Form
                 ->with(['payment_captures' => function ($query) {
                     $query->selectRaw('coopId, SUM(savingAmount) as total_savings')
                         ->groupBy('coopId');
-                }, 'annual_fees' => function ($query) {
-                    $query->selectRaw('coopId, SUM(annual_fee) as total_annual_fee')
-                        ->where('annual_fee', '>', 0)
-                        ->groupBy('coopId');
-                    
                 }])->get();
             
         
@@ -68,11 +63,13 @@ class AnnualFeeForm extends Form
 
                 // Check if the member has already paid the annual fee
                 $annual_fee = $member->annual_fees->first();
-                $previous_annual_fee = $annual_fee ? $annual_fee->total_annual_fee : 0;
+                $previous_annual_fee = $annual_fee->total_annual_fee ?? 0;
                 
                 $savings -= $previous_annual_fee;
 
                 $amount_fee = $this->convertToPhpNumber($this->amount);
+
+                
     
                 AnnualFee::create([
                     'annual_year' => $this->year,
@@ -90,6 +87,8 @@ class AnnualFeeForm extends Form
         } catch (\Throwable $th) {
             // dd($th->getMessage());
             DB::rollBack();
+
+            throw $th;
             return false;
         }
         

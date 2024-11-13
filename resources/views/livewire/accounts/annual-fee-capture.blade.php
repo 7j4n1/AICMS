@@ -49,29 +49,39 @@
                     {{-- Annual fees Table --}}
                     <!-- <div class="table-responsive"> -->
                     <div >
-                    <div class="col-md-2 mb-2">
-                        <div class="form-group">
-                            <label for="coopId">By Year</label>
-                            <select class="form-select" wire:model.live="year">
-                                @foreach($years as $year)
-                                    <option value="{{ $year }}">{{ $year }}</option>
-                                @endforeach
-                            </select>
+                        <div class="row">
+                            <div class="col-md-4 col-sm-6 mb-2">
+                                <div class="form-group">
+                                    <label for="coopId">By Year</label>
+                                    <select class="form-select" wire:model.live="year">
+                                        @foreach($years as $year)
+                                            <option value="{{ $year }}">{{ $year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            @can('can delete', 'admin')
+                                {{-- only super-admin can delete annual fee --}}
+                                @if($this->annualFees->count() > 0)
+                                    <div class="col-md-4 col-sm-6 mb-2 pt-4">
+                                        {{-- Delete The Annual Year --}}
+                                        <button class="btn btn-danger" wire:click="deleteAnnualYear">Delete this Record</button>
+                                    </div>
+                                @endif
+                            @endcan
                         </div>
-                    </div>
                     <table class="table table-bordered table-striped mb-0" id="datatable-tabletools">
 
                         <thead>
                             <tr>
                                 <th>Year</th>
                                 <th>Coop Id</th>
-                                <th>Savings</th>
-                                <th>Fee</th>
-                                <th>Balance</th>
+                                <th>Avail. Savings</th>
+                                <th>Deduction</th>
+                                <th>Cur. Balance</th>
                                 <th>Created-By</th>
-                                {{-- @canAny(['can edit', 'can delete'], 'admin')
-                                <th>Actions</th>
-                                @endcanany --}}
+                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,14 +93,7 @@
                                     <td>{{ number_format($fee->annual_fee, 2) }}</td>
                                     <td>{{ number_format($fee->total_savings, 2) }}</td>
                                     <td>{{ $fee->userId }}</td>
-                                    {{-- @canAny(['can edit', 'can delete'], 'admin')
-                                    <td class="">
-                                        @can('can delete', 'admin')
-                                            <button onclick="sendDeleteEvent('{{ $itemcapture->id }}')" 
-                                            class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
-                                        @endcan
-                                    </td>
-                                    @endcanany --}}
+                                    <td>{{ $fee->created_at->format('Y-m-d') }}</td>
                                 </tr>
                             @endforeach
                             

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('annual_fees', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('coopId')->nullable();
-            $table->decimal('annual_savings')->default(0.00);
-            $table->decimal('annual_fee')->default(0.00);
-            $table->decimal('total_savings')->default(0.00);
+            $table->decimal('annual_savings', 15, 2)->default(0.00);
+            $table->decimal('annual_fee', 15, 2)->default(0.00);
+            $table->decimal('total_savings', 15, 2)->default(0.00);
             $table->year('annual_year');
             $table->string('status')->default('pending');
             $table->string('userId')->nullable();

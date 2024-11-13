@@ -16,8 +16,8 @@ return new class extends Migration
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->unsignedBigInteger('coopId')->nullable();
             $table->uuid('item_capture_id')->nullable();
-            $table->decimal('amountToRepay')->default(0);
-            $table->decimal('loanBalance')->default(0);
+            $table->decimal('amountToRepay', 15, 2)->default(0);
+            $table->decimal('loanBalance', 15, 2)->default(0);
             $table->date('repaymentDate')->default(date('Y-m-d'));
             $table->decimal('serviceCharge')->default(0);
             $table->unsignedBigInteger('userId')->nullable();
