@@ -16,6 +16,8 @@ class ItemCapture extends Model
     protected $fillable = [
         'coopId',
         'quantity',
+        'price',
+        'description',
         'buyingDate',
         'payment_timeframe',
         'payment_status',

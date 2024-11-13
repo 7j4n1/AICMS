@@ -67,7 +67,7 @@
                                         </div>
                                         {{-- Categories --}}
                                         <div class="col-md-6">
-                                            <label for="title">Select Item <span class="text-danger">*</span></label>
+                                            <label for="title">Select Category <span class="text-danger">*</span></label>
                                             <select class="form-select" wire:model.live="itemForm.category_id">
                                                 <option value=""></option>
                                                 @foreach($this->itemcategories as $item)
@@ -79,8 +79,16 @@
                                         {{-- Price --}}
                                         <div class="col-md-6">
                                             <label for="title">Amount <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" value="{{ number_format($categoryPrice, 2) }}" disabled />
-                                           
+                                            <input type="text" id="price"  class="form-control" wire:model.blur="itemForm.price"  />
+                                            @error('itemForm.price') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+
+                                        {{-- Description --}}
+
+                                        <div class="col-md-6">
+                                            <label for="title">Item(s) List <span class="text-danger">*</span></label>
+                                            <input type="text"  class="form-control" placeholder="Description" wire:model.blur="itemForm.description" />
+                                            @error('itemForm.description') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
                                         {{-- Buying Date --}}
@@ -95,9 +103,11 @@
                                             <label for="title">Payment Duration <span class="text-danger">*</span></label>
                                             <select class="form-select" wire:model.blur="itemForm.payment_timeframe">
                                                 <option value="">Select Duration</option>
-                                                <option value="3">3 Months</option>
+                                                <option value="1">Immediately-Cash</option>
                                                 <option value="6">6 Months</option>
-                                                <option value="12">12 Months</option>
+                                                <option value="9">9 Months</option>
+                                                <option value="18">18 Months</option>
+                                                <option value="24">24 Months</option>
                                             </select>
                                             @error('itemForm.payment_timeframe') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>

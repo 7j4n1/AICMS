@@ -54,13 +54,15 @@
                         <thead>
                             <tr>
                                 <th>Coop Id</th>
-                                <th>Item</th>
+                                <th>Category</th>
                                 <th>Price</th>
+                                <th>Items</th>
                                 <th>From </th>
                                 <th>Duration</th>
                                 <th>To </th>
                                 <th>Status</th>
                                 <th>Amt Paid</th>
+                                <th>Created By</th>
                                 @canAny(['can edit', 'can delete'], 'admin')
                                 <th>Actions</th>
                                 @endcanany
@@ -72,12 +74,14 @@
                                 <tr wire:key="item-profile-{{ $itemcapture->id }}">
                                     <td>{{ $itemcapture->coopId }}</td>
                                     <td>{{ $itemcapture->category->name ?? ''}}</td>
-                                    <td>{{ number_format($itemcapture->category->price ?? 0, 2) }}</td>
+                                    <td>{{ number_format($itemcapture->price ?? 0, 2) }}</td>
+                                    <td>{{ $itemcapture->description }}</td>
                                     <td>{{ $itemcapture->buyingDate }}</td>
                                     <td>{{ $itemcapture->payment_timeframe }}</td>
                                     <td>{{ $itemcapture->repaymentDate }}</td>
                                     <td>{{ $itemcapture->payment_status }}</td>
                                     <td>{{ number_format($itemcapture->loanPaid, 2) }}</td>
+                                    <th>{{ $itemcapture->userId }}</th>
                                     @canAny(['can edit', 'can delete'], 'admin')
                                     <td class="">
                                         @can('can delete', 'admin')
@@ -131,6 +135,14 @@
                 Livewire.dispatch('delete-item-capture', { id: value });
             }
         }
+
+        document.getElementById('price').addEventListener('input', function() {
+            let amount = document.getElementById('price');
+            // remove formatting before a new one is applied
+            amount.value = amount.value.replace(/,/g, '');
+            amount.value = new Intl.NumberFormat().format(Number(amount.value));
+            
+        });
        
     </script>
 

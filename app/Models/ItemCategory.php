@@ -9,7 +9,12 @@ class ItemCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'userId','editedBy'];
+    protected $fillable = ['name', 'userId','editedBy', 'editDates'];
+
+    protected $casts = [
+        'editedBy' => 'array',
+        'editDates' => 'array'
+    ];
 
     public function items()
     {

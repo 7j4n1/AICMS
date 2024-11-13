@@ -55,7 +55,10 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Name</th>
+                                <th>Created By</th>
+                                
                                 @canAny(['can edit', 'can delete'], 'admin')
+                                <th>Modified By</th>
                                 <th>Actions</th>
                                 @endcanany
                             </tr>
@@ -66,7 +69,9 @@
 
                                     <td>{{ $category->id }}</td>
                                     <td>{{ $category->name }}</td>
+                                    <td>{{ $category->userId }}</td>
                                     @canAny(['can edit', 'can delete'], 'admin')
+                                    <td>{{ is_array($category->editedBy) ? implode(', ', $category->editedBy) : $category->editedBy }}</td>
                                     <td class="">
                                         @can('can edit', 'admin')
                                             <button onclick="sendMemEvent('{{$category->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>

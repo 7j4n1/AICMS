@@ -9,6 +9,7 @@ use App\Models\ItemCategory;
 use Livewire\Attributes\Computed;
 use App\Livewire\Forms\Business\ItemForm;
 use App\Models\ItemCapture as ModelsItemCapture;
+use Illuminate\Support\Facades\DB;
 
 class ItemCapture extends Component
 {
@@ -16,13 +17,9 @@ class ItemCapture extends Component
     public ItemForm $itemForm;
     public $isModalOpen = false;
     public $editingItemId = null;
-    private $fullname;
-    public $categoryPrice;
 
     public function render()
     {
-
-        $this->categoryPrice = $this->getCategoryPrice($this->itemForm->category_id);
 
         return view('livewire.business.item-capture')->with(['fullname' => $this->getMemberDetails()]);
     }
@@ -54,17 +51,6 @@ class ItemCapture extends Component
             return $mem->surname.' '.$mem->otherNames;
         }
         return 'Member not found';
-    }
-
-    // get category price through category id selected
-    public function getCategoryPrice($id)
-    {
-        $cat = ItemCategory::query()->where('id', $id)->first();
-        if($cat)
-        {
-            return $cat->price;
-        }
-        return 0;
     }
 
     public function mount()
@@ -110,9 +96,22 @@ class ItemCapture extends Component
 
     #[On('delete-item-capture')]
     public function deleteOldLoanItem($id) {
-        ModelsItemCapture::find($id)->delete();
+        try{
+            DB::beginTransaction();
 
-        session()->flash('message','Loan item with id('.$id.') deleted successfully.');
+            ModelsItemCapture::find($id)->delete();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            session()->flash('error','An error occurred while deleting the loan item');
+            $this->sendDispatchEvent();
+            
+            return;
+        }
+
+        session()->flash('message','Loan item capture with id('.$id.') deleted successfully.');
 
         $this->sendDispatchEvent();
     }

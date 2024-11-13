@@ -16,10 +16,12 @@ return new class extends Migration
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->unsignedBigInteger('coopId')->nullable();
             $table->bigInteger('quantity')->nullable();
+            $table->decimal('price', 15, 2)->default(0.00);
+            $table->text('description')->nullable();
             $table->date('buyingDate')->default(date('Y-m-d'));
             $table->bigInteger('payment_timeframe')->nullable();
             $table->boolean('payment_status')->default(1);
-            $table->unsignedBigInteger('userId')->nullable();
+            $table->string('userId')->nullable();
             $table->date('repaymentDate')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
             $table->decimal('loanPaid')->default(0);
@@ -31,7 +33,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('coopId')->references('coopId')->on('members')->nullOnDelete();
-            $table->foreign('userId')->references('id')->on('admins')->nullOnDelete();
             $table->foreign('category_id')->references('id')->on('item_categories')->nullOnDelete();
         });
     }
