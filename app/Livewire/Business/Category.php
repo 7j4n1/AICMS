@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\ItemCategory;
 use Livewire\Attributes\Computed;
 use App\Livewire\Forms\Business\CategoryForm;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 
 class Category extends Component
@@ -86,7 +87,6 @@ class Category extends Component
             
         $this->catForm->fill([
             'name' => $category->name,
-            'price' => $category->price,
         ]);
 
         $this->editingCatId = $id;
@@ -104,18 +104,31 @@ class Category extends Component
             return;
         }
 
-        $category = ItemCategory::find($this->editingCatId);
+        try
+        {
+            DB::beginTransaction();
 
-        $category->update([
-            'name' => $this->catForm->name,
-            'price' => $this->catForm->price,
-        ]);
+            $category = ItemCategory::find($this->editingCatId);
 
-        $this->editingCatId = null;
+            $category->update([
+                'name' => $this->catForm->name
+            ]);
 
-        session()->flash('message','Category details updated successfully');
+            $category->updateEditDates();
+            $category->save();
 
-        $this->resetForm();
+            DB::commit();
+
+            $this->editingCatId = null;
+
+            session()->flash('message','Category details updated successfully');
+
+            $this->resetForm();
+        }catch(\Exception $e)
+        {
+            DB::rollBack();
+            session()->flash('error','An error occurred while updating category');
+        }
 
         $this->sendDispatchEvent();
     }

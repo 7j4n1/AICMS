@@ -61,14 +61,6 @@
                                             <input type="text"  class="form-control" placeholder="Name" wire:model.blur="catForm.name" />
                                             @error('catForm.name') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
-                        
-                                            {{-- Price --}}
-                                        <div class="col-md-6">
-                                            <label for="price">Price <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Price" wire:model.blur="catForm.price" />
-                                            @error('catForm.price') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-
                                         
                                         <div class="text-end">
 

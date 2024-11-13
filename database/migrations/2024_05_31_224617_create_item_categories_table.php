@@ -15,7 +15,9 @@ return new class extends Migration
         Schema::create('item_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('price', 10, 2);
+            $table->string('userId')->nullable();
+            $table->json('editedBy')->nullable();
+            $table->json('editDates')->nullable();
         
             $table->timestamps();
         });

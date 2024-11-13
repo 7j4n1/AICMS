@@ -13,8 +13,6 @@ class CategoryForm extends Form
     public $id;
     #[Validate('required|string|max:255|unique:item_categories,name')]
     public $name;
-    #[Validate('required|numeric|min:100|max:99999999999.99')]
-    public $price;
 
 
     public function save()
@@ -25,7 +23,7 @@ class CategoryForm extends Form
         try {
             $category = ItemCategory::create([
                 'name' => $this->name,
-                'price' => $this->price,
+                'userId' => auth('admin')->user()->name,
             ]);
 
             return $category;
@@ -39,6 +37,5 @@ class CategoryForm extends Form
     public function resetForm()
     {
         $this->name = '';
-        $this->price = '';
     }
 }

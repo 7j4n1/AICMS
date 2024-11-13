@@ -55,7 +55,6 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Name</th>
-                                <th>Price</th>
                                 @canAny(['can edit', 'can delete'], 'admin')
                                 <th>Actions</th>
                                 @endcanany
@@ -67,7 +66,6 @@
 
                                     <td>{{ $category->id }}</td>
                                     <td>{{ $category->name }}</td>
-                                    <td>{{ number_format($category->price, 2) }}</td>
                                     @canAny(['can edit', 'can delete'], 'admin')
                                     <td class="">
                                         @can('can edit', 'admin')
