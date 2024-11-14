@@ -20,12 +20,14 @@ return new class extends Migration
             $table->decimal('loanBalance', 15, 2)->default(0);
             $table->date('repaymentDate')->default(date('Y-m-d'));
             $table->decimal('serviceCharge')->default(0);
-            $table->unsignedBigInteger('userId')->nullable();
+            $table->string('userId')->nullable();
+            $table->json('editDates')->nullable();
+            $table->json('editedBy')->nullable();
             $table->timestamps();
 
             $table->foreign('item_capture_id')->on('item_captures')->references('id')->nullOnDelete();
             $table->foreign('coopId')->on('members')->references('coopId')->nullOnDelete();
-            $table->foreign('userId')->references('id')->on('admins')->nullOnDelete();
+            
         });
     }
 

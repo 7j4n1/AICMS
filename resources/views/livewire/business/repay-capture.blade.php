@@ -69,7 +69,7 @@
                             @foreach($this->getRepayCaptures as $itemcapture)
                                 <tr wire:key="item-profile-{{ $itemcapture->id }}">
                                     <td>{{ $itemcapture->coopId }}</td>
-                                    <td>{{ $itemcapture->itemCapture->category->name ?? 0 }}</td>
+                                    <td>{{ $itemcapture->itemCapture->description ?? 0 }}</td>
                                     <td>{{ number_format($itemcapture->amountToRepay ?? 0, 2) }}</td>
                                     <td>{{ $itemcapture->itemCapture->buyingDate ?? '' }}</td>
                                     <td>{{ number_format($itemcapture->loanBalance, 2) }}</td>
