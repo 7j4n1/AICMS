@@ -60,38 +60,47 @@
                                             <label for="title">Coop Id <span class="text-danger">*</span></label>
                                             <select class="form-select" wire:model.live="repayForm.coopId">
                                                 <option value=""></option>
-                                                @foreach($this->getActiveItemCaptures as $item)
+                                                @foreach($this->getActiveItemCapturesMembers as $item)
                                                     <option value="{{ $item->coopId }}">{{ $item->coopId }}</option>
                                                 @endforeach
                                             </select>
                                             @error('repayForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
-                        
-                                        @if($get_loan)
-                                        {{-- Loan Id --}}
-                                        <div class="col-md-6">
-                                            <label for="username">Loan ID </label>
-                                            <input type="text"  class="form-control" placeholder="loan Id" wire:model.blur="repayForm.item_capture_id" disabled />
-                                            @error('repayForm.item_capture_id') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
+
                                         {{-- Loan Details --}}
                                         <div class="col-md-6">
                                             <label for="username">Name </label>
-                                            <input type="text"  class="form-control" placeholder="name" value="{{$get_loan->member->surname ?? ''}}" disabled />
+                                            <input type="text"  class="form-control" placeholder="name" value="{{ $this->getMemberInfo() }}" disabled />
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <label for="title">Loan List <span class="text-danger">*</span></label>
+                                            <select class="form-select" wire:model.live="repayForm.item_capture_id">
+                                                <option value="">Select a Loan Item</option>
+                                                @foreach($this->getLoanDetails as $loan)
+                                                    <option value="{{ $loan->id }}">{{ $loan->description }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('repayForm.item_capture_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                        
+                                        
+                                        {{-- List all the loan  --}}
+                                        
+                                        @if($this->getLoanDetails->count() > 0)
 
                                         {{-- Loan Balance --}}
                                         <div class="col-md-6">
                                             <label for="username">Balance</label>
-                                            <input type="text"  class="form-control" placeholder="Loan Balance" value="{{number_format($get_loan->loanBalance,2) ?? 0}}" disabled />
-                                            <input type="hidden"  class="form-control" placeholder="Loan Balance"  wire:model="repayForm.loanBalance" />
+                                            <input type="text"  class="form-control" placeholder="Loan Balance" value="{{$loanBalance}}" disabled />
+                                            <input type="hidden"  class="form-control"  wire:model="repayForm.loanBalance" />
                                         </div>
 
-                                        @endif
+                                       @endif
                                         {{-- Amount --}}
                                         <div class="col-md-6">
                                             <label for="password">Repay Amount </label>
-                                            <input type="text" id="repayAmount"  class="form-control" placeholder="Amount" wire:model.blur="repayForm.amountToRepay" {{$get_loan ? '' : 'disabled'}}/>
+                                            <input type="text" id="repayAmount"  class="form-control" placeholder="Amount" wire:model.blur="repayForm.amountToRepay" {{$this->getLoanDetails->count() > 0 ? '' : 'disabled'}}/>
                                             @error('repayForm.amountToRepay') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 

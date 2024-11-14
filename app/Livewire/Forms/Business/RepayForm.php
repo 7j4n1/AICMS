@@ -20,10 +20,11 @@ class RepayForm extends Form
     public $amountToRepay;
     #[Validate('required|date')]
     public $repaymentDate;
-    #[Validate('required|numeric|min:0|max:99999999999.99')]
+    #[Validate('required|numeric|min:0')]
     public $serviceCharge=0;
     #[Validate('required|numeric')]
     public $loanBalance;
+    
 
     public function boot()
     {

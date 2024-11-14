@@ -8,6 +8,7 @@ use App\Models\ItemCapture;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
 use App\Livewire\Forms\Business\RepayForm;
+use App\Models\Member;
 use App\Models\RepayCapture as ModelsRepayCapture;
 
 class RepayCapture extends Component
@@ -17,22 +18,30 @@ class RepayCapture extends Component
     public $isModalOpen = false;
     public $editingRepayId = null;
 
-
     public function render()
     {
-        $get_loan = $this->getLoanDetails();
-        if($get_loan)
-        {
-            $this->repayForm->item_capture_id = $get_loan->id;
-            $this->repayForm->loanBalance = $get_loan->loanBalance;
-        }
-        return view('livewire.business.repay-capture')->with(['get_loan' => $get_loan]);
+
+        return view('livewire.business.repay-capture')
+            ->with([
+                'loanBalance' => $this->getLoanBalance(),
+                'session' => session(),
+        ]);
     }
 
     public function mount()
     {
         $this->repayForm = new RepayForm($this, 'repayForm');
         $this->sendDispatchEvent();
+    }
+
+    // fetch loanBalance from the item_capture table
+    
+    public function getLoanBalance()
+    {
+        $loan = ItemCapture::where('id', $this->repayForm->item_capture_id)->first();
+        
+        $this->repayForm->loanBalance = $loan ? $loan->loanBalance : 0;
+        return $loan ? $loan->loanBalance : 0;
     }
 
     #[Computed]
@@ -43,27 +52,41 @@ class RepayCapture extends Component
             ->get();
     }
 
+    // capture the full name of the member
     #[Computed]
-    public function getActiveItemCaptures()
+    public function getMemberInfo()
+    {
+        $member = Member::where('coopId', $this->repayForm->coopId)->first();
+
+        // if member is found return the member full name else return empty string
+        return $member ? $member->surname.' '.$member->otherNames : 'No User';
+    }
+
+
+    #[Computed]
+    public function getActiveItemCapturesMembers()
     {
         // get distinct values of item_capture_id from repay_captures
-        return ItemCapture::distinct()
+        return ItemCapture::select('coopId')
+            ->distinct()
             ->where('payment_status', '1')
-            ->orderBy('id', 'asc')
-            ->get(['coopId', 'id']);
+            ->orderBy('coopId', 'asc')
+            ->get();
         
     }
 
-    public function getLoanDetails() : mixed
+    #[Computed]
+    public function getLoanDetails()
     {
-        $item = ItemCapture::query()->where('coopId', $this->repayForm->coopId)
-            ->where('payment_status', '1')->first();
-        if($item)
-        {
-            return $item;
-        }
-        return null;
+        $items = ItemCapture::query()
+        ->select('coopId', 'id', 'description', 'loanBalance')
+            ->where('coopId', $this->repayForm->coopId)
+                ->where('payment_status', '1')
+                    ->get();
+        
+        return $items;
     }
+    
 
     public function toggleModalClose()
     {
@@ -83,7 +106,7 @@ class RepayCapture extends Component
             return;
         }
 
-        $loanBalance = (float)$this->getLoanDetails()->loanBalance - $this->convertToPhpNumber($this->repayForm->amountToRepay);
+        $loanBalance = (float)$this->repayForm->loanBalance - $this->convertToPhpNumber($this->repayForm->amountToRepay);
 
         $repay = $this->repayForm->save($loanBalance);
 
