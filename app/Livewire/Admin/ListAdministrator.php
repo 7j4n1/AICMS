@@ -6,6 +6,8 @@ use App\Models\Admin;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Livewire\Forms\AdminForm;
+use App\Models\Member;
+use App\Models\User;
 use Livewire\Attributes\Computed;
 use Livewire\WithPagination;
 
@@ -18,15 +20,28 @@ class ListAdministrator extends Component
     public AdminForm $adminForm;
     public $isModalOpen = false;
     public $editingAdminId = null;
+    public $isMember = false;
 
     public $paginate = 10;
     public $search = '';
 
     public function render()
     {
+        if($this->adminForm->role == 'member')
+        {
+            $this->isMember = true;
+
+            // get member Username
+            $this->adminForm->name = $this->getMemberName($this->adminForm->coopId);
+        }else
+        {
+            $this->isMember = false;
+        }
         
         return view('livewire.admin.list-administrator')
-            ->with(['session' => session()]);
+            ->with(['session' => session(),
+            'isMember' => $this->isMember,
+        ]);
     }
 
     #[Computed]
@@ -38,6 +53,13 @@ class ListAdministrator extends Component
             ->orderBy('id', 'asc')
             ->paginate($this->paginate);
 
+    }
+
+    public function getMemberName($id)
+    {
+        $member = Member::where('coopId', $id)->first();
+
+        return $member ? $member->surname.' '.$member->otherNames : 'User not found';
     }
 
     public function mount()
@@ -81,7 +103,7 @@ class ListAdministrator extends Component
 
         unset($this->admins);
 
-        session()->flash('success','New Admin details with Manager priviledges added successfully');
+        session()->flash('success','New Login details with Manager priviledges added successfully');
         $this->adminForm->resetForm();
         $this->isModalOpen = false;
     
@@ -90,11 +112,21 @@ class ListAdministrator extends Component
     }
 
     #[On('edit-admins')]
-    public function editOldAdmin($id)
+    public function editOldAdmin($id, $role)
     {
         
         // $this->resetForm();
-        $admin = Admin::find($id);
+        
+        $admin = null;
+
+        if($role == 'member')
+        {
+            $admin = User::find($id);
+        }
+        else {
+            $admin = Admin::find($id);
+        }
+
 
         if(!$admin){
 
@@ -109,6 +141,8 @@ class ListAdministrator extends Component
             'name' => $admin->name,
             'username' => $admin->username,
             'email' => $admin->email,
+            'role' => $admin->role,
+            'coopId' => $admin->coopId,
         ]);
 
         $this->editingAdminId = $id;
@@ -146,10 +180,19 @@ class ListAdministrator extends Component
     }
 
     #[On('delete-admins')]
-    public function deleteOldAdmin($id) {
-        Admin::find($id)->delete();
+    public function deleteOldAdmin($id, $role) {
 
-        session()->flash('message','Admin details deleted successfully.');
+        if($role == 'member')
+        {
+            User::find($id)->delete();
+            
+        }
+        else {
+            Admin::find($id)->delete();
+        }
+        
+
+        session()->flash('message','Admin login details deleted successfully.');
 
         $this->sendDispatchEvent();
     }

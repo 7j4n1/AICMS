@@ -77,6 +77,7 @@
                                     <th>Name</th>
                                     <th>Username</th>
                                     <th>Email</th>
+                                    <th>Created By</th>
                                     @canAny(['can edit', 'can delete'], 'admin')
                                     <th>Actions</th>
                                     @endcanany
@@ -90,11 +91,14 @@
                                         <td>{{ $admin->name }}</td>
                                         <td>{{ $admin->username }}</td>
                                         <td>{{ $admin->email }}</td>
+                                        <td>{{ $admin->userId }}</td>
                                         @canAny(['can edit', 'can delete'], 'admin')
                                         <td class="">
                                             @can('can edit', 'admin')
-                                                <button onclick="sendMemEvent('{{$admin->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
-                                                <!-- <button wire:click="$dispatch('edit-admins', { component: 'admin.adminform.admin', arguments: {user: 5}})"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button> -->
+                                                @if($admin->role != 'member')
+                                                    <button onclick="sendMemEvent('{{$admin->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                                @endif
+                                                {{-- <button wire:click="$dispatch('edit-admins', { component: 'admin.adminform.admin', arguments: {user: 5}})"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button> --}}
                                             @endcan
                                             @can('can delete', 'admin')
                                                 <button onclick="sendDeleteEvent('{{ $admin->id }}')" 
@@ -139,17 +143,17 @@
     <script src="{{ asset('vendor/datatables/extras/TableTools/pdfmake-0.1.32/vfs_fonts.js') }}"></script>
     
     <script>
-        function sendMemEvent(value) {
-            Livewire.dispatch('edit-admins', {id: value });
+        function sendMemEvent(value, role) {
+            Livewire.dispatch('edit-admins', {id: value, role: role });
             
         }
 
         
-        function sendDeleteEvent(value) {
-            var result = confirm("Are you sure you want to delete this admin?");
+        function sendDeleteEvent(value, role) {
+            var result = confirm("Are you sure you want to delete this login user?");
             if (result) {
                 // User clicked 'OK', dispatch delete event
-                Livewire.dispatch('delete-admins', { id: value });
+                Livewire.dispatch('delete-admins', { id: value, role: role });
             }
         }
        

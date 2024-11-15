@@ -58,7 +58,7 @@
                                         {{-- Name --}}
                                         <div class="col-md-6">
                                             <label for="title">Full Name <span class="text-danger">*</span></label>
-                                            <input type="text"  class="form-control" placeholder="Full Name" wire:model.blur="adminForm.name" />
+                                            <input type="text"  class="form-control" placeholder="Full Name" wire:model.blur="adminForm.name" {{ $isMember ? 'disabled' : '' }} />
                                             @error('adminForm.name') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                         
@@ -87,11 +87,23 @@
                                         {{-- Choose Role --}}
                                         <div class="col-md-6">
                                             <label for="yearJoined" class="form-label">Select Role: </label>
-                                            <select class="form-select" wire:model="adminForm.role">
+                                            <select class="form-select" wire:model.live="adminForm.role">
                                                 <option value="manager">Sub-Admin</option>
                                                 <option value="member">Member</option>
+                                                @canAny(['can delete'])
+                                                    <option value="super-admin">Super Admin</option>
+                                                @endcan
                                             </select>
                                         </div>
+                                        @if($isMember)
+                                            {{-- Set CoopId --}}
+                                            <div class="col-md-6">
+                                                <label for="username">Member Coop Id <span class="text-danger">*</span></label>
+                                                <input type="text"  class="form-control" placeholder="username" wire:model.live="adminForm.coopId"  />
+                                                @error('adminForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
+                                            </div>
+                                        @endif
+
                                         @endif
                                         <div class="text-end">
 
