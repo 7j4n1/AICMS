@@ -103,7 +103,7 @@ class ListAdministrator extends Component
 
         unset($this->admins);
 
-        session()->flash('success','New Login details with Manager priviledges added successfully');
+        session()->flash('success','New Login details with '.$this->adminForm->role.' priviledges added successfully');
         $this->adminForm->resetForm();
         $this->isModalOpen = false;
     
@@ -117,16 +117,7 @@ class ListAdministrator extends Component
         
         // $this->resetForm();
         
-        $admin = null;
-
-        if($role == 'member')
-        {
-            $admin = User::find($id);
-        }
-        else {
-            $admin = Admin::find($id);
-        }
-
+        $admin = Admin::find($id);
 
         if(!$admin){
 
@@ -141,8 +132,8 @@ class ListAdministrator extends Component
             'name' => $admin->name,
             'username' => $admin->username,
             'email' => $admin->email,
-            'role' => $admin->role,
             'coopId' => $admin->coopId,
+            'role' => $role,
         ]);
 
         $this->editingAdminId = $id;
@@ -166,6 +157,7 @@ class ListAdministrator extends Component
             'name' => $this->adminForm->name,
             'username' => $this->adminForm->username,
             'email' => $this->adminForm->email,
+            'role' => $this->adminForm->role,
         ]);
 
         $this->editingAdminId = null;
@@ -182,13 +174,15 @@ class ListAdministrator extends Component
     #[On('delete-admins')]
     public function deleteOldAdmin($id, $role) {
 
-        if($role == 'member')
-        {
-            User::find($id)->delete();
-            
-        }
-        else {
-            Admin::find($id)->delete();
+        try {
+            $admin = Admin::find($id);
+            $admin->delete();
+
+        } catch (\Exception $e) {
+            session()->flash('error','Admin login details cannot be deleted.');
+
+            $this->sendDispatchEvent();
+            return;
         }
         
 

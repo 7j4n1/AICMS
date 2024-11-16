@@ -39,6 +39,13 @@ class Login extends Component
     
         session()->flash('success','You have successfully logged in.');
 
+        // check if the user has a member role
+        if(auth('admin')->user()->role == 'member')
+        {
+            return redirect()->route('user.dashboard');
+        }
+
+        
         return redirect()->route('dashboard');
 
     }

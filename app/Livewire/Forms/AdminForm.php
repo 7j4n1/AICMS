@@ -93,6 +93,9 @@ class AdminForm extends Form
             'username' => $this->username,
             'email' => $this->email,
             'password' => bcrypt($this->password),
+            'coopId' => $this->role == 'member' ? $this->coopId : null,
+            'role' => $this->role,
+            'userId' => auth('admin')->user()->name,
         ]);
 
         if(!$admin)

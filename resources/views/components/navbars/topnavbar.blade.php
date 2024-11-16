@@ -53,10 +53,15 @@
                     <li>
                         <a role="menuitem" tabindex="-1" href="{{route('admins')}}"><i class="bx bx-user-circle"></i> My Profile</a>
                     </li>
-                    @endif
                     <li>
                         <a role="menuitem" tabindex="-1" href="{{ route('logout') }}"><i class="bx bx-power-off"></i> Logout</a>
                     </li>
+                    @else
+                    <li>
+                        <a role="menuitem" tabindex="-1" href="{{ route('user.logout') }}"><i class="bx bx-power-off"></i> Logout</a>
+                    </li>
+                    @endif
+                    
                 </ul>
             </div>
         </div>

@@ -78,7 +78,7 @@
                                     <th>Username</th>
                                     <th>Email</th>
                                     <th>Created By</th>
-                                    @canAny(['can edit', 'can delete'], 'admin')
+                                    @canAny(['can delete'], 'admin')
                                     <th>Actions</th>
                                     @endcanany
                                 </tr>
@@ -92,18 +92,11 @@
                                         <td>{{ $admin->username }}</td>
                                         <td>{{ $admin->email }}</td>
                                         <td>{{ $admin->userId }}</td>
-                                        @canAny(['can edit', 'can delete'], 'admin')
+                                        @canAny(['can delete'], 'admin')
                                         <td class="">
-                                            @can('can edit', 'admin')
-                                                @if($admin->role != 'member')
-                                                    <button onclick="sendMemEvent('{{$admin->id}}')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
-                                                @endif
-                                                {{-- <button wire:click="$dispatch('edit-admins', { component: 'admin.adminform.admin', arguments: {user: 5}})"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button> --}}
-                                            @endcan
-                                            @can('can delete', 'admin')
-                                                <button onclick="sendDeleteEvent('{{ $admin->id }}')" 
+                                            <button onclick="sendMemEvent('{{$admin->id}}', 'super-admin')"  class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                            <button onclick="sendDeleteEvent('{{ $admin->id }}')" 
                                                 class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
-                                            @endcan
                                         </td>
                                         @endcanany
                                     </tr>

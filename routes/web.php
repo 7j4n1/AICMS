@@ -41,27 +41,31 @@ Route::get('/admin/download', function() {
     return view('livewire.admin.reports.individual-ledger-download');
 })->name('individualReport1');
 
-Route::middleware('auth:user')->group(function () {
+Route::middleware(['auth:admin', 'check.member.role'])->group(function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/dashboard', function () {
-            return view('user.dashboard.index');
+            return view('admin.dashboard.index');
         })->name('user.dashboard');
 
         Route::get('/report/purchase-history', function() {
-            return view('user.reports.my-history');
-        })->name('purchase.individualReport');
+            return view('business.reports.my-history');
+        })->name('user.purchase.individualReport');
+
+        Route::get('/my/report', function() {
+            return view('admin.reports.individual_report');
+        })->name('user.individualReport');
 
         Route::get('/report/individual_download/{id}/{beginning_date}/{ending_date}', [IndividualLedger::class, 'downloadLedger'])->name('individualReportDownload');
         Route::get('/report/general_download/{beginning_date}/{ending_date}/{from_number}/{to_number}', [GeneralLedger::class, 'downloadLedger'])->name('generalReportDownload');
 
         Route::get('/logout', function () {
-            auth('user')->logout();
+            auth('admin')->logout();
             return redirect()->route('login');
-        })->name('logout');
+        })->name('user.logout');
     });
 });
 
-Route::middleware('auth:admin')->group(function () {
+Route::middleware(['auth:admin', 'check.admin.role'])->group(function () {
     Route::group(['prefix' => 'admin'], function () {
         Route::get('/dashboard', function () {
             return view('admin.dashboard.index');

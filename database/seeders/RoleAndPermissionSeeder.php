@@ -35,6 +35,13 @@ class RoleAndPermissionSeeder extends Seeder
         if(!Permission::where('name', 'can only view')->first())
             Permission::create(['guard_name' => 'user', 'name' => 'can only view']);
         
+        // check if permission exists for the guard 'web'
+        if(!Permission::where('name', 'can only view')->where('guard_name', 'web')->exists())
+            Permission::create(['guard_name' => 'web', 'name' => 'can only view']);
+
+        // check if permission exists for the guard 'web'
+        if(!Permission::where('name', 'can only view')->where('guard_name', 'admin')->exists())
+            Permission::create(['guard_name' => 'admin', 'name' => 'can only view']);
 
         // Create a superadmin role for users authenticating with the admin guard:
         // check if role exists
@@ -51,6 +58,17 @@ class RoleAndPermissionSeeder extends Seeder
         // member role
         if(!Role::where('name', 'member')->first()){
             $memberRole = Role::create(['guard_name' => 'user', 'name' => 'member']);
+            $memberRole->syncPermissions(['can only view']);
+        }
+
+        // check if role exists for the guard 'web'
+        if(!Role::where('name', 'member')->where('guard_name', 'web')->exists()){
+            $memberRole = Role::create(['guard_name' => 'web', 'name' => 'member']);
+            $memberRole->syncPermissions(['can only view']);
+        }
+
+        if(!Role::where('name', 'member')->where('guard_name', 'admin')->exists()){
+            $memberRole = Role::create(['guard_name' => 'admin', 'name' => 'member']);
             $memberRole->syncPermissions(['can only view']);
         }
         
