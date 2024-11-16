@@ -4,6 +4,8 @@ namespace App\Livewire\Forms;
 
 use Livewire\Form;
 use App\Models\Admin;
+use App\Models\Member;
+use App\Models\User;
 use Livewire\Attributes\Validate;
 
 class AdminForm extends Form
@@ -11,7 +13,7 @@ class AdminForm extends Form
     public $id;
     #[Validate('required|string|max:255')]
     public $name;
-    #[Validate('required|string|max:255|unique:admins,username')]
+    #[Validate('required|string|max:255')]
     public $username;
     public $email;
     #[Validate('required|string|min:6|max:255')]
@@ -19,6 +21,8 @@ class AdminForm extends Form
     #[Validate('required|string|min:6|max:255')]
     public $password_confirmation;
     public $role = 'manager';
+    #[Validate('required|numeric')]
+    public $coopId=0;
 
     
     /**
@@ -48,6 +52,34 @@ class AdminForm extends Form
                 if ($this->password !== $this->password_confirmation) {
                     $validator->errors()->add('password_confirmation', 'The password confirmation does not match.');
                 }
+
+                // check if the username already exist
+                if($this->role != 'member'){
+                    $admin = Admin::where('username', $this->username)->first();
+                    if($admin)
+                        $validator->errors()->add('username', 'The Username is already taken.');
+                }
+
+                if($this->role == 'member'){
+
+                    // check if the username is valid in the User's table
+                    $admin = User::where('username', $this->username)->first();
+                    if($admin)
+                        $validator->errors()->add('username', 'The Username is already taken.');
+
+                    // check if the coopId is valid
+                    if($this->coopId <= 0)
+                        $validator->errors()->add('coopId', 'The Coop ID is invalid.');
+
+                    
+
+                    // check if the coopId is valid from member's table
+                    $member = Member::where('coopId', $this->coopId)->first();
+                    if(!$member)
+                        $validator->errors()->add('coopId', 'The Coop ID is invalid.');
+                }
+
+                
             });
         });
 
@@ -61,6 +93,9 @@ class AdminForm extends Form
             'username' => $this->username,
             'email' => $this->email,
             'password' => bcrypt($this->password),
+            'coopId' => $this->role == 'member' ? $this->coopId : null,
+            'role' => $this->role,
+            'userId' => auth('admin')->user()->name,
         ]);
 
         if(!$admin)

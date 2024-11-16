@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('coopId')->nullable();
             $table->string('userId')->nullable();
+            $table->string('role')->nullable();
             $table->json('editDates')->nullable();
             $table->json('editedBy')->nullable();
             $table->rememberToken();

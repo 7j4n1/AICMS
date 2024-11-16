@@ -16,8 +16,7 @@ class LoginForm extends Form
             'username' => 'required|string',
         ]);
 
-        if (!\App\Models\Admin::where('username', $this->username)->exists() && 
-            !\App\Models\User::where('username', $this->username)->exists()) {
+        if (!\App\Models\Admin::where('username', $this->username)->exists() ) {
             $this->addError('username', 'The provided username does not exist.');
         }
     }
@@ -43,10 +42,10 @@ class LoginForm extends Form
         // Authenticate user against the admin guard
         if (!auth()->guard('admin')->attempt($credentials)) {
             // Authenticate user against the user guard
-            if (!auth()->guard('user')->attempt($credentials)) {
+            // if (!auth()->guard('user')->attempt($credentials)) {
                 $this->addError('password', 'The provided credentials are incorrect.');
                 return false;
-            }
+            // }
         }
 
         // start session for the logged in user
