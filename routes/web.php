@@ -125,7 +125,7 @@ Route::middleware(['auth:admin', 'check.admin.role'])->group(function () {
         Route::post('/import/loans', [ImportController::class, 'importLoan'])->name('newImportLoan');
         Route::post('/import/prev_payments', [ImportController::class, 'importLoanFromCsv'])->name('newImportPrevLoan');
 
-        Route::get('/import/getprev_loans', [ImportController::class, 'loadAllLoan'])->name('getPrevLoans');
+        // Route::get('/import/getprev_loans', [ImportController::class, 'loadAllLoan'])->name('getPrevLoans');
         // for uploading the 2023 ledger csv file
         Route::post('/import/ledgers/prev_ledger_2023', [HomeController::class, 'setLastLedger'])->name('lastledger2023');
 

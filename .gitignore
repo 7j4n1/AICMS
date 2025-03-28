@@ -17,3 +17,17 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+.vs/AICMS/FileContentIndex/3deeb6cc-9ab0-4b01-8b81-3a481c0b90a4.vsidx
+.vs/AICMS/FileContentIndex/052c83ab-714a-45cb-aaf4-ac2fbf8d40b5.vsidx
+.gitignore
+.vs/AICMS/v17/.wsuo
+.vs/AICMS/FileContentIndex/0482b287-1cc0-4123-8bf8-928763d3eb9f.vsidx
+.vs/AICMS/FileContentIndex/43258d65-641b-4e8f-8d8d-330682e8f470.vsidx
+.vs/AICMS/FileContentIndex/b34f163c-572f-4d05-b157-3e6d73e6e8e3.vsidx
+.vs/slnx.sqlite
+.vs/AICMS/v17/DocumentLayout.backup.json
+.vs/AICMS/v17/DocumentLayout.json
+.vs/VSWorkspaceState.json
+.vs/ProjectSettings.json
+data/test_2023.csv
+data/prev_ledger_test.csv
