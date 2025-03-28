@@ -92,34 +92,28 @@ class IndividualLedger extends Component
             ->whereBetween('paymentDate', [$beginning_date, $ending_date])
             ->orderByDesc('paymentDate')
             ->get(['id', 'coopId', 'loanAmount', 'savingAmount', 'totalAmount', 'paymentDate', 'others', 'shareAmount', 'adminCharge']);
+        
         if($ledgers){
             $memberId = Member::where('coopId', $id)->first();
 
             $isActive = ActiveLoans::where('coopId', $id)->first();
             $isOnLoan = ($isActive) ? true : false;
 
-            $balance = ($isActive) ? $isActive->loanBalance : 0;
+            $loanBalance = ($isActive) ? $isActive->loanBalance : 0;
 
-            $dataTotals = PaymentCapture::query()
-                ->where('coopId', $id)
-                ->whereBetween('paymentDate', [$beginning_date, $ending_date])
-                ->get();
-
-            // ->selectRaw('SUM("loanAmount") as loanAmount, SUM("savingAmount") as savingAmount, SUM("totalAmount") as totalAmount, SUM("shareAmount") as shareAmount, SUM("adminCharge") as adminCharge, SUM("others") as others')
-
-            $total_loan = $dataTotals->sum('loanAmount') ?? 0;
-            $total_saving = $dataTotals->sum('savingAmount') ?? 0;
-            $total_total = $dataTotals->sum('totalAmount') ?? 0;
-            $total_share = $dataTotals->sum('shareAmount') ?? 0;
-            $total_admin = $dataTotals->sum('adminCharge') ?? 0;
-            $total_others = $dataTotals->sum('others') ?? 0;
+            $loan_paid = $ledgers->sum('loanAmount') ?? 0;
+            $total_saving = $ledgers->sum('savingAmount') ?? 0;
+            $total_total = $ledgers->sum('totalAmount') ?? 0;
+            $total_share = $ledgers->sum('shareAmount') ?? 0;
+            $total_admin = $ledgers->sum('adminCharge') ?? 0;
+            $total_others = $ledgers->sum('others') ?? 0;
 
             $html = View::make('admin.reports.report_view', ['ledgers' => $ledgers, 
-                'dataTotals' => $dataTotals, 'memberId' => $memberId, 'isOnLoan' => $isOnLoan,
+                'memberId' => $memberId, 'isOnLoan' => $isOnLoan,
                 'beginning_date' => $beginning_date, 'ending_date' => $ending_date,
-                'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
+                'loan_paid' => $loan_paid, 'total_saving' => $total_saving, 'total_total' => $total_total,
                 'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others,
-                'balance' => $balance
+                'loan_balance' => $loanBalance
             ]);
 
             $pdf = new Dompdf();
