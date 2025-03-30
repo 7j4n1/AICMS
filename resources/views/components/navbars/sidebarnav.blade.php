@@ -124,6 +124,11 @@
                                 </a>
                             </li>
                             <li>
+                                <a class="nav-link" href="{{route('importMembersCsv')}}">
+                                    Import Members CSV
+                                </a>
+                            </li>
+                            <li>
                                 <a class="nav-link" href="{{route('exports')}}">
                                     Export records
                                 </a>

@@ -1,18 +1,19 @@
 <?php
 
+use Illuminate\Http\Request;
+use App\Livewire\Members\ListMembers;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImportController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DatabaseController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ImportController;
-use App\Http\Controllers\ItemCaptureController;
 use App\Http\Controllers\ItemRepayController;
-use App\Http\Controllers\MemberController;
-use App\Http\Controllers\PaymentController;
 use App\Livewire\Admin\Reports\GeneralLedger;
+use App\Http\Controllers\ItemCaptureController;
 use App\Livewire\Admin\Reports\IndividualLedger;
-use App\Livewire\Members\ListMembers;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -156,6 +157,32 @@ Route::middleware(['auth:admin', 'check.admin.role'])->group(function () {
         Route::get('/export/payments', [PaymentController::class, 'export'])->name('exportLedgers');
 
         Route::get('/generatelogins', [MemberController::class, 'generateLoginDetails'])->name('generateLogins');
+
+        Route::get('/import/csv/members', function(Request $request) {
+            return view('admin.import.import_member_csv');
+        })->name('importMembersCsv');
+
+        // Upload Chunk File
+        Route::post('/upload-chunk', function(Request $request) {
+
+            if($request->hasFile('chunk')) {
+                $chunk = $request->file('chunk');
+
+                // store chunk in temporary directory
+                $path = $chunk->store('chunks', 'local');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Chunk file uploaded successfully',
+                    'path' => $path
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No chunk file uploaded'
+            ], 400);
+        });
     });
 
 

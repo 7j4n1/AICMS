@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -31,7 +32,7 @@ class AuthController extends Controller
         ]);
 
         // Debug incoming request
-        \Log::info('Login attempt', [
+        Log::info('Login attempt', [
             'username' => $request->username,
             'headers' => $request->headers->all(),
         ]);
