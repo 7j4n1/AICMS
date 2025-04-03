@@ -7,33 +7,43 @@
                         <h4 class="card-title">Upload Members Details in Bulk (CSV Only)</h4>
                     </div>
                     <div class="card-body">
+                        @if(session('info'))
+                            <div class="alert alert-info">
+                                {{ session('info') }}
+                            </div>
+                        @endif
                         @if (session('success'))
-                            <div class="alert alert-success auto-close">
+                            <div class="alert alert-success">
                                 {{ session('success') }}
                             </div>
                         @endif
                         @if (session('error'))
-                            <div class="alert alert-danger auto-close">
+                            <div class="alert alert-danger">
                                 {{ session('error') }}
                             </div>
                         @endif
                         <h2>Import Member Data Bulk (CSV file)</h2>
                         
 
-                        <div x-data="csvUploader()">
-                            <input type="file" name="file" class="form-control" @change="handleFileUpload" accept=".csv">
+                        <div x-data="csvUploader()" x-init="initUploader()" class="mt-4">
+                            <input type="file" name="file" @change="handleFileUpload($event)" accept=".csv"
+                            class="form-control" id="csv-file-input" :disabled="isProcessing" />
+
 
                             <div x-show="isProcessing" class="mt-2">
-                                <div>Progress: <span x-text="progress"></span>%</div>
+                                <div>Uploading Progress: <span x-text="progress"></span>%</div>
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" :style="'width: ' + progress + '%'" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
-                                <div>Processed Chunks: <span x-text="processedChunks"></span> / <span x-text="totalChunks"></span></div>
+                               {{-- <div>Uploaded Chunks: <span x-text="processedChunks"></span> / <span x-text="totalChunks"></span></div> --}} 
                             </div>
                         </div>
+                        
 
                         
                     </div>
+
+
                 </div>
             </div>
         </div>

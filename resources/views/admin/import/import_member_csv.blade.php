@@ -13,6 +13,17 @@
     
 {{-- Handle Browser dispatched Events --}}
 <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('csvState', {
+            instance: null,
+            setInstance(instance) {
+                this.instance = instance;
+            },
+            getInstance() {
+                return this.instance;
+            },
+        });
+    });
     function csvUploader() {
         return {
             isProcessing: false,
@@ -25,6 +36,88 @@
             totalRows: 0,
             rowsProcessed: 0,
             useRowCount: true, // Use row count for chunking
+            parsingComplete: false,
+            parser: null, // Store the Papa.parse instance
+            activeChunkPromises: {}, // Store active chunk promises
+            importComplete: false, // Track if import is complete
+
+            // Add a method to clear all pending promises when complete
+            clearPendingPromises() {
+                Object.values(this.activeChunkPromises).forEach(promiseData => {
+                    if (promiseData.listener) {
+                        window.removeEventListener('chunk-processed', promiseData.listener);
+                    }
+                    if (promiseData.timeout) {
+                        clearTimeout(promiseData.timeout);
+                    }
+                });
+                this.activeChunkPromises = {};
+                console.log('Cleared all pending chunk promises');
+            },
+
+            // Add initialization function
+            initUploader() {
+                console.log('CSV Uploader initialized');
+
+                // Register this instance with Alpine
+                if(Alpine && Alpine.store) {
+                    Alpine.store('csvState').setInstance(this);
+                } 
+
+                window.addEventListener('import-complete', () => {
+                    this.progress = 100; // Set progress to 100%
+                    this.isProcessing = false;
+                    this.resetFileInput();
+                });
+            },
+
+            resetFileInput() {
+                const fileInput = document.getElementById('csv-file-input');
+                if(fileInput) {
+                    fileInput.value = ''; // Reset the file input value
+                }
+                // Reset all other properties
+                this.isProcessing = false;
+                this.progress = 0;
+                this.processedChunks = 0;
+                this.totalChunks = 0;
+                this.chunkCounter = 0;
+                this.currentChunkData = [];
+                this.rowsProcessed = 0;
+                this.totalRows = 0;
+                this.parsingComplete = false;
+                this.importComplete = false; // Reset import complete flag
+                
+                if(this.parser)
+                {
+                    try {
+                        this.parser.abort(); // Abort the parser if it's still running
+                    } catch (error) {
+                        console.error('Error aborting parser:', error);
+                    }
+                    this.parser = null; // Reset the parser instance
+                }
+            },
+
+            signalCompletion() {
+                if(this.parsingComplete && this.processedChunks === this.chunkCounter && !this.importComplete) {
+                    console.log('Signaling import completion...');
+                    this.importComplete = true; // Set import complete flag
+                    this.progress = 100;
+
+                    // Clear any pending promises first
+                    this.clearPendingPromises();
+                    
+                    // Notify Livewire
+                    Livewire.dispatch('import-complete', {
+                        totalChunks: this.chunkCounter,
+                        totalRows: this.rowsProcessed,
+                    });
+                    
+                    // Set state
+                    this.isProcessing = false;
+                }
+            },
 
             handleFileUpload(event) {
                 const file = event.target.files[0];
@@ -84,8 +177,9 @@
 
             parseAndProcess(file) {
                 const self = this;
+                this.parsingComplete = false;
 
-                Papa.parse(file, {
+                this.parser = Papa.parse(file, {
                     header: true,
                     skipEmptyLines: true,
                     step: function(results) {
@@ -108,14 +202,30 @@
                         }
                     },
                     complete: () => {
+                        this.parsingComplete = true;
+
                         // Process any remaining data in the current chunk
                         if(self.currentChunkData.length > 0) {
                             self.processCurrentChunk();
+                        }else {
+                            self.signalCompletion();
                         }
                         console.log('Parsing complete');
                         console.log(`Final stats: ${self.processedChunks} chunks / ${self.rowsProcessed} rows`);
                         // Update progress to 100% after all chunks are processed
-                        self.progress = 100;
+                        // if(self.useRowCount) {
+                        //     self.progress = Math.min(Math.round((self.rowsProcessed / self.totalRows) * 100), 100);
+                        // } else {
+                        //     self.progress = 100;
+                        // }
+
+                        // Set the processing status to false
+                        // self.isProcessing = false;
+                        // reset the file input
+                        // document.getElementById('csv-file-input').value = '';
+
+                        // 
+                        
                         // self.isProcessing = false;
                         // self.currentChunkData = []; // Clear current chunk data
                     },
@@ -128,6 +238,11 @@
 
             processCurrentChunk() {
                 if (this.currentChunkData.length === 0) return;
+
+                // Pause parsing to process the current chunk
+                if(this.parser) {
+                    this.parser.pause();
+                }
 
                 this.chunkCounter++;
                 console.log(`Processing chunk ${this.chunkCounter} with ${this.currentChunkData.length} rows`);
@@ -149,15 +264,47 @@
                     // Create FormData for upload
                     const formData = new FormData();
                     formData.append('chunk', blob, `chunk_${this.chunkCounter}.csv`);
+                    formData.append('chunkNumber', this.chunkCounter);
+
+                    // Clear the current chunk data
+                    this.currentChunkData = [];
 
                     // Upload chunk via AXIOS
-                    this.uploadChunk(formData, this.chunkCounter);
+                    this.uploadChunk(formData, this.chunkCounter)
+                        .then(() => {
+                            // Chunk uploaded successfully
+                            console.log(`Chunk ${this.chunkCounter} processed successfully`);
+
+                            // Update progress based on chunks
+                            if (this.useRowCount) {
+                                this.progress = Math.min(Math.round((this.processedChunks / this.totalRows) * 100), 99);
+                            }
+
+                            // Resume parsing if paused for the next chunk
+                            if (this.parser && !this.parsingComplete) {
+                                this.parser.resume();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error uploading chunk:', error);
+                            
+                            // Handle error (e.g., retry, notify user, etc.)
+                            this.isProcessing = false;
+
+                            // try to resume parsing if paused
+                            if (this.parser && !this.parsingComplete) {
+                                this.parser.resume();
+                            }
+                        });
                     
                 } catch (error) {
                     console.error('Error processing chunk:', error, this.currentChunkData);
-                } finally {
-                    // Reset current chunk data
-                    this.currentChunkData = [];
+                    this.isProcessing = false;
+
+                    // try to resume parsing if paused
+                    if (this.parser && !this.parsingComplete) {
+                        this.parser.resume();
+                    }
                 }
 
             },
@@ -172,8 +319,15 @@
             },
 
             uploadChunk(formData, chunkNumber) {
+                // Skip upload if import is already complete
+                if(this.importComplete) {
+                    console.log('Upload skipped, import already complete');
+                    return Promise.resolve(); // Resolve immediately if import is complete
+                }
+
                 // Use AXios query to upload the chunk
-                axios.post('/admin/upload-chunk', formData, {
+                // Return the promise chain
+                return axios.post('/admin/upload-chunk', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -182,20 +336,80 @@
                     this.processedChunks++;
 
                     // Only update progress if not using row-based counting
-                    if (!this.useRowCounting) {
-                        this.progress = Math.min(Math.round((this.processedChunks / this.totalChunks) * 100), 99);
+                    if (!this.useRowCount) {
+                        this.progress = Math.min(Math.round((this.processedChunks / this.totalChunks) * 100), 100);
                     }
                     // Log the response for debugging
                     console.log(`Chunk ${chunkNumber} uploaded (${this.processedChunks}/${this.totalChunks})`);
 
                     // Update Livewire component state
-                    Livewire.dispatch('chunk-uploaded', {
-                        chunkNumber: chunkNumber,
-                        totalChunks: this.totalChunks
+                    return new Promise((resolve, reject) => {
+                        Livewire.dispatch('process-chunk', {
+                            chunkNumber: chunkNumber,
+                            totalChunks: this.totalChunks,
+                            path: response.data.path,
+                        });
+
+                        // setup a listener for when the chunk is uploaded
+                        const processListener = (e) => {
+                            if (e.detail.chunkNumber === chunkNumber) {
+                                // Remove the listener after processing
+                                window.removeEventListener('chunk-processed', processListener);
+
+                                // Clear the timeout if it exists
+                                if (this.activeChunkPromises[chunkNumber]?.timeout) {
+                                    clearTimeout(this.activeChunkPromises[chunkNumber].timeout);
+                                }
+                                
+                                // Delete this promise from tracking
+                                delete this.activeChunkPromises[chunkNumber];
+                                
+                                if(e.detail.success) {
+                                    resolve();
+                                } else {
+                                    reject(new Error(e.detail.message || 'Error processing upload'));
+                                }
+                            }
+                        };
+
+
+                        // Add the listener for the chunk upload
+                        window.addEventListener('chunk-processed', processListener);
+
+                        // Set a timeout for this chunk
+                        const timeoutId = setTimeout(() => {
+                            window.removeEventListener('chunk-processed', processListener);
+                            delete this.activeChunkPromises[chunkNumber];
+                            
+                            // Check if processing is already complete
+                            if (!this.isProcessing) {
+                                // If we're already done, don't show an error
+                                console.log(`Chunk ${chunkNumber} timed out, but processing is already complete - ignoring`);
+                                resolve(); // Resolve anyway to prevent cascading errors
+                            } else {
+                                reject(new Error(`Timeout waiting for chunk ${chunkNumber} processing`));
+                            }
+                        }, 100000);
+                        
+                        // Store the promise details for tracking
+                        this.activeChunkPromises[chunkNumber] = {
+                            listener: processListener,
+                            timeout: timeoutId
+                        };
+                        
+                        // Dispatch the Livewire event to start processing
+                        Livewire.dispatch('process-chunk', {
+                            chunkNumber: chunkNumber,
+                            totalChunks: this.totalChunks,
+                            path: response.data.path,
+                        });
+
+
                     });
                 })
                 .catch(error => {
                     console.error('Error uploading chunk:', error);
+                    throw error; // Rethrow the error to be caught in the calling block
                 })
             },
 
@@ -203,5 +417,128 @@
     }
 
     
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Wait for Alpine.js to be initialized
+        setTimeout(() => {
+            if(!Alpine) {
+                console.error('Alpine.js is not loaded yet. Please check your script inclusion.');
+                return;
+            }
+            console.log('Alpine.js is loaded and ready to use.');
+        }, 100);
+
+        window.addEventListener('chunk-processed', function(event) {
+            console.log('Chunk processed:', event.detail);
+            
+            
+            const csvUploader = Alpine.store('csvState').getInstance();
+            
+            if(!csvUploader) {
+                console.log('CSV Uploader not initialized yet');
+
+                setTimeout(() => {
+                const retryUploader = Alpine.store('csvState').getInstance();
+                    if (retryUploader && retryUploader.processedChunks === retryUploader.chunkCounter) {
+                        handleProcessingComplete(retryUploader);
+                    }
+                }, 500);
+
+                return;
+            }
+
+            console.log('CSV Uploader:', csvUploader);
+
+            if(csvUploader && csvUploader.processedChunks === csvUploader.chunkCounter && csvUploader.parsingComplete) {
+                handleProcessingComplete(csvUploader);
+                
+            }
+        });
+
+        // Extract the completion handler as a separate function
+        function handleProcessingComplete(csvUploader) {
+            // All chunks processed, reset the uploader
+            console.log('All chunks processed, resetting uploader...');
+
+            if(typeof csvUploader.clearPendingPromises === 'function') {
+                csvUploader.clearPendingPromises(); // Clear pending promises
+            }
+
+            // Notify Livewire component
+            Livewire.dispatch('import-complete', {
+                totalChunks: csvUploader.chunkCounter,
+                totalRows: csvUploader.rowsProcessed,
+            });
+
+            csvUploader.progress = 100; // Set progress to 100%
+            csvUploader.isProcessing = false;
+
+            // Reset the file input
+            csvUploader.resetFileInput();
+        }
+
+        window.addEventListener('show-notification', function(event) {
+            console.log('Notification:', event.detail);
+
+            const detail = event.detail[0] || {};
+            const type = detail.type || 'info';
+            const message = detail.message || 'Notification received';
+            
+            if (typeof toastr !== 'undefined') {
+                toastr[type](message);
+            } else {
+                console.log(type + ': ' + message);
+
+                // Create div with a class of 'auto-close'
+                const notificationDiv = document.createElement('div');
+                notificationDiv.className = 'alert alert-' + type;
+                notificationDiv.innerHTML = message;
+                // append it to class of 'card-body' 
+                const cardBody = document.querySelector('.card-body');
+                if (cardBody) {
+                    cardBody.appendChild(notificationDiv);
+                }
+                // set a timeout to remove the div after 10 seconds
+                setTimeout(() => {
+                    notificationDiv.classList.add('fade-out');
+                    notificationDiv.addEventListener('transitionend', () => {
+                        notificationDiv.remove();
+                    });
+                }, 50000);
+
+            }
+        });
+        // Listen for Livewire events
+        // window.addEventListener('notify', event => {
+        //     // You can integrate with your preferred notification library here
+        //     // For example with toastr:
+        //     if (typeof toastr !== 'undefined') {
+        //         toastr[event.detail.type || 'info'](event.detail.message);
+        //     } else {
+        //         console.log(event.detail.type + ': ' + event.detail.message);
+        //     }
+        // });
+        
+        // // Listen for Alpine.js events
+        // window.addEventListener('processing-status-changed', event => {
+        //     console.log('Processing status changed:', event.detail);
+        // });
+
+        
+        // document.addEventListener('livewire:init', () => {
+        //     Livewire.on('processing-status-changed', () => {
+
+        //         // window.setTimeout(function() {
+        //         //     $(".auto-close").fadeTo(5000, 0).slideUp(5000, function(){
+        //         //         $(this).remove(); 
+        //         //     });
+        //         // }, 500);
+        //     });
+        // });
+    
+        
+    });
 </script>
 @endsection
