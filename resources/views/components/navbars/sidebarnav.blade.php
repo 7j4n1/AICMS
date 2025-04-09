@@ -129,6 +129,14 @@
                                 </a>
                             </li>
                             <li>
+                                <a class="nav-link" href="{{route('importLedgerCsv')}}">
+                                    Import Ledger CSV
+                                </a>
+                            <li>
+                                <a class="nav-link" href="{{route('importLoansCsv')}}">
+                                    Import Loans CSV
+                                </a>
+                            <li>
                                 <a class="nav-link" href="{{route('exports')}}">
                                     Export records
                                 </a>
