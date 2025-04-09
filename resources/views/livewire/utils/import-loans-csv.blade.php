@@ -1,10 +1,10 @@
 
-    <div class="container">
+<div class="container">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Upload Members Details in Bulk (CSV Only)</h4>
+                        <h4 class="card-title">Upload Previous Loan Details (CSV Only)</h4>
                     </div>
                     <div class="card-body">
                         @if(session('info'))
@@ -22,7 +22,7 @@
                                 {{ session('error') }}
                             </div>
                         @endif
-                        <h2>Import Member Data Bulk (CSV file)</h2>
+                        <h2>Import Loan Data (CSV file)</h2>
                         
 
                         <div x-data="csvUploader()" x-init="initUploader()" class="mt-4">

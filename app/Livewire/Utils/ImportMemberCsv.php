@@ -8,7 +8,6 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class ImportMemberCsv extends Component
 {
@@ -24,9 +23,16 @@ class ImportMemberCsv extends Component
     protected $listeners = [
         'process-chunk' => 'handleChunkUploaded',
         'import-complete' => 'handleImportComplete',
-        // 'processing-status-changed' => 'handleProcessingStatus',
     ];
 
+    /**
+     * Handle the chunk upload
+     *
+     * @param int $chunkNumber
+     * @param int $totalChunks
+     * @param string $path
+     * @return void
+     */
     public function handleChunkUploaded($chunkNumber, $totalChunks, $path)
     {
         $this->uploadedChunks = $chunkNumber;
@@ -39,6 +45,13 @@ class ImportMemberCsv extends Component
         
     }
 
+    /**
+     * Handle the import completion
+     *
+     * @param int $totalChunks
+     * @param int $totalRows
+     * @return void
+     */
     public function handleImportComplete($totalChunks, $totalRows)
     {
         $this->isProcessing = false;
@@ -60,18 +73,13 @@ class ImportMemberCsv extends Component
         $this->reset(['isProcessing', 'uploadedChunks', 'totalChunks', 'progress']);
     }
 
-    // public function handleChunkUploaded($chunkNumber, $totalChunks, $path)
-    // {
-    //     $this->uploadedChunks = $chunkNumber;
-    //     $this->totalChunks = $totalChunks;
-
-    //     // If all chunks are uploaded, start processing
-    //     if ($this->uploadedChunks == $this->totalChunks) {
-    //         $this->processUploadedChunks();
-    //     }
-        
-    // }
-
+    /**
+     * Process the chunk file
+     *
+     * @param int $chunkNumber
+     * @param string $path
+     * @return void
+     */
     public function processChunk($chunkNumber, $path)
     {
         DB::beginTransaction();
@@ -106,87 +114,12 @@ class ImportMemberCsv extends Component
         }
     }
 
-    // public function processUploadedChunks()
-    // {
-    //     $this->isProcessing = true;
-    //     $this->errorMessage = '';
-
-
-    //     DB::beginTransaction();
-    //     try {
-
-    //         // Log the start of processing
-    //         Log::info('Processing uploaded chunks...');
-
-    //         // Get all uploaded chunks from storage
-    //         $chunkFiles = Storage::files('chunks');
-    //         $totalFiles = count($chunkFiles);
-    //         $processedFiles = 0;
-
-    //         foreach ($chunkFiles as $chunkPath) {
-    //             $processedFiles++;
-
-    //             // Calculate progress
-    //             $progress = round(($processedFiles / $totalFiles) * 100);
-
-    //             // Dispatch progress to the frontend
-    //             $this->sendDispatchEvent([
-    //                 'isProcessing' => true,
-    //                 'progress' => $progress,
-    //                 'message' => "Processing chunk {$processedFiles} of {$totalFiles}...",
-    //             ]);
-
-    //             // process the chunk file
-    //             $this->processChunkFile($chunkPath);
-
-    //             // Log the chunk processing
-    //             Log::info('Processed chunk file: ' . $chunkPath);
-    //             // dispatch progress to the frontend
-
-    //             // Allow some time for the UI to update
-    //             // This is a workaround to ensure the UI updates before the next chunk is processed
-    //             // usleep(500000); // 50 milliseconds pause
-                
-    //         }
-
-    //         DB::commit();
-    //         $this->isProcessing = false;
-    //         $this->isCompleted = true;
-            
-            
-    //         // Log the success message
-    //         Log::info('All chunks processed successfully.');
-
-    //         // $this->reset(['isProcessing', 'uploadedChunks', 'totalChunks']);
-
-    //         session()->flash('success', 'All chunks processed successfully.');
-
-    //         // $this->sendDispatchEvent();
-
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         $this->errorMessage = 'Processing failed: ' . $e->getMessage();
-    //         $this->isProcessing = false;
-
-    //         // Dispatch error message
-    //         // $this->sendDispatchEvent([
-    //         //     'isProcessing' => false,
-    //         //     'isCompleted' => false,
-    //         //     'progress' => 0,
-    //         //     'message' => $this->errorMessage,
-    //         //     'error' => true
-    //         // ]);
-
-    //         session()->flash('error', $this->errorMessage);
-    //         // Log the error message
-    //         Log::error('Error processing chunks: ' . $this->errorMessage);
-    //         // log the exception
-    //         Log::error('Exception: ', [
-    //             'exception' => $e,
-    //         ]);
-    //     }
-    // }
-
+    /**
+     * Process the chunk file
+     *
+     * @param string $chunkPath
+     * @return void
+     */
     protected function processChunkFile($chunkPath)
     {
         $fullPath = storage_path('app/' . $chunkPath);
@@ -215,7 +148,6 @@ class ImportMemberCsv extends Component
             }
 
             // If batch size is reached, insert into the database
-            // If batch size is reached, insert into the database
             if (count($batch) >= $batchSize) {
                 DB::table('members')->insert($batch);
                 $batch = []; // Reset the batch
@@ -231,6 +163,12 @@ class ImportMemberCsv extends Component
         unlink($fullPath);
     }
 
+    /**
+     * Validate and transform the record
+     *
+     * @param array $record
+     * @return array|null
+     */
     protected function validateRecord(array $record): ?array
     {
         // Perform your validation and transformation here
@@ -286,25 +224,18 @@ class ImportMemberCsv extends Component
      */
     protected function setNullIfEmpty($value)
     {
-        return (empty($value) || !isset($value)) ? null : $value;
+        return empty($value) ? null : $value;
     }
 
-    // This method exists just to force a refresh
-    public function handleProcessingStatus()
-    {
-        // This method is intentionally left empty
-        // It is used to force a refresh of the component
-        // when the processing status changes
-    }
-    
-
+    /**
+     * Render the component
+     *
+     * @return \Illuminate\View\View
+     */
     public function render()
     {
         return view('livewire.utils.import-member-csv');
     }
 
-    public function sendDispatchEvent($array = [])
-    {
-        $this->dispatch('processing-status-changed', $array);
-    }
+    
 }

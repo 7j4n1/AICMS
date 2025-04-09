@@ -1,12 +1,12 @@
 <?php
-    $title = "Import Member CSV Data to Database";
+    $title = "Import Ledger CSV Data to Database";
 ?>
 @extends('components.layouts.app')
 
 @section('content')
-    <x-navbars.topnavbar homeUrl="/" sectionName="Upload CSV(Bulk)" subSection1="Account" subSection2="Members Details"></x-topnavbar>
+    <x-navbars.topnavbar homeUrl="/" sectionName="Upload CSV(Bulk)" subSection1="Account" subSection2="Ledger"></x-topnavbar>
     
-    <livewire:utils.import-member-csv />
+    <livewire:utils.import-ledger-csv />
 
     <x-scriptvendor></x-scriptvendor>
 
@@ -212,22 +212,7 @@
                         }
                         console.log('Parsing complete');
                         console.log(`Final stats: ${self.processedChunks} chunks / ${self.rowsProcessed} rows`);
-                        // Update progress to 100% after all chunks are processed
-                        // if(self.useRowCount) {
-                        //     self.progress = Math.min(Math.round((self.rowsProcessed / self.totalRows) * 100), 100);
-                        // } else {
-                        //     self.progress = 100;
-                        // }
 
-                        // Set the processing status to false
-                        // self.isProcessing = false;
-                        // reset the file input
-                        // document.getElementById('csv-file-input').value = '';
-
-                        // 
-                        
-                        // self.isProcessing = false;
-                        // self.currentChunkData = []; // Clear current chunk data
                     },
                     error: (error) => {
                         console.error('Error parsing CSV:', error);

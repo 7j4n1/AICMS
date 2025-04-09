@@ -1,12 +1,12 @@
 <?php
-    $title = "Import Member CSV Data to Database";
+    $title = "Import Loans CSV Data to Database";
 ?>
 @extends('components.layouts.app')
 
 @section('content')
-    <x-navbars.topnavbar homeUrl="/" sectionName="Upload CSV(Bulk)" subSection1="Account" subSection2="Members Details"></x-topnavbar>
+    <x-navbars.topnavbar homeUrl="/" sectionName="Upload CSV(Bulk)" subSection1="Account" subSection2="Loan Details"></x-topnavbar>
     
-    <livewire:utils.import-member-csv />
+    <livewire:utils.import-loans-csv />
 
     <x-scriptvendor></x-scriptvendor>
 

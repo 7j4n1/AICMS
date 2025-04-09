@@ -162,6 +162,14 @@ Route::middleware(['auth:admin', 'check.admin.role'])->group(function () {
             return view('admin.import.import_member_csv');
         })->name('importMembersCsv');
 
+        Route::get('/import/csv/loans', function(Request $request) {
+            return view('admin.import.import_loan_csv');
+        })->name('importLoansCsv');
+
+        Route::get('/import/csv/ledger', function(Request $request) {
+            return view('admin.import.import_ledger_csv');
+        })->name('importLedgerCsv');
+
         // Upload Chunk File
         Route::post('/upload-chunk', function(Request $request) {
 
