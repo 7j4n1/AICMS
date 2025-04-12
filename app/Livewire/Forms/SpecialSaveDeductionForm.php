@@ -38,6 +38,29 @@ class SpecialSaveDeductionForm extends Form
     {
         $this->withValidator(function ($validator) {
             $validator->after(function ($validator) {
+                
+                if($this->otherSavingsType == '') {
+                    $validator->errors()->add('otherSavingsType', 'Savings type is required.');
+                }
+
+                // Check if user has a valid valid credit amount
+                // from records
+                $record = SpecialSaveDeduction::where('coopId', $this->coopId)
+                    ->where('type', $this->otherSavingsType)
+                    ->where('credit', '>', 0)
+                    ->first();
+
+                if(!$record) {
+                    $validator->errors()->add('coopId', 'No valid credit amount found for this Coop ID.');
+                }
+
+                // Check if the payment date is in the future
+                if($this->paymentDate > now()) {
+                    $validator->errors()->add('paymentDate', 'Payment date cannot be in the future.');
+                }
+
+
+                // Check if the debit amount is less than 50
                 if ($this->convertToPhpNumber($this->debitAmount) < 50) {
                     $validator->errors()->add('debitAmount', 'Debit amount must be at least 50.');
                 }

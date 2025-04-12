@@ -111,7 +111,7 @@ class ImportLoansCsv extends Component
         // Read the CSV file and process each record
         foreach ($reader->getRecords() as $record) {
             // validate and transform the record
-            if(empty($record[0]) || ($record[0] == '-') || stripos($record[0], 'COOP') !== false) {
+            if(empty($record[0]) || ($record[0] == '-') || stripos($record[0], 'COOP') !== false || stripos($record[0], 'object') !== false) {
                 Log::warning("Skipping record due to missing required fields: ", $record);
                 continue; // Skip if required fields are missing
             }
@@ -165,7 +165,7 @@ class ImportLoansCsv extends Component
             $existingRecord->update([
                 'loanAmount' => $record[1],
                 'loanDate' => date('Y-m-d', strtotime($record[2])),
-                'guarantor1' => ($record[3] == '-') ? $record : ($this->checkIfMemberExists(ltrim($record[3], '0')) ? ltrim($record[3], '0') : $uniqueId),
+                'guarantor1' => ($record[3] == '-') ? $uniqueId : ($this->checkIfMemberExists(ltrim($record[3], '0')) ? ltrim($record[3], '0') : $uniqueId),
                 'guarantor2' => $this->otherGuarantorCheckNullorFilter($record[4]),
                 'guarantor3' => $this->otherGuarantorCheckNullorFilter($record[5]),
                 'guarantor4' => $this->otherGuarantorCheckNullorFilter($record[6]),

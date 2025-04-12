@@ -90,6 +90,12 @@
                                     Payment capture
                                 </a>
                             </li>
+
+                            <li>
+                                <a class="nav-link" href="{{route('sp-save-deduction')}}">
+                                    Special Save Deduct
+                                </a>
+                            </li>
                             
                         </ul>
                     </li>

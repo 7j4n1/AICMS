@@ -384,11 +384,17 @@
             }
 
             // calculate the remaining total after charges
-            let remainingTotal = totalAmount - adminCharge - others;
+            let remainingTotal = totalAmount - others;
 
             // calculate the savings and shares based on the split option
-            let savingAmount = (remainingTotal - loanAmount) * (100 - splitOption) / 100;
+            let savingAmount = ((remainingTotal - loanAmount) * (100 - splitOption) / 100) - adminCharge;
             let shareAmount = (remainingTotal - loanAmount) * splitOption / 100;
+
+            // Ensure savingAmount and shareAmount are not negative
+            if (savingAmount < 0) {
+                adminCharge += savingAmount;
+                savingAmount = 0;
+            }
 
             // Update input fields with the computed values
             document.getElementById('adminCharge').value = adminCharge;

@@ -43,56 +43,7 @@
                         </div>
                     </div>
                     
-                    <div class="row mb-3">
-                        <div class="col-xl-6">
-                            <section class="card card-featured-left card-featured-secondary">
-                                <div class="card-body">
-                                    <div class="widget-summary">
-                                        <div class="widget-summary-col widget-summary-col-icon">
-                                            <div class="summary-icon bg-secondary">
-                                                <i class="fas fa-naira-sign"></i>
-                                            </div>
-                                        </div>
-                                        <div class="widget-summary-col">
-                                            <div class="summary">
-                                                <h3 class="">Loan Balance</h3>
-                                                <div class="info">
-                                                    <strong class="amount">&#8358; {{ ($activeLoan ? number_format($activeLoan->loanBalance, 2) : number_format(0, 2)) }} </strong>
-                                                </div>
-                                            </div>
-                                            <div class="summary-footer">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="col-xl-6">
-                            <section class="card card-featured-left card-featured-secondary">
-                                <div class="card-body">
-                                    <div class="widget-summary">
-                                        <div class="widget-summary-col widget-summary-col-icon">
-                                            <div class="summary-icon bg-secondary">
-                                                <!-- <i class="fas fa-naira-sign"></i> -->
-                                            </div>
-                                        </div>
-                                        <div class="widget-summary-col">
-                                            <div class="summary">
-                                                <h3 class="">Loan Status</h3>
-                                                <div class="info">
-                                                    <strong class="amount"> {{ ($activeLoan ? 'On Loan' : '-')}}</strong>
-                                                </div>
-                                            </div>
-                                            <div class="summary-footer">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        
-                    </div>
-
+                    
                     {{-- Modal for capturing new payment details --}}
                     <div x-cloak x-show="isOpen" x-transition:opacity.duration.500ms class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"  tabindex="-1">
                         <div class="bg-white rounded-lg w-1/2">
@@ -133,13 +84,14 @@
                                             <!-- Other Savings Type Dropdown -->
                                             <div class="form-group">
                                                 <label for="otherSavingsType">From Savings Type</label>
-                                                <select id="otherSavingsType" class="form-control" wire:model="paymentForm.otherSavingsType">
+                                                <select id="otherSavingsType" class="form-control" wire:model.live="paymentForm.otherSavingsType">
                                                     <option value="">Select Savings Type</option>
                                                     <option value="special">Special savings</option>
                                                     <option value="hajj">Hajj</option>
                                                     <option value="ileya">Ileya</option>
                                                     <!-- Add more options as needed -->
                                                 </select>
+                                                @error('paymentForm.otherSavingsType') <span class="text-danger">{{ $message }}</span> @enderror
                                             </div>
                                         </div>
 
@@ -200,7 +152,6 @@
                                     <th>Type</th>
                                     <th>Credit</th>
                                     <th>Debit</th>
-                                    <th>Available Bal.</th>
                                     <th>Date</th>
                                     @canAny(['can edit', 'can delete'], 'admin')
                                         <th>Actions</th>
@@ -215,8 +166,8 @@
                                         <!-- <td>{{-- $counter++ --}}</td> -->
                                         <td>{{ $record->coopId }}</td>
                                         <td>{{ $record->type }}</td>
-                                        <td>{{ number_format($record->credit, 2) }}</td>
-                                        <td>{{ number_format($record->debit, 2) }}</td>
+                                        <td>{{ $record->credit > 0 ? '+' : ''}} {{ number_format($record->credit, 2) }}</td>
+                                        <td>{{ $record->debit > 0 ? '-' : ''}} {{ number_format($record->debit, 2) }}</td>
                                         <td>{{ $record->paymentDate }}</td>
                                         @canany(['can edit', 'can delete'], 'admin')
                                             <td class="">
@@ -235,7 +186,7 @@
                     </div>
                     <div class="row mt-4">
                         <div class="col-sm-12 dataTables_paginate paging_simple_numbers">
-                            {{ $payments->links() }}
+                            {{ $records->links() }}
                         </div>
                     </div>
                 </div>
@@ -288,96 +239,21 @@
                 return;
             }
 
-            Livewire.dispatch('save-payments', {id: coopId,debitAmount: debitAmount});
+            Livewire.dispatch('save-payments', {id: coopId, debitAmount: debitAmount});
             
 
             
         }
 
-        function calculatePercent() {
-            let totalAmount = parseFloat(document.getElementById('totalAmount').value.replace(/,/g, ''));
-            let loanAmount = parseFloat(document.getElementById('loanAmount').value.replace(/,/g, ''));
-            let splitOption = parseFloat(document.getElementById('splitOption').value);
-            let others = parseFloat(document.getElementById('otherAmount').value.replace(/,/g, ''));
-            let adminCharge = 0;
-
-            // convert total amount to number
-            if (isNaN(totalAmount)) {
-                alert("Total Amount cannot be empty..");
-                return;
+        function convertToCurrency() {
+            let debitAmount = parseFloat(document.getElementById('debitAmount').value.replace(/,/g, ''));
+            
+            if (!isNaN(debitAmount)) {
+                document.getElementById('debitAmount').value = debitAmount.toLocaleString('en-US');
             }
 
-            // Admin charge computation logic
-            if (totalAmount >= 10000) {
-                adminCharge = 50;
-            }
-
-            // calculate the remaining total after charges
-            let remainingTotal = totalAmount - adminCharge - others;
-
-            // calculate the savings and shares based on the split option
-            let savingAmount = (remainingTotal - loanAmount) * (100 - splitOption) / 100;
-            let shareAmount = (remainingTotal - loanAmount) * splitOption / 100;
-
-            // Update input fields with the computed values
-            document.getElementById('adminCharge').value = adminCharge;
-            document.getElementById('savingAmount').value = savingAmount.toLocaleString('en-US');
-            document.getElementById('shareAmount').value = shareAmount.toLocaleString('en-US');
-        
         }
 
-        // When saving amount is changed, calculate the share and savings amount
-        function recalculateFromSavings()
-        {
-            let totalAmount = parseFloat(document.getElementById('totalAmount').value.replace(/,/g, ''));
-            let loanAmount = parseFloat(document.getElementById('loanAmount').value.replace(/,/g, ''));
-            let savingAmount = parseFloat(document.getElementById('savingAmount').value.replace(/,/g, ''));
-            let shareAmount = parseFloat(document.getElementById('shareAmount').value.replace(/,/g, ''));
-            let others = parseFloat(document.getElementById('otherAmount').value.replace(/,/g, ''));
-            let adminCharge = parseFloat(document.getElementById('adminCharge').value);
-
-            // convert total amount to number
-            if (isNaN(totalAmount)) {
-                alert("Total Amount cannot be empty..");
-                return;
-            }
-
-            // calculate the remaining total after charges
-            let remainingTotal = totalAmount - adminCharge - loanAmount - others;
-
-            // calculate the savings and shares based on the split option
-            let newShareAmount = remainingTotal - savingAmount;
-
-            // Update input fields with the computed values
-            document.getElementById('shareAmount').value = newShareAmount.toLocaleString('en-US');
-            document.getElementById('otherAmount').value = others.toLocaleString('en-US');
-        }
-
-        // When share amount is changed, calculate the savings and loan amount
-        function recalculateFromShares()
-        {
-            let totalAmount = parseFloat(document.getElementById('totalAmount').value.replace(/,/g, ''));
-            let loanAmount = parseFloat(document.getElementById('loanAmount').value.replace(/,/g, ''));
-            let shareAmount = parseFloat(document.getElementById('shareAmount').value.replace(/,/g, ''));
-            let others = parseFloat(document.getElementById('otherAmount').value.replace(/,/g, ''));
-            let adminCharge = parseFloat(document.getElementById('adminCharge').value);
-
-            // convert total amount to number
-            if (isNaN(totalAmount)) {
-                alert("Total Amount cannot be empty..");
-                return;
-            }
-
-            // calculate the remaining total after charges
-            let remainingTotal = totalAmount - adminCharge - loanAmount - others;
-
-            // calculate the savings and shares
-            let newSavingAmount = remainingTotal - shareAmount;
-
-            // Update input fields with the computed values
-            document.getElementById('savingAmount').value = newSavingAmount.toLocaleString('en-US');
-            document.getElementById('otherAmount').value = others.toLocaleString('en-US');
-        }
 
         function UpdateDataAfterValidation() {
             let coopId = document.getElementById('coopId').value;
@@ -413,23 +289,9 @@
         }
 
 
-        // Event listener for the split option
-        document.getElementById('splitOption').addEventListener('change', calculatePercent);
+        // Add an input event on debitAmount
+        document.getElementById('debitAmount').addEventListener('input', convertToCurrency);
 
-        // Add an input event on totalAmount id
-        document.getElementById('totalAmount').addEventListener('input', calculatePercent);
-        // Add an input event on loanAmount id
-        document.getElementById('loanAmount').addEventListener('input', calculatePercent);
-        // Add an input event on savingAmount id
-        document.getElementById('otherAmount').addEventListener('input', calculatePercent);
-
-        
-        // Event listener for user manipulations of the savings and shares
-        // Add an input event on savingAmount id
-        document.getElementById('savingAmount').addEventListener('input', recalculateFromSavings);
-        // Add an input event on shareAmount id
-        document.getElementById('shareAmount').addEventListener('input', recalculateFromShares);
-        
 
     </script>
     

@@ -6,6 +6,7 @@ use App\Models\Member;
 use League\Csv\Reader;
 use Livewire\Component;
 use App\Models\ActiveLoans;
+use App\Models\LoanCapture;
 use Livewire\WithFileUploads;
 use App\Models\PaymentCapture;
 use Illuminate\Support\Facades\DB;
@@ -140,7 +141,7 @@ class ImportLedgerCsv extends Component
         // Read the CSV file and process each record
         foreach ($reader->getRecords() as $record) {
             // validate and transform the record
-            if(empty($record[0]) || ($record[0] == '-') || stripos($record[0], 'COOP') !== false) {
+            if(empty($record[0]) || ($record[0] == '-') || stripos($record[0], 'COOP') !== false || stripos($record[0], 'object') !== false) {
                 Log::warning("Skipping record due to missing required fields: ", $record);
                 continue; // Skip if required fields are missing
             }
@@ -161,8 +162,8 @@ class ImportLedgerCsv extends Component
 
                 if($validatedData['others'] > 0) {
                     $specialSaveBatch[] = [
-                        'coopId' => $this->coopId,
-                        'paymentDate' => $this->paymentDate,
+                        'coopId' => $validatedData['coopId'],
+                        'paymentDate' => $validatedData['paymentDate'],
                         'debit' => 0,
                         'type' => 'special',
                         'credit' => $validatedData['others'],
@@ -285,7 +286,7 @@ class ImportLedgerCsv extends Component
 
             if($totalPayment >= $activeLoan->loanBalance) {
                 // loan is fully paid
-                $bulkFullyPaid[] = $activeLoan->id;
+                $bulkFullyPaid[] = $activeLoan->coopId;
             } else {
                 // loan is partially paid, need to update the balance individually
                 $bulkPartiallyPaid[] = [
@@ -298,13 +299,15 @@ class ImportLedgerCsv extends Component
 
         // update the active loans in bulk
         if(!empty($bulkFullyPaid)) {
-            ActiveLoans::whereIn('id', $bulkFullyPaid)
-                ->update([
-                    'loanPaid' => DB::raw('loanAmount'),
-                    'loanBalance' => 0,
-                    'lastPaymentDate' => now(),
-                    'updated_at' => now(),
-                ]);
+
+            // Move to completed loans table and
+            // active loans will be deleted automatically
+            LoanCapture::whereIn('coopId', $bulkFullyPaid)
+                ->get()
+                ->each(function ($loan) {
+                    $loan->completedLoan();
+                });
+        
         }
 
         // update the active loans individually for partially paid
