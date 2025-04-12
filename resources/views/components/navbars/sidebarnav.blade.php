@@ -90,6 +90,12 @@
                                     Payment capture
                                 </a>
                             </li>
+
+                            <li>
+                                <a class="nav-link" href="{{route('sp-save-deduction')}}">
+                                    Special Save Deduct
+                                </a>
+                            </li>
                             
                         </ul>
                     </li>
@@ -123,6 +129,19 @@
                                     Imports records
                                 </a>
                             </li>
+                            <li>
+                                <a class="nav-link" href="{{route('importMembersCsv')}}">
+                                    Import Members CSV
+                                </a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="{{route('importLedgerCsv')}}">
+                                    Import Ledger CSV
+                                </a>
+                            <li>
+                                <a class="nav-link" href="{{route('importLoansCsv')}}">
+                                    Import Loans CSV
+                                </a>
                             <li>
                                 <a class="nav-link" href="{{route('exports')}}">
                                     Export records

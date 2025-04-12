@@ -31,3 +31,4 @@ yarn-error.log
 .vs/ProjectSettings.json
 data/test_2023.csv
 data/prev_ledger_test.csv
+data/members_datacapture_full.csv

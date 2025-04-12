@@ -151,7 +151,15 @@
         @if($ledgers->count() > 0)
             <div class="col-md-3 mb-4" style="padding-top: 2%;">
                 <!-- <button type="button" class="btn btn-primary" @click="downloadLedger('{{$coopId}}')">Export to Pdf</a> -->
-                <a href="{{ route('individualReportDownload', ['id' => $coopId, 'beginning_date' => $beginning_date, 'ending_date' => $ending_date]) }}" class="btn btn-primary">Export to Pdf</a>
+                @canany(['can edit', 'can delete'], 'admin')
+                    
+                @endcanany
+                @if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->hasRole('member', 'admin'))
+                    <a href="{{ route('individualReportDownload', ['id' => $coopId, 'beginning_date' => $beginning_date, 'ending_date' => $ending_date]) }}" class="btn btn-primary">Export to Pdf</a>
+                @else
+                <a href="{{ route('individualReportDownloadAdmin', ['id' => $coopId, 'beginning_date' => $beginning_date, 'ending_date' => $ending_date]) }}" class="btn btn-primary">Export to Pdf</a>
+                @endif
+
             </div>
         @endif
 

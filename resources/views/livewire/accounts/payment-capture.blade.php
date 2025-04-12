@@ -174,7 +174,7 @@
                                         <div class="col-md-6">
                                             <!-- Other Savings Type Dropdown -->
                                             <div class="form-group">
-                                                <label for="otherSavingsType">Other Savings Type</label>
+                                                <label for="otherSavingsType">Special Savings Type</label>
                                                 <select id="otherSavingsType" class="form-control" wire:model="paymentForm.otherSavingsType">
                                                     <option value="">Select Savings Type</option>
                                                     <option value="special">Special savings</option>
@@ -186,7 +186,7 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label for="others">Others <span class="text-danger">*</span></label>
+                                            <label for="others">Special Saving Amount <span class="text-danger">*</span></label>
                                             <input type="text" id="otherAmount" class="form-control" placeholder="Others Amount" wire:model.live="paymentForm.others"  />
                                             @error('paymentForm.others') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
@@ -384,11 +384,17 @@
             }
 
             // calculate the remaining total after charges
-            let remainingTotal = totalAmount - adminCharge - others;
+            let remainingTotal = totalAmount - others;
 
             // calculate the savings and shares based on the split option
-            let savingAmount = (remainingTotal - loanAmount) * (100 - splitOption) / 100;
+            let savingAmount = ((remainingTotal - loanAmount) * (100 - splitOption) / 100) - adminCharge;
             let shareAmount = (remainingTotal - loanAmount) * splitOption / 100;
+
+            // Ensure savingAmount and shareAmount are not negative
+            if (savingAmount < 0) {
+                adminCharge += savingAmount;
+                savingAmount = 0;
+            }
 
             // Update input fields with the computed values
             document.getElementById('adminCharge').value = adminCharge;

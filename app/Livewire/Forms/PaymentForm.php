@@ -10,6 +10,8 @@ use App\Models\LoanCapture;
 use App\Models\PaymentCapture;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\SpecialSaveDeduction;
 
 class PaymentForm extends Form
 {
@@ -153,11 +155,35 @@ class PaymentForm extends Form
             // Deduct pending annual fees from available shareAmount for the member across all years
             $this->deductPendingAnnualFees($this->coopId, $this->convertToPhpNumber($this->shareAmount));
 
+            if($this->convertToPhpNumber($this->others) > 0)
+            {
+                SpecialSaveDeduction::create([
+                    'coopId' => $this->coopId,
+                    'paymentDate' => $this->paymentDate,
+                    'debit' => 0,
+                    'type' => $this->otherSavingsType,
+                    'credit' => $this->convertToPhpNumber($this->others),
+                ]);
+            }
+
             // commit the transaction
             DB::commit();
 
             return true;
         } catch (\Exception $th) {
+            // Log the error message
+            Log::error('Error saving payment: ' . $th->getMessage(), [
+                'coopId' => $this->coopId,
+                'splitOption' => $this->splitOption,
+                'loanAmount' => $this->convertToPhpNumber($this->loanAmount),
+                'savingAmount' => $this->convertToPhpNumber($this->savingAmount),
+                'totalAmount' => $this->convertToPhpNumber($this->totalAmount),
+                'paymentDate' => $this->paymentDate,
+                'others' => $this->convertToPhpNumber($this->others),
+                'shareAmount' => $this->convertToPhpNumber($this->shareAmount),
+                'userId' => auth('admin')->user()->name,
+                'adminCharge' => $this->adminCharge,
+            ]);
             // rollback the transaction
             DB::rollBack();
 
@@ -259,6 +285,11 @@ class PaymentForm extends Form
             DB::commit();
 
         } catch (\Exception $th) {
+            // Log the error message
+            Log::error('Error deducting pending annual fees: ' . $th->getMessage(), [
+                'coopId' => $coopId,
+                'savingAmount' => $savingAmount,
+            ]);
             // Rollback the transaction on error
             DB::rollBack();
 

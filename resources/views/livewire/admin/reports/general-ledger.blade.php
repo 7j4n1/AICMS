@@ -20,7 +20,12 @@
         </div>
         @if($ledgers->count() > 0)
             <div class="col-md-3 mb-4" style="padding-top: 2%;">
-                <a href="{{ route('generalReportDownload', ['beginning_date' => $beginning_date, 'ending_date' => $ending_date, 'from_number' => 1, 'to_number' => 100]) }}" target="_blank" class="btn btn-primary">Export to PDF</a>
+                
+                @if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->hasRole('member', 'admin'))
+                    <a href="{{ route('generalReportDownload', ['beginning_date' => $beginning_date, 'ending_date' => $ending_date, 'from_number' => 1, 'to_number' => 100]) }}" target="_blank" class="btn btn-primary">Export to PDF</a>
+                @else
+                    <a href="{{ route('generalReportDownload_Admin', ['beginning_date' => $beginning_date, 'ending_date' => $ending_date, 'from_number' => 1, 'to_number' => 100]) }}" target="_blank" class="btn btn-primary">Export to PDF</a>
+                @endif
             </div>
         @endif
 

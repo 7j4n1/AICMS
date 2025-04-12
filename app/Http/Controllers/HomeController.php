@@ -32,12 +32,10 @@ class HomeController extends Controller
               if ($row) {
                 // Insert new record
                 
-                $coop = null;
-
                 
-                if($row[0] == '-' || $row[0] == null)
+                if($row[0] == '-' || empty($row[0]))
                 {
-                  $coop = null;
+                  continue;
                 }
 
                 if (!empty($row[0])) {

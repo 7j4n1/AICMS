@@ -44,7 +44,7 @@
 		<script src="{{ asset('vendor/modernizr/modernizr.js') }}" data-navigate-once></script>
 
 	</head>
-	<body class="{{ $bodyClass ?? "" }}">
+	<body class="{{ $bodyClass ?? '' }}">
         
         @yield('content')
 		
@@ -55,6 +55,13 @@
 
 		<!-- Theme Initialization Files -->
 		<script src="{{ asset('js/theme.init.js') }}"></script>
+
+		<!-- Header Menu -->
+		<script src="{{ asset('js/header.menu.js') }}"></script>
+
+		<!-- Papa -->
+		<script src="{{ asset('js/papaparse.js') }}"></script>
+		<script src="{{ asset('js/axios.min.js') }}"></script>
 
 		<script>
 			function initTable(params) {
