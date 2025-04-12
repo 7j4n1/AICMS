@@ -1,10 +1,10 @@
 <div x-data="{ isOpen: @entangle('isModalOpen') }" class="container">
-    <!-- Button to open the modal for capturing new payment details -->
+    <!-- Button to open the modal for deduction payment details -->
     <div class="row mb-3">
         <div class="col">
             <section class="card">
                 <header class="card-header">
-                    <h2 class="card-title">All Payment Records</h2>
+                    <h2 class="card-title">Special Savings Records</h2>
                 </header>
                 <div class="card-body">
                     <div class="row">
@@ -38,7 +38,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="mb-3">
-                                <button class="btn btn-primary" @click="isOpen = true; @this.set('isModalOpen', true);">Capture New Payment <i class="fas fa-plus"></i></button>
+                                <button class="btn btn-primary" @click="isOpen = true; @this.set('isModalOpen', true);">Deduct Savings(Spec) <i class="fas fa-plus"></i></button>
                             </div>
                         </div>
                     </div>
@@ -98,18 +98,18 @@
                         <div class="bg-white rounded-lg w-1/2">
                             <div class="">
                                 <div class="bg-gray-200 p-3 flex justify-between items-center rounded-t-lg">
-                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingPaymentId ? 'Edit Payment details' : 'Capture New Payment details' }}</h5>
+                                    <h5 class="modal-title fw-bold" id="MemberModalLabel">{{ $editingSpSavingId ? 'Edit Savings details' : 'Capture New Deduction(Special)' }}</h5>
                                     <button type="button" class="btn btn-danger transition duration-300" @click="isOpen = false; @this.set('isModalOpen', false);$wire.toggleModalClose()" aria-label="Close"><i class="fas fa-close"></i> Cancel</button>
                                 </div>
                                 <div class="p-5">
 
                                     {{-- Form starts --}}
-                                    <form wire:submit="{{ $editingPaymentId ? 'updatePayment' : 'savePayment' }}" class="row g-3">
+                                    <form wire:submit="{{ $editingSpSavingId ? 'updateDeduction' : 'saveDeduction' }}" class="row g-3">
 
                                         {{-- CoopId --}}
                                         <div class="col-md-6">
                                             <label for="title">Coop ID <span class="text-danger">*</span></label>
-                                            <input type="text" id="coopId" class="form-control" placeholder="Coop ID" wire:model.live="paymentForm.coopId" {{ $editingPaymentId ? 'disabled' : '' }}/>
+                                            <input type="text" id="coopId" class="form-control" placeholder="Coop ID" wire:model.live="paymentForm.coopId" {{ $editingSpSavingId ? 'disabled' : '' }}/>
                                             @error('paymentForm.coopId') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
@@ -117,64 +117,22 @@
                                             <label for="title">Full Name:</label>
                                             <input type="text" id="fullname" class="form-control" placeholder="Full Name" value="{{$fullname}}" readonly />
                                         </div>
-                                        @if($activeLoan)
-                                        <!-- Loan Status & Balance -->
-                                        <div class="col-md-6">
-                                            <label for="title">Loan Balance: </label>
-                                            <input type="text" id="loanBalance" class="form-control" placeholder="Full Name" value="&#8358; {{ ($activeLoan ? number_format($activeLoan->loanBalance, 2) : number_format(0, 2)) }}" readonly />
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label for="title">Loan Status:</label>
-                                            <input type="text" id="loanStatus" class="form-control" placeholder="Full Name" value="{{ ($activeLoan ? 'On Loan' : '-')}}" readonly />
-                                        </div>
-                                        @endif
-
-                                        <div class="col-md-6">
-                                            <label for="splitOption" class="form-label">Split Option</label>
-                                            <select class="form-select" wire:model.live="paymentForm.splitOption" id="splitOption">
-                                                <option value="0">0</option>
-                                                @foreach(range(1, 10) as $perc)
-                                                    <option value="{{ $perc*10 }}">{{ $perc*10 }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
 
                                         <input type="hidden" value="{{ $prev_amount}}" id="prevAmount" />
-                                        
-                                            {{-- Amount --}}
+
+                                            {{-- Debit Amount --}}
                                         <div class="col-md-6">
-                                            <label for="totalAmount">Total Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="totalAmount" class="form-control" placeholder="Total Amount" wire:model.blur="paymentForm.totalAmount" />
-                                            @error('paymentForm.totalAmount') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-                        
-                                            {{-- Loan Amount --}}
-                                        <div class="col-md-6">
-                                            <label for="loanAmount">Loan Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="loanAmount" class="form-control" placeholder="Loan Amount" wire:model.live="paymentForm.loanAmount"  />
-                                            @error('paymentForm.loanAmount') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <label for="debitAmount">Debit Amount <span class="text-danger">*</span></label>
+                                            <input type="text" id="debitAmount" class="form-control"  placeholder="Debit Amount" wire:model.live="paymentForm.debitAmount" />
+                                            @error('paymentForm.debitAmount') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
-
-                                            {{-- Savings Amount --}}
-                                        <div class="col-md-6">
-                                            <label for="savingAmount">Savings Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="savingAmount" class="form-control"  placeholder="Savings Amount" wire:model.live="paymentForm.savingAmount" />
-                                            @error('paymentForm.savingAmount') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-
-                                            {{-- Shares Amount --}}
-                                        <div class="col-md-6">
-                                            <label for="shareAmount">Shares Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="shareAmount" class="form-control" placeholder="Shares Amount" wire:model.live="paymentForm.shareAmount"  />
-                                            @error('paymentForm.shareAmount') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
+                                         
 
                                         <div class="col-md-6">
                                             <!-- Other Savings Type Dropdown -->
                                             <div class="form-group">
-                                                <label for="otherSavingsType">Special Savings Type</label>
+                                                <label for="otherSavingsType">From Savings Type</label>
                                                 <select id="otherSavingsType" class="form-control" wire:model="paymentForm.otherSavingsType">
                                                     <option value="">Select Savings Type</option>
                                                     <option value="special">Special savings</option>
@@ -183,18 +141,6 @@
                                                     <!-- Add more options as needed -->
                                                 </select>
                                             </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label for="others">Special Saving Amount <span class="text-danger">*</span></label>
-                                            <input type="text" id="otherAmount" class="form-control" placeholder="Others Amount" wire:model.live="paymentForm.others"  />
-                                            @error('paymentForm.others') <span class="text-danger">{{ $message }}</span> @enderror
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label for="adminCharge">Admin Charge <span class="text-danger">*</span></label>
-                                            <input type="text" id="adminCharge" class="form-control" placeholder="admin Charge" wire:model.live="paymentForm.adminCharge"  />
-                                            @error('paymentForm.adminCharge') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
 
                                         {{-- Payment Date --}}
@@ -208,7 +154,7 @@
 
                                         <div class="text-end">
 
-                                            <button type="button" class="btn btn-success transition duration-300" onclick="{{ $editingPaymentId ? 'UpdateDataAfterValidation()' : 'sendDataAfterValidation()' }}">{{ $editingPaymentId ? 'Update' : 'Add' }} Payment</button>
+                                            <button type="button" class="btn btn-success transition duration-300" onclick="{{ $editingSpSavingId ? 'UpdateDataAfterValidation()' : 'sendDataAfterValidation()' }}">{{ $editingSpSavingId ? 'Update' : 'Add' }} Payment</button>
                                         </div>
 
 
@@ -251,13 +197,11 @@
                                 <tr>
                                     <!-- <th>S/N</th> -->
                                     <th>Coop Id</th>
-                                    <th>Total Amount</th>
-                                    <th>Savings</th>
-                                    <th>Shares</th>
-                                    <th>Loans</th>
-                                    <th>Others</th>
-                                    <th>Split</th>
-                                    <th>Capture Date</th>
+                                    <th>Type</th>
+                                    <th>Credit</th>
+                                    <th>Debit</th>
+                                    <th>Available Bal.</th>
+                                    <th>Date</th>
                                     @canAny(['can edit', 'can delete'], 'admin')
                                         <th>Actions</th>
                                     @endcanany
@@ -266,24 +210,18 @@
                             <tbody>
                                 <?php //$counter = 1; ?>
 
-                                @foreach($payments as $payment)
-                                    <tr wire:key="item-profile-{{ $payment->id }}">
+                                @foreach($records as $record)
+                                    <tr wire:key="item-profile-{{ $record->id }}">
                                         <!-- <td>{{-- $counter++ --}}</td> -->
-                                        <td>{{ $payment->coopId }}</td>
-                                        <td>{{ number_format($payment->totalAmount, 2) }}</td>
-                                        <td>{{ number_format($payment->savingAmount, 2) }}</td>
-                                        <td>{{ number_format($payment->shareAmount, 2) }}</td>
-                                        <td>{{ number_format($payment->loanAmount, 2) }}</td>
-                                        <td>{{ number_format($payment->others, 2) }}</td>
-                                        <td>{{ $payment->splitOption }}</td>
-                                        <td>{{ $payment->paymentDate }}</td>
+                                        <td>{{ $record->coopId }}</td>
+                                        <td>{{ $record->type }}</td>
+                                        <td>{{ number_format($record->credit, 2) }}</td>
+                                        <td>{{ number_format($record->debit, 2) }}</td>
+                                        <td>{{ $record->paymentDate }}</td>
                                         @canany(['can edit', 'can delete'], 'admin')
                                             <td class="">
-                                                @can('can edit', 'admin')
-                                                    <button onclick="sendMsg('{{ $payment->id }}')" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Edit</button>
-                                                @endcan
                                                 @can('can delete', 'admin')
-                                                    <button onclick="sendDeleteEvent('{{ $payment->id }}')" 
+                                                    <button onclick="sendDeleteEvent('{{ $record->id }}')" 
                                                         class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
                                                 @endcan
                                             </td>
@@ -326,7 +264,7 @@
         }
 
         function sendDeleteEvent(value) {
-            var result = confirm("Are you sure you want to delete this Payment details?");
+            var result = confirm("Are you sure you want to delete this Record details?");
             if (result) {
                 // User clicked 'OK', dispatch delete event
                 Livewire.dispatch('delete-payments', { id: value });
@@ -335,32 +273,23 @@
 
         function sendDataAfterValidation() {
             let coopId = document.getElementById('coopId').value;
-            let totalAmount = document.getElementById('totalAmount').value.replace(/,/g, '');
-            let loanAmount = document.getElementById('loanAmount').value.replace(/,/g, '');
-            let splitOption = document.getElementById('splitOption').value;
-            let savingAmount = document.getElementById('savingAmount').value.replace(/,/g, '');
-            let shareAmount = document.getElementById('shareAmount').value.replace(/,/g, '');
-            let others = document.getElementById('otherAmount').value.replace(/,/g, '');
-            let adminCharge = document.getElementById('adminCharge').value;
+            let debitAmount = document.getElementById('debitAmount').value.replace(/,/g, '');
 
-            if(loanAmount === '' || savingAmount === '' || shareAmount === '' || others === '' || adminCharge === '') {
+            if(debitAmount === '') {
                 alert("All fields are required..");
                 return;
-            }else if(isNaN(Number(totalAmount)) || isNaN(Number(loanAmount)) || isNaN(Number(savingAmount)) || isNaN(Number(shareAmount)) || isNaN(Number(others)) || isNaN(adminCharge)) {
-                alert("All fields must be numbers..");
+            }else if(isNaN(Number(debitAmount))) {
+                alert("Debit must be numbers..");
                 return;
             } 
             
-            if(totalAmount < 0 || loanAmount < 0 || savingAmount < 0 || shareAmount < 0 || others < 0 || adminCharge < 0) {
-                alert("All fields must be greater than zero..");
+            if(debitAmount < 0 ) {
+                alert("Debit must be greater than zero..");
                 return;
             }
 
-            if ((Number(loanAmount) + Number(savingAmount) + Number(shareAmount) + Number(others) + Number(adminCharge)) !== Number(totalAmount)) {
-                alert("Your computation cannot be greater than the TOTAL.");
-            }else{
-                Livewire.dispatch('save-payments', {id: coopId,totalAmount: totalAmount, loanAmount: loanAmount, splitOption: splitOption, savingAmount: savingAmount, shareAmount: shareAmount, others: others, adminCharge: adminCharge});
-            }
+            Livewire.dispatch('save-payments', {id: coopId,debitAmount: debitAmount});
+            
 
             
         }

@@ -10,6 +10,7 @@ use Livewire\WithFileUploads;
 use App\Models\PaymentCapture;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\SpecialSaveDeduction;
 
 class ImportLedgerCsv extends Component
 {
@@ -134,6 +135,7 @@ class ImportLedgerCsv extends Component
         $batchSize = 500; // Number of records to process at once
         $batch = [];
         $loanUpdatesBatch = [];
+        $specialSaveBatch = [];
 
         // Read the CSV file and process each record
         foreach ($reader->getRecords() as $record) {
@@ -156,22 +158,35 @@ class ImportLedgerCsv extends Component
                         'paymentDate' => $validatedData['paymentDate'],
                     ];
                 }
+
+                if($validatedData['others'] > 0) {
+                    $specialSaveBatch[] = [
+                        'coopId' => $this->coopId,
+                        'paymentDate' => $this->paymentDate,
+                        'debit' => 0,
+                        'type' => 'special',
+                        'credit' => $validatedData['others'],
+                    ];
+                }
             }
 
             // If batch size is reached, insert into the database
             if (count($batch) >= $batchSize) {
                 PaymentCapture::insert($batch);
+                SpecialSaveDeduction::insert($specialSaveBatch);
                 $this->processLoanUpdatesInBatch($loanUpdatesBatch);
                 
                 // Reset the batches
                 $batch = [];
                 $loanUpdatesBatch = []; 
+                $specialSaveBatch = [];
             }
         }
 
         // Insert any remaining records in the batch
         if (!empty($batch)) {
             PaymentCapture::insert($batch);
+            SpecialSaveDeduction::insert($specialSaveBatch);
             $this->processLoanUpdatesInBatch($loanUpdatesBatch);
         }
 

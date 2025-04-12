@@ -81,6 +81,10 @@ Route::middleware(['auth:admin', 'check.admin.role'])->group(function () {
             return view('admin.accounts.payment');
         })->name('payments');
 
+        Route::get('/special-saving-ded', function() {
+            return view('admin.accounts.special-saving');
+        })->name('sp-save-deduction');
+
         Route::get('/admins', function() {
             return view('admin.members.admin');
         })->name('admins');
