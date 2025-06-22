@@ -14,6 +14,7 @@ use App\Http\Controllers\ItemRepayController;
 use App\Livewire\Admin\Reports\GeneralLedger;
 use App\Http\Controllers\ItemCaptureController;
 use App\Livewire\Admin\Reports\IndividualLedger;
+use App\Http\Controllers\ExcelDownloadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -173,6 +174,10 @@ Route::middleware(['auth:admin', 'check.admin.role'])->group(function () {
         Route::get('/import/csv/ledger', function(Request $request) {
             return view('admin.import.import_ledger_csv');
         })->name('importLedgerCsv');
+
+        // Download Imported CSV Report
+        Route::get('/download/excel', [ExcelDownloadController::class, 'downloadExcel'])
+            ->name('download.excel');
 
         // Upload Chunk File
         Route::post('/upload-chunk', function(Request $request) {
