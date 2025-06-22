@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Illuminate\Support\Str;
 use App\Exports\SheetExport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +13,26 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class GenerateExcelReportJob implements ShouldQueue
+class GenerateExcelReportJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * The number of seconds the job can run before timing out.
+     */
+    public $timeout = 300;
+
+    /**
+     * The number of times the job may be attempted.
+     */
+    public $tries = 3;
+
+    /**
+     * The maximum number of unhandled exceptions to allow before failing.
+     */
+    public $maxExceptions = 3;
 
     /**
      * Create a new job instance.
@@ -26,7 +43,15 @@ class GenerateExcelReportJob implements ShouldQueue
         public string $title,
     )
     {
-        //
+        $this->onQueue('excel-reports'.$this->batchKey.Str::uuid()); // Set the queue for this job
+    }
+
+    /**
+     * The unique ID of the job.
+     */
+    public function uniqueId(): string
+    {
+        return $this->batchKey . '_' . md5(serialize($this->title) . Str::uuid());
     }
 
     /**
@@ -66,7 +91,7 @@ class GenerateExcelReportJob implements ShouldQueue
             if (Storage::disk('public')->exists($path)) {
                 // Store the file path in cache for download
                 $cacheKey = "excel_report_{$this->type}_{$this->batchKey}";
-                Cache::put($cacheKey, $path, now()->addHours(24));
+                Cache::put($cacheKey, $path, now()->addHours(12));
 
                 Log::info("Excel report generated successfully", [
                     'type' => $this->type,

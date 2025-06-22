@@ -13,6 +13,7 @@ use App\Traits\LivewireCsvImporter;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ImportMemberCsv extends Component
@@ -71,20 +72,13 @@ class ImportMemberCsv extends Component
 
         try {
             // Store the CSV file temporarily
-            // $this->progressKey = 'csv-import-' . uniqid();
             $filename = Str::uuid() . '.' . $this->csvFile->getClientOriginalExtension();
             $path = $this->csvFile->storeAs('csv_imports', $filename);
 
             $fileContent = Storage::get($path);
             // Convert the file data into an array of lines
-            // Convert the file data into an array of lines and filter empty lines PROPERLY
             $rows = explode(PHP_EOL, $fileContent);
-            // $rows = array_filter($allLines, function($row) {
-            //     return !empty(trim($row));
-            // });
 
-            // // Re-index the array after filtering
-            // $rows = array_values($rows);
             $this->totalRows = count($rows);
 
             if ($this->totalRows === 0) {
@@ -260,12 +254,6 @@ class ImportMemberCsv extends Component
         if (!$batchKey) return;
 
         try {
-            // // Get all results from cache
-            // $allResults = Cache::get("batch_all_results_{$batchKey}", [
-            //     'valid_data' => [],
-            //     'invalid_data' => [],
-            //     'error_logs' => []
-            // ]);
 
             $this->downloadLinks = [];
 
@@ -337,28 +325,7 @@ class ImportMemberCsv extends Component
         $coopId = $row[0] ?? null;
         if (!$coopId || strpos($coopId, 'COOP') !== false) return null; // Skip if coopId is missing or header row
 
-        // Check if record already exists
-        $existingRecord = Member::where('coopId', $coopId)->first();
-        if ($existingRecord) {
-            // Update the existing record
-            $existingRecord->update([
-                'surname' => $this->setNullIfEmpty($row[1]),
-                'otherNames' => $this->setNullIfEmpty($row[2]),
-                'occupation' => $this->setNullIfEmpty($row[3]),
-                'gender' => $this->setNullIfEmpty($row[4]),
-                'religion' => $this->setNullIfEmpty($row[5]),
-                'phoneNumber' => $this->setNullIfEmpty($row[6]),
-                'accountNumber' => $this->setNullIfEmpty($row[7]),
-                'bankName' => $this->setNullIfEmpty($row[8]),
-                'nextOfKinName' => $this->setNullIfEmpty($row[9]),
-                'nextOfKinPhoneNumber' => $this->setNullIfEmpty($row[10]),
-                'yearJoined' => $this->setNullIfEmpty($row[11]),
-                'userId' => $userId, // Retrieve admin id
-            ]);
-            return []; // Return empty array to indicate record was updated
-        }
-
-        return [
+        $recordData = [
             'coopId' => $coopId,
             'surname' => $this->setNullIfEmpty($row[1]),
             'otherNames' => $this->setNullIfEmpty($row[2]),
@@ -372,65 +339,39 @@ class ImportMemberCsv extends Component
             'nextOfKinPhoneNumber' => $this->setNullIfEmpty($row[10]),
             'yearJoined' => $this->setNullIfEmpty($row[11]),
             'userId' => $userId, // set admin id
+            'created_at' => now(),
+            'updated_at' => now()
         ];
-    }
 
-    public function downloadReport()
-    {
-        return Storage::download($this->reportPath);
-    }
+        try {
+            $affectedRows = DB::table('members')->upsert(
+                [$recordData],
+                ['coopId'], 
+                [ // Columns to update if record exists (exclude coopId and created_at)
+                    'surname', 'otherNames', 'occupation', 'gender', 'religion',
+                    'phoneNumber', 'accountNumber', 'bankName', 'nextOfKinName',
+                    'nextOfKinPhoneNumber', 'yearJoined', 'userId', 'updated_at'
+                ]
+            );
 
-    /**
-     * Validate and transform the record
-     *
-     * @param array $record
-     * @return array|null
-     */
-    protected function validateRecord(array $record): ?array
-    {
-        // Perform your validation and transformation here
-        $uniqueId = $record[0]; // assuming the first column is uniqueId
-        // Check if record already exists
-        $existingRecord = Member::where('coopId', $uniqueId)->first();
-        if ($existingRecord) {
-            // update the existing record
-            $existingRecord->update([
-                'surname' => $this->setNullIfEmpty($record[1]),
-                'otherNames' => $this->setNullIfEmpty($record[2]),
-                'occupation' => $this->setNullIfEmpty($record[3]),
-                'gender' => $this->setNullIfEmpty($record[4]),
-                'religion' => $this->setNullIfEmpty($record[5]),
-                'phoneNumber' => $this->setNullIfEmpty($record[6]),
-                'accountNumber' => $this->setNullIfEmpty($record[7]),
-                'bankName' => $this->setNullIfEmpty($record[8]),
-                'nextOfKinName' => $this->setNullIfEmpty($record[9]),
-                'nextOfKinPhoneNumber' => $this->setNullIfEmpty($record[10]),
-                'yearJoined' => $this->setNullIfEmpty($record[11]),
-                'userId' => auth('admin')->user()->id, // Retrieve admin id
+            Log::debug('Record upserted successfully', [
+                'coop_id' => $coopId,
+                'affected_rows' => $affectedRows
             ]);
-            return null; // Skip this record if it already exists
+
+
+            return $recordData;
+
+        } catch (\Exception $th) {
+            Log::error('Failed to upsert record', [
+                'coop_id' => $coopId,
+                'error' => $th->getMessage(),
+                'data' => $recordData
+            ]);
+            throw $th; // Rethrow the exception to be handled by the job
         }
 
-        if(!isset($record[0]) || !isset($record[1])) {
-            return null; // Skip if required fields are missing
-        }
-
-        return [
-            'coopId' => $record[0],
-            'surname' => $this->setNullIfEmpty($record[1]),
-            'otherNames' => $this->setNullIfEmpty($record[2]),
-            'occupation' => $this->setNullIfEmpty($record[3]),
-            'gender' => $this->setNullIfEmpty($record[4]),
-            'religion' => $this->setNullIfEmpty($record[5]),
-            'phoneNumber' => $this->setNullIfEmpty($record[6]),
-            'accountNumber' => $this->setNullIfEmpty($record[7]),
-            'bankName' => $this->setNullIfEmpty($record[8]),
-            'nextOfKinName' => $this->setNullIfEmpty($record[9]),
-            'nextOfKinPhoneNumber' => $this->setNullIfEmpty($record[10]),
-            'yearJoined' => $this->setNullIfEmpty($record[11]),
-            'userId' => auth('admin')->user()->id, // Retrieve admin id
-        ];
-
+        
     }
 
     /**

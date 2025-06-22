@@ -3,158 +3,377 @@
 namespace App\Livewire\Utils;
 
 use App\Models\Member;
-use League\Csv\Reader;
 use Livewire\Component;
+use Illuminate\Bus\Batch;
 use App\Models\ActiveLoans;
 use App\Models\LoanCapture;
+use Illuminate\Support\Str;
+use Livewire\Attributes\On;
+use App\Jobs\RunCsvImportJob;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\DB;
+use App\Traits\LivewireCsvImporter;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class ImportLoansCsv extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, LivewireCsvImporter;
 
-    public $uploadedChunks = 0;
-    public $totalChunks = 0;
-    public $isProcessing = false;
-    public $errorMessage = '';
-    public $isCompleted = false;
+    public $csvFile;
+    public $reportPath;
+    public $batchId = null;
     public $progress = 0;
+    public $status = 'idle'; // idle, uploading, processing, completed, failed
+    public $statusMessage = '';
+    public $processedRows = 0;
+    public $totalRows = 0;
+    public $validRows = 0;
+    public $invalidRows = 0;
+    public $totalJobs = 0;
+    public $completedJobs = 0;
+    public $failedJobs = 0;
+    public $processingErrors = [];
+    public $downloadLinks = [];
+    public $progressKey;
 
-    protected $listeners = [
-        'process-chunk' => 'handleChunkUploaded',
-        'import-complete' => 'handleImportComplete',
-        // 'processing-status-changed' => 'handleProcessingStatus',
+    protected $rules = [
+        'csvFile' => 'required|file|mimes:csv,txt|max:10048'
     ];
 
-    public function handleChunkUploaded($chunkNumber, $totalChunks, $path)
+    protected $messages = [
+        'csvFile.required' => 'Please select a CSV file.',
+        'csvFile.file' => 'The selected file is not valid.',
+        'csvFile.mimes' => 'Please select a CSV or TXT file only.',
+        'csvFile.max' => 'The file size must not exceed 10MB.',
+    ];
+
+    public function updatedCsvFile()
     {
-        $this->uploadedChunks = $chunkNumber;
-        $this->totalChunks = $totalChunks;
-
-        // Log the chunk upload
-
-        // If all chunks are uploaded, start processing
-        $this->processChunk($chunkNumber, $path);
+        // Reset any previous validation errors
+        $this->resetErrorBag();
         
+        // Validate the uploaded file
+        $this->validateOnly('csvFile', [
+            'csvFile' => $this->rules['csvFile']
+        ], $this->messages);
     }
 
-    public function handleImportComplete($totalChunks, $totalRows)
+    public function startImport()
     {
-        $this->isProcessing = false;
-        $this->isCompleted = true;
-        $this->errorMessage = '';
+        // Validate before processing
+        $this->validate();
 
-        // Log the completion message
-        Log::info("Loan Records CSV import completed: {$totalRows} records processed.");
+        $this->status = 'uploading';
+        $this->statusMessage = 'Reading and chunking CSV file...';
 
-        // Dispatch completion event
-        $this->dispatch('show-notification', [
-            'type' => 'success',
-            'message' => "CSV import completed! Processed {$totalRows} records.",
-        ]);
-
-        session()->flash('success', "Loan Records Import completed successfully! Processed {$totalRows} records.");
-        
-        // Reset the component state
-        $this->reset(['isProcessing', 'uploadedChunks', 'totalChunks', 'progress']);
-    }
-
-    public function processChunk($chunkNumber, $path)
-    {
-        DB::beginTransaction();
+        // Reset any previous errors
+        $this->resetErrorBag();
 
         try {
-            // Process the chunk file
-            $this->processChunkFile($path);
+            // Store the CSV file temporarily
+            $filename = Str::uuid() . '.' . $this->csvFile->getClientOriginalExtension();
+            $path = $this->csvFile->storeAs('csv_imports', $filename);
 
-            // Commit the transaction
-            DB::commit();
+            $fileContent = Storage::get($path);
+            // Convert the file data into an array of lines
+            $rows = explode(PHP_EOL, $fileContent);
 
-            // Log the success message
-            Log::info('Successfully processed chunk '. $chunkNumber);
+            $this->totalRows = count($rows);
 
-            $this->dispatch('chunk-processed', [
-                'chunkNumber' => $chunkNumber,
-                'success' => true,
-            ]);
+            if ($this->totalRows === 0) {
+                throw new \Exception('CSV file is empty or contains no data rows.');
+            }
+
+            // chunk the file data into manageable pieces
+            $chunks = array_chunk($rows, 100);
+            $this->totalJobs = count($chunks);
+
+            $this->status = 'processing';
+            $this->statusMessage = 'Creating batch jobs for processing...';
+
+            $batchKey = 'csv-import-' . Str::uuid();
+
+            // Initialize cache counters to 0
+            $cachePrefix = "batch_results_{$batchKey}";
+            Cache::put("{$cachePrefix}_valid", 0, now()->addHours(12));
+            Cache::put("{$cachePrefix}_invalid", 0, now()->addHours(12));
+            Cache::put("{$cachePrefix}_errors", 0, now()->addHours(12));
+            
+
+            $jobs = [];
 
             
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->errorMessage = 'Processing failed: ' . $e->getMessage();
-            Log::error('Error processing chunk: ' . $this->errorMessage);
 
-            $this->dispatch('chunk-processed', [
-                'chunkNumber' => $chunkNumber,
-                'success' => false,
-                'message' => $e->getMessage(),
+            foreach ($chunks as $chunkIndex => $chunk) {
+
+                $jobs[]  = new RunCsvImportJob(
+                    $chunk,
+                    $batchKey,
+                    static::class,
+                    auth('admin')->user()->id
+                );
+
+            }
+
+            // Store the file path in cache for cleanup later
+            Cache::put("temp_file_{$batchKey}", $path, now()->addHours(12));
+
+
+            $batch = Bus::batch($jobs)
+                ->name("Import Loan CSV processing - {$batchKey}")
+                ->allowFailures()
+                ->finally(function (Batch $batch) use ($batchKey) {
+                    $tempFilePath = Cache::get("temp_file_{$batchKey}");
+                    if ($tempFilePath && Storage::exists($tempFilePath)) {
+                        Storage::delete($tempFilePath);
+                        Cache::forget("temp_file_{$batchKey}");
+                    }
+                })
+                ->dispatch();
+
+            $this->batchId = $batch->id;
+
+            // Store the batch key in cache for later retrieval
+            Cache::put("batch_key_{$this->batchId}", $batchKey, now()->addHours(12));
+
+            
+            // start polling for progress updates
+            $this->dispatch('start-loan-polling');
+
+            Log::info('CSV Loan Import Started', [
+                'batch_id' => $this->batchId,
+                'batch_key' => $batchKey,
+                'total_rows' => $this->totalRows,
+                'total_jobs' => $this->totalJobs,
+                'user_id' => auth('admin')->user()->id
             ]);
 
+        } catch (\Exception $e) {
+            $this->status = 'failed';
+            $this->statusMessage = '❌ Error processing file: ' . $e->getMessage();
+            
         }
     }
 
-    protected function processChunkFile($chunkPath)
+    #[On('check-loan-progress')]
+    public function checkProgress()
     {
-        $fullPath = storage_path('app/' . $chunkPath);
+        if (!$this->batchId) {
+            return;
+        }
 
-        // use league csv for efficient processing
-        $reader = Reader::createFromPath($fullPath, 'r');
-        $reader->setDelimiter(','); // Set the delimiter to comma
-        $reader->setHeaderOffset(null); // Set the header offset to 0
+        try {
+            // Retrieve the batch by ID
+            $batch = Bus::findBatch($this->batchId);
 
-        $batchSize = 500; // Number of records to process at once
-        $batch = [];
-        $activeLoanBatch = [];
+            if (!$batch) return;
 
-        // Read the CSV file and process each record
-        foreach ($reader->getRecords() as $record) {
-            // validate and transform the record
-            if(empty($record[0]) || ($record[0] == '-') || stripos($record[0], 'COOP') !== false || stripos($record[0], 'object') !== false) {
-                Log::warning("Skipping record due to missing required fields: ", $record);
-                continue; // Skip if required fields are missing
+            $this->totalJobs = $batch->totalJobs;
+            $this->completedJobs = $batch->processedJobs();
+            $this->failedJobs = $batch->failedJobs;
+
+            // Calculate progress
+            $this->progress = $this->totalJobs > 0 ? 
+                ($this->completedJobs / $this->totalJobs) * 100 : 0;
+
+            // Get aggregated results from cache
+            $batchKey = Cache::get("batch_key_{$this->batchId}");
+            if ($batchKey) {
+                $cachePrefix = "batch_results_{$batchKey}";
+
+                $this->validRows = Cache::get("{$cachePrefix}_valid", 0);
+                $this->invalidRows = Cache::get("{$cachePrefix}_invalid", 0);
+                $errorCount = Cache::get("{$cachePrefix}_errors", 0);
+
+                $this->processedRows = $this->validRows + $this->invalidRows;
+                // Load recent errors from files instead of cache
+                $this->loadRecentErrors($batchKey);
+
             }
-            $validatedData = $this->validateRecord($record);
+
+            if ($batch->finished()) {
+                $this->dispatch('stop-polling');
+                
+                if ($batch->hasFailures()) {
+                    $this->status = 'completed';
+                    $this->statusMessage = "Processing completed with some failures. {$this->completedJobs}/{$this->totalJobs} jobs succeeded.";
+                } else {
+                    $this->status = 'completed';
+                    $this->statusMessage = "All jobs completed successfully! Processed {$this->processedRows} rows.";
+                }
+
+                // Generate download links
+                if($batchKey)
+                    $this->generateDownloadLinks($batchKey);
+            } else {
+                $this->status = 'processing';
+                $this->statusMessage = "Processing... {$this->completedJobs}/{$this->totalJobs} jobs completed.";
+            }
+            
+        } catch (\Exception $e) {
+            $this->status = 'failed';
+            $this->statusMessage = '❌ Error checking progress: ' . $e->getMessage();
+            $this->dispatch('stop-loan-polling');
+        }
+    }
+
+    private function loadRecentErrors($batchKey)
+    {
+        try {
+            $errorFile = "batch_data/{$batchKey}_errors.json";
+            
+            if (Storage::exists($errorFile)) {
+                $content = Storage::get($errorFile);
+                if (!empty($content)) {
+                    $errors = json_decode($content, true) ?? [];
+                    
+                    // Get last 10 errors for display
+                    $recentErrors = array_slice($errors, -10);
+                    
+                    $this->processingErrors = array_map(function($error) {
+                        return $error['error'] ?? 'Unknown error';
+                    }, $recentErrors);
+                } else {
+                    $this->processingErrors = [];
+                }
+            } else {
+                $this->processingErrors = [];
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to load recent errors', [
+                'batch_key' => $batchKey,
+                'error' => $e->getMessage()
+            ]);
+            $this->processingErrors = [];
+        }
+    }
+
+
+    private function generateDownloadLinks($batchKey)
+    {
+        if (!$batchKey) return;
+
+        try {
+
+            $this->downloadLinks = [];
+
+            // Check for invalid rows file
+            $invalidFile = "batch_data/{$batchKey}_invalid.json";
+            if (Storage::exists($invalidFile)) {
+                // Dispatch job to generate Excel report
+                dispatch(new \App\Jobs\GenerateExcelReportJob(
+                    'invalid',
+                    $batchKey,
+                    'Invalid Rows Report'
+                ));
+                $this->downloadLinks['invalid'] = route('download.excel', [
+                    'type' => 'invalid',
+                    'batch' => $batchKey
+                ]);
+            }else {
+                Log::warning('Invalid rows file not found', [
+                    'file_path' => $invalidFile,
+                    'batch_key' => $batchKey
+                ]);
+            }
+
+            // Check for errors file
+            $errorFile = "batch_data/{$batchKey}_errors.json";
+            if (Storage::exists($errorFile)) {
+                // Dispatch job to generate Excel report
+                dispatch(new \App\Jobs\GenerateExcelReportJob(
+                    'errors',
+                    $batchKey,
+                    'Error Logs Report'
+                ));
+                $this->downloadLinks['errors'] = route('download.excel', [
+                    'type' => 'errors',
+                    'batch' => $batchKey
+                ]);
+            } else {
+                Log::warning('Error logs file not found', [
+                    'file_path' => $errorFile,
+                    'batch_key' => $batchKey
+                ]);
+            }
+
+            Log::info('Download links generated', [
+                'batch_key' => $batchKey,
+                'links' => $this->downloadLinks
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to generate download links: ' . $e->getMessage());
+        }
+    }
+
+    public function resetUpload()
+    {
+        $this->reset([
+            'csvFile', 'batchId', 'progress', 'status', 'statusMessage', 
+            'processedRows', 'totalRows', 'validRows', 'invalidRows',
+            'totalJobs', 'completedJobs', 'failedJobs', 'processingErrors', 'downloadLinks'
+        ]);
+
+        // Also reset the error bag
+        $this->resetErrorBag();
+    }
+
+    public function processCsvRow(array $row, int $userId): ?array
+    {
+        $activeLoan = [];
+
+        try {
+            $validatedData = $this->validateRecord($row, $userId);
 
             if ($validatedData) {
 
-                $batch[] = $validatedData;
-
                 // Process active loans
                 if($validatedData['status'] == 1) {
-                    $activeLoanBatch[] = $this->extractActiveLoan($validatedData);
+                    $activeLoan = $this->extractActiveLoan($validatedData, $userId);
                 }
-            }
 
-            // If batch size is reached, insert into the database
-            if (count($batch) >= $batchSize) {
-                LoanCapture::insert($batch);
+                LoanCapture::insert($validatedData);
                 // Insert active loans if any
-                if(!empty($activeLoanBatch)) {
-                    ActiveLoans::insert($activeLoanBatch);
+                if(!empty($activeLoan)) {
+                    ActiveLoans::insert($activeLoan);
                 }
 
-                // Reset batch and active loan batch
-                $batch = []; 
-                $activeLoanBatch = [];
+                Log::debug('Record inserted successfully', [
+                    'coop_id' => $validatedData['coopId'],
+                    'affected_rows' => $validatedData
+                ]);
+
+                return $validatedData; // Return the new record to be inserted
             }
+
+            // If the record is not valid, return null
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error('Error processing CSV row', [
+                'row' => $row,
+                'user_id' => $userId,
+                'error' => $e->getMessage()
+            ]);
+            
+            throw $e; // Re-throw the exception to be handled by the job
         }
 
-        // Insert any remaining records in the batch
-        if (!empty($batch)) {
-            LoanCapture::insert($batch);
-        }
-        // Insert any remaining active loans
-        if (!empty($activeLoanBatch)) {
-            ActiveLoans::insert($activeLoanBatch);
-        }
+        
 
-        // clean up the chunk file
-        unlink($fullPath);
     }
 
-    protected function validateRecord(array $record): ?array
+    /**
+     * Validate and transform the record before inserting into the database
+     *
+     * @param array $record
+     * @param int $userId
+     * @return array|null
+     */
+    protected function validateRecord(array $record, int $userId=1): ?array
     {
         // Perform validation and transformation
         $uniqueId = ltrim($record[0], '0'); // first column should be coop Id
@@ -171,7 +390,7 @@ class ImportLoansCsv extends Component
                 'guarantor4' => $this->otherGuarantorCheckNullorFilter($record[6]),
                 'status' => $record[7],
                 'repaymentDate' => date('Y-m-d', strtotime($record[2]. ' + 540 days')),
-                'userId' => auth('admin')->user()->id, // Retrieve admin id
+                'userId' => $userId, // Retrieve admin id
             ]);
 
             // search in ActiveLoan and update
@@ -224,7 +443,7 @@ class ImportLoansCsv extends Component
             'guarantor4' => $this->otherGuarantorCheckNullorFilter($record[6]),
             'status' => $record[7],
             'repaymentDate' => date('Y-m-d', strtotime($record[2]. ' + 540 days')),
-            'userId' => auth('admin')->user()->id, // Retrieve admin id
+            'userId' => $userId, // Retrieve admin id
         ];
 
     }
@@ -235,7 +454,7 @@ class ImportLoansCsv extends Component
      * @param array $validatedRecord
      * @return array|null
      */
-    protected function extractActiveLoan(array $validatedRecord): ?array
+    protected function extractActiveLoan(array $validatedRecord, int $userId=1): ?array
     {
         return [
             'coopId' => $validatedRecord['coopId'],
@@ -245,7 +464,7 @@ class ImportLoansCsv extends Component
             'loanDate' => $validatedRecord['loanDate'],
             'repaymentDate' => $validatedRecord['repaymentDate'],
             'lastPaymentDate' => $validatedRecord['loanDate'],
-            'userId' => auth('admin')->user()->id, // Retrieve admin id
+            'userId' => $userId, // Retrieve admin id
         ];
     }
 

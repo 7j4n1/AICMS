@@ -31,6 +31,11 @@ class RunCsvImportJob implements ShouldQueue, ShouldBeUnique
     public $tries = 3;
 
     /**
+     * The maximum number of unhandled exceptions to allow before failing.
+     */
+    public $maxExceptions = 3;
+
+    /**
      * Create a new job instance.
      */
     public function __construct(
@@ -40,7 +45,24 @@ class RunCsvImportJob implements ShouldQueue, ShouldBeUnique
         public int $userId
     )
     {
+        // Set the queue name based on the handler class
+        $this->onQueue($this->getQueueName());
+    }
+
+    /**
+     * Get queue name based on handler class
+     */
+    private function getQueueName(): string
+    {
+        if (str_contains($this->handlerClass, 'ImportMemberCsv')) {
+            return 'member-imports';
+        } elseif (str_contains($this->handlerClass, 'ImportLoansCsv')) {
+            return 'loan-imports';
+        } elseif (str_contains($this->handlerClass, 'ImportLedgerCsv')) {
+            return 'ledger-imports';
+        }
         
+        return 'csv-imports'; // Default queue
     }
 
     /**
@@ -57,10 +79,30 @@ class RunCsvImportJob implements ShouldQueue, ShouldBeUnique
     public function handle(): void
     {
         if ($this->batch() && $this->batch()->cancelled()) {
+            Log::info('Job cancelled - batch was cancelled', [
+                'batch_key' => $this->batchKey,
+                'handler' => class_basename($this->handlerClass)
+            ]);
             return;
         }
 
-        $handler = App::make($this->handlerClass);
+        // Create handler instance with better error handling
+        try {
+            $handler = App::make($this->handlerClass);
+            
+            // Verify the handler has the required method
+            if (!method_exists($handler, 'processCsvRow')) {
+                throw new \Exception("Handler {$this->handlerClass} does not have processCsvRow method");
+            }
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to create or validate handler', [
+                'handler_class' => $this->handlerClass,
+                'error' => $e->getMessage(),
+                'batch_key' => $this->batchKey
+            ]);
+            throw $e;
+        }
 
         $records = $this->chunkRecord;
         // convert each row from csv string to an array
@@ -96,10 +138,9 @@ class RunCsvImportJob implements ShouldQueue, ShouldBeUnique
                         // New record to insert
                         $validCount++;
                         
-                        DB::table('members')->insert($result);
-
                         Log::debug('Record inserted', [
-                            'coop_id' => $result['coopId'] ?? 'unknown'
+                            'coop_id' => $result['coopId'] ?? 'unknown',
+                            'row_index' => $rowIndex,
                         ]);
                         
                     } else if(is_array($result) && count($result) === 0) {
@@ -123,7 +164,7 @@ class RunCsvImportJob implements ShouldQueue, ShouldBeUnique
                         Log::debug('Invalid record', ['row_index' => $rowIndex]);
                     }
 
-                } catch (\Throwable $e) {
+                } catch (\Exception $e) {
                     Log::error('CSV Row Processing Error', [
                         'row_index' => $rowIndex,
                         'error' => $e->getMessage(),
