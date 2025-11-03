@@ -165,6 +165,9 @@
                         <div class="col-md-4">
                             <input type="text" class="form-control" placeholder="Search Members..." wire:model.live="search">
                         </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" placeholder="Filter by Group..." wire:model.live="groupFilter" min="1">
+                        </div>
                         {{--<div class="col-md-3 text-right">
                             <select wire:model="paginate" class="form-control">
                                 <option value="10">10</option>
@@ -181,6 +184,7 @@
                             <thead>
                                 <tr>
                                     <th>Coop Id</th>
+                                    <th>Group</th>
                                     <th>Surname</th>
                                     <th>Other Names</th>
                                     <th>Occupation</th>
@@ -197,6 +201,7 @@
                                     <tr wire:key="item-profile-{{ $mem->id }}">
 
                                         <td>{{ $mem->coopId }}</td>
+                                        <td>{{ $mem->groupId ?? 'N/A' }}</td>
                                         <td>{{ $mem->surname }}</td>
                                         <td>{{ $mem->otherNames }}</td>
                                         <td>{{ $mem->occupation }}</td>

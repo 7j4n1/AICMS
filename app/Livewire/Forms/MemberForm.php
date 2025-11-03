@@ -45,6 +45,7 @@ class MemberForm extends Form
         $this->validate();
         $member = Member::create([
             'coopId' => $this->coopId,
+            'groupId' => Member::calculateGroupId($this->coopId),
             'surname' => $this->surname,
             'otherNames' => $this->otherNames,
             'occupation' => $this->occupation,

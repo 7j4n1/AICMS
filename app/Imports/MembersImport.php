@@ -14,9 +14,11 @@ class MembersImport implements ToModel
     */
     public function model(array $row)
     {
+        $coopId = $row[1];
         return new Member([
             'id' => $row[0],
-            'coopId' => $row[1],
+            'coopId' => $coopId,
+            'groupId' => Member::calculateGroupId($coopId),
             'surname' => $row[2],
             'otherNames' => $row[3],
             'occupation' => $row[4],

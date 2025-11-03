@@ -21,6 +21,7 @@ class ListMembers extends Component
 
     private $paginate = 10;
     public $search = '';
+    public $groupFilter = '';
 
 
     /**
@@ -36,7 +37,11 @@ class ListMembers extends Component
             $query->where('surname', 'like', "%{$this->search}%")
                   ->orWhere('otherNames', 'like', "%{$this->search}%")
                   ->orWhere('coopId', 'like', "%{$this->search}%");
-        })->orderBy('coopId', 'asc')
+        })
+        ->when($this->groupFilter, function ($query) {
+            $query->where('groupId', $this->groupFilter);
+        })
+        ->orderBy('coopId', 'asc')
         ->paginate($this->paginate);
 
         return view('livewire.members.list-members', [
