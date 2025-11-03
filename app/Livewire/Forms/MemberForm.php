@@ -2,25 +2,40 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
 use App\Models\Member;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Rule;
-use Livewire\Attributes\Validate;
+use Livewire\Form;
 
 class MemberForm extends Form
 {
     #[Locked]
     public $id;
+
     #[Rule('required|numeric|min:1|unique:members,coopId')]
     public $coopId;
+
     #[Rule('required|string')]
     public $surname;
+
     public $otherNames;
-    public $gender, $occupation;
-    public $phoneNumber, $religion;
-    public $bankName, $accountNumber;
-    public $nextOfKinName, $nextOfKinPhoneNumber;
+
+    public $gender;
+
+    public $occupation;
+
+    public $phoneNumber;
+
+    public $religion;
+
+    public $bankName;
+
+    public $accountNumber;
+
+    public $nextOfKinName;
+
+    public $nextOfKinPhoneNumber;
+
     public $yearJoined;
 
     /**
@@ -29,7 +44,7 @@ class MemberForm extends Form
      * This class represents the ListMembers component in the AICMS application.
      * It contains an array of validation error messages for the form fields.
      *
-     * @var array $messages
+     * @var array
      */
     protected $messages = [
         'coopId.required' => 'The Coop ID field is required.',
@@ -51,17 +66,18 @@ class MemberForm extends Form
             'occupation' => $this->occupation,
             'gender' => $this->gender,
             'phoneNumber' => $this->phoneNumber,
-            'religion'=> $this->religion,
-            'bankName'=> $this->bankName,
-            'accountNumber'=> $this->accountNumber,
-            'nextOfKinName'=> $this->nextOfKinName,
-            'nextOfKinPhoneNumber'=> $this->nextOfKinPhoneNumber,
-            'yearJoined'=> $this->yearJoined,
+            'religion' => $this->religion,
+            'bankName' => $this->bankName,
+            'accountNumber' => $this->accountNumber,
+            'nextOfKinName' => $this->nextOfKinName,
+            'nextOfKinPhoneNumber' => $this->nextOfKinPhoneNumber,
+            'yearJoined' => $this->yearJoined,
             'userId' => auth('admin')->user()->name,
         ]);
 
-        if($member)
+        if ($member) {
             return false;
+        }
 
         return true;
     }

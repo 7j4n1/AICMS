@@ -29,9 +29,10 @@ class AssignGroupIds extends Command
         $this->info('Checking for members without group assignments...');
 
         $membersWithoutGroups = Member::whereNull('groupId')->count();
-        
+
         if ($membersWithoutGroups === 0) {
             $this->info('All members already have group assignments.');
+
             return 0;
         }
 

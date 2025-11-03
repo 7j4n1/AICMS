@@ -8,13 +8,12 @@ use Maatwebsite\Excel\Concerns\ToModel;
 class MembersImport implements ToModel
 {
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
         $coopId = $row[1];
+
         return new Member([
             'id' => $row[0],
             'coopId' => $coopId,
@@ -30,7 +29,7 @@ class MembersImport implements ToModel
             'nextOfKinName' => $row[10],
             'nextOfKinPhoneNumber' => $row[11],
             'yearJoined' => $row[12],
-            'userId' => $row[13]
+            'userId' => $row[13],
         ]);
     }
 }

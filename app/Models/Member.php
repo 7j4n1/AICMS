@@ -27,13 +27,13 @@ class Member extends Model
         'nextOfKinName',
         'nextOfKinPhoneNumber',
         'yearJoined',
-        'userId','editDates',
-        'editedBy'
+        'userId', 'editDates',
+        'editedBy',
     ];
 
     protected $casts = [
         'editDates' => 'array',
-        'editedBy' => 'array'
+        'editedBy' => 'array',
     ];
 
     public function admin()
@@ -93,7 +93,7 @@ class Member extends Model
         parent::boot();
 
         static::creating(function ($member) {
-            if ($member->coopId && !$member->groupId) {
+            if ($member->coopId && ! $member->groupId) {
                 $member->groupId = self::calculateGroupId($member->coopId);
             }
         });
@@ -104,5 +104,4 @@ class Member extends Model
             }
         });
     }
-
 }

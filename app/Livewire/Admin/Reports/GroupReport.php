@@ -2,18 +2,21 @@
 
 namespace App\Livewire\Admin\Reports;
 
-use Dompdf\Dompdf;
-use Livewire\Component;
 use App\Models\Member;
 use App\Models\PaymentCapture;
 use App\Models\PreviousLedger2023;
+use Dompdf\Dompdf;
 use Illuminate\Support\Facades\View;
+use Livewire\Component;
 
 class GroupReport extends Component
 {
     public $beginning_date;
+
     public $ending_date;
+
     public $group_from;
+
     public $group_to;
 
     public function render()
@@ -39,7 +42,7 @@ class GroupReport extends Component
                 ->pluck('coopId')
                 ->toArray();
 
-            if (!empty($memberCoopIds) && $this->beginning_date && $this->ending_date) {
+            if (! empty($memberCoopIds) && $this->beginning_date && $this->ending_date) {
                 $ledgers = PaymentCapture::query()
                     ->whereIn('coopId', $memberCoopIds)
                     ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
@@ -78,15 +81,17 @@ class GroupReport extends Component
         $total_admin += $preledgers->sum('adminCharge') ?? 0;
         $total_others += $preledgers->sum('others') ?? 0;
 
-        if($this->beginning_date == null)
+        if ($this->beginning_date == null) {
             $this->beginning_date = date('Y-m-d');
-        else
+        } else {
             $this->sendDispatchEvent();
-        
-        if($this->ending_date == null)
-            $this->ending_date = date('Y-m-d');
+        }
 
-        return view('livewire.admin.reports.group-report')->with(['ledgers' => $ledgers, 
+        if ($this->ending_date == null) {
+            $this->ending_date = date('Y-m-d');
+        }
+
+        return view('livewire.admin.reports.group-report')->with(['ledgers' => $ledgers,
             'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
             'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others]);
     }
@@ -116,11 +121,11 @@ class GroupReport extends Component
         }
 
         $ledgers = PaymentCapture::query()
-                ->whereIn('coopId', $memberCoopIds)
-                ->whereBetween('paymentDate', [$beginning_date, $ending_date])
-                ->selectRaw('coopId, SUM(loanAmount) as loanAmount, SUM(savingAmount) as savingAmount, SUM(totalAmount) as totalAmount, SUM(shareAmount) as shareAmount, SUM(adminCharge) as adminCharge, SUM(others) as others')
-                ->groupBy('coopId')
-                ->get();
+            ->whereIn('coopId', $memberCoopIds)
+            ->whereBetween('paymentDate', [$beginning_date, $ending_date])
+            ->selectRaw('coopId, SUM(loanAmount) as loanAmount, SUM(savingAmount) as savingAmount, SUM(totalAmount) as totalAmount, SUM(shareAmount) as shareAmount, SUM(adminCharge) as adminCharge, SUM(others) as others')
+            ->groupBy('coopId')
+            ->get();
 
         $total_loan = $ledgers->sum('loanAmount') ?? 0;
         $total_saving = $ledgers->sum('savingAmount') ?? 0;
@@ -129,25 +134,25 @@ class GroupReport extends Component
         $total_admin = $ledgers->sum('adminCharge') ?? 0;
         $total_others = $ledgers->sum('others') ?? 0;
 
-        if($ledgers->count() > 0){
+        if ($ledgers->count() > 0) {
 
-            $html = View::make('admin.reports.groupexport_view', ['ledgers' => $ledgers, 
+            $html = View::make('admin.reports.groupexport_view', ['ledgers' => $ledgers,
                 'beginning_date' => $beginning_date, 'ending_date' => $ending_date, 'total_loan' => $total_loan,
                 'total_saving' => $total_saving, 'total_total' => $total_total, 'total_share' => $total_share,
                 'total_admin' => $total_admin, 'total_others' => $total_others,
-                'group_from' => $groupFrom, 'group_to' => $groupTo
+                'group_from' => $groupFrom, 'group_to' => $groupTo,
             ]);
 
-            $pdf = new Dompdf();
+            $pdf = new Dompdf;
             $pdf->loadHtml($html->render(), 'UTF-8');
             $pdf->setPaper('A4', 'landscape');
             $pdf->render();
 
-            $filename = 'Group_'.$groupFrom.'_to_'.$groupTo.'_Report_'.str_replace('/','-',$beginning_date).'_'.str_replace('/','-',$ending_date).'.pdf';
-            
+            $filename = 'Group_'.$groupFrom.'_to_'.$groupTo.'_Report_'.str_replace('/', '-', $beginning_date).'_'.str_replace('/', '-', $ending_date).'.pdf';
+
             return $pdf->stream($filename);
-        }else {
+        } else {
             abort(404, 'No record found for the specified groups');
-        }    
+        }
     }
 }
