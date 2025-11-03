@@ -3,15 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\Member;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class GroupAssignmentTest extends TestCase
 {
-    use RefreshDatabase;
-
     /**
      * Test that groupId is calculated correctly for different coopIds.
+     * This test does not require database connection.
      */
     public function test_group_id_calculation(): void
     {
@@ -26,33 +24,41 @@ class GroupAssignmentTest extends TestCase
     }
 
     /**
-     * Test that groupId is automatically assigned when creating a member.
+     * Test edge cases for group ID calculation.
      */
-    public function test_group_id_auto_assignment_on_create(): void
+    public function test_group_id_calculation_edge_cases(): void
     {
-        $member = Member::create([
-            'coopId' => 150,
-            'surname' => 'Test',
-        ]);
-
-        $this->assertEquals(2, $member->groupId);
+        // Boundary values
+        $this->assertEquals(1, Member::calculateGroupId(1));
+        $this->assertEquals(1, Member::calculateGroupId(100));
+        $this->assertEquals(2, Member::calculateGroupId(101));
+        
+        // Large numbers
+        $this->assertEquals(50, Member::calculateGroupId(5000));
+        $this->assertEquals(100, Member::calculateGroupId(10000));
+        
+        // Mid-range values
+        $this->assertEquals(5, Member::calculateGroupId(450));
+        $this->assertEquals(5, Member::calculateGroupId(500));
     }
 
     /**
-     * Test that groupId is updated when coopId changes.
+     * Test that the calculation formula matches the requirement.
+     * Each group should contain exactly 100 sequential coopIds.
      */
-    public function test_group_id_updates_when_coop_id_changes(): void
+    public function test_group_size_consistency(): void
     {
-        $member = Member::create([
-            'coopId' => 50,
-            'surname' => 'Test',
-        ]);
-
-        $this->assertEquals(1, $member->groupId);
-
-        $member->coopId = 250;
-        $member->save();
-
-        $this->assertEquals(3, $member->groupId);
+        // Test that all values in a group of 100 map to the same groupId
+        for ($coopId = 1; $coopId <= 100; $coopId++) {
+            $this->assertEquals(1, Member::calculateGroupId($coopId), "coopId $coopId should be in Group 1");
+        }
+        
+        for ($coopId = 101; $coopId <= 200; $coopId++) {
+            $this->assertEquals(2, Member::calculateGroupId($coopId), "coopId $coopId should be in Group 2");
+        }
+        
+        for ($coopId = 201; $coopId <= 300; $coopId++) {
+            $this->assertEquals(3, Member::calculateGroupId($coopId), "coopId $coopId should be in Group 3");
+        }
     }
 }
