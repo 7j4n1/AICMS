@@ -155,20 +155,9 @@ class DatabaseController extends Controller
                 // Execute SQL restore with foreign key checks disabled
                 DB::unprepared('SET FOREIGN_KEY_CHECKS=0;');
 
-                // Split SQL into individual statements and execute
-                $statements = array_filter(
-                    array_map('trim', explode(';', $sql)),
-                    function ($statement) {
-                        return ! empty($statement);
-                    }
-                );
-
-                foreach ($statements as $statement) {
-                    if (! empty($statement)) {
-                        // Statement already has semicolon from split, no need to add
-                        DB::unprepared($statement);
-                    }
-                }
+                // Execute entire SQL file in one go to avoid splitting inside values
+                // (splitting on ';' breaks serialized/quoted values that contain semicolons)
+                DB::unprepared($sql);
 
                 DB::unprepared('SET FOREIGN_KEY_CHECKS=1;');
 
