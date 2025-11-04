@@ -1,4 +1,4 @@
-# AlBirr MCS Documentation
+# Companion MCS Documentation
 
 
 ## Table of Contents
@@ -65,7 +65,7 @@ In the terminal we can run this command to generate that key. (Make sure that yo
     If you check the .env file again, you will see that it now has a long random string of characters in the APP_KEY field. We now have a valid app encryption key.
 
 5. Create an empty database for our application
-Create an empty database for your project using the Xampp or Mysql Application (PhpMyAdmin). In our example we created a database called “albirricms_2024”. Just create an empty database here, the exact steps will depend on your system setup.
+Create an empty database for your project using the Xampp or Mysql Application (PhpMyAdmin). In our example we created a database called “Companionicms_2024”. Just create an empty database here, the exact steps will depend on your system setup.
 ![alt text](mysql.png)
 6. In the .env file, add database information to allow Laravel to connect to the database
     Configure the database config variables as follows:
@@ -73,7 +73,7 @@ Create an empty database for your project using the Xampp or Mysql Application (
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
-    DB_DATABASE=albirricms_2024
+    DB_DATABASE=Companionicms_2024
     DB_USERNAME=root
     DB_PASSWORD=
     ```
@@ -109,7 +109,7 @@ The username and password for superadmin are the same.
 http://localhost:8000/admin/import/members
 ```
 ![alt text](image1.png)
-the members details files(6) one after the other, they can be found in (\AICMS\data\albirrudatacapture_ files). Import successful will be returned before uploading the next one.
+the members details files(6) one after the other, they can be found in (\AICMS\data\). Import successful will be returned before uploading the next one.
 ![alt text](step1.png)
 
 2. Import the Previous Loan records, by clicking on the green button. It will open a new tab, when it's done, A text will show saying "Imported, Successfully."

@@ -61,7 +61,7 @@ class MemberController extends Controller
                     
                     User::create([
                         'name' => $member->surname ?? 'User',
-                        'username' => 'albirru'.$member->coopId,
+                        'username' => 'Companionu' . $member->coopId,
                         'password' => Hash::make('password@'.$member->coopId),
                         'coopId' => $member->coopId,
                     ])->assignRole('member');

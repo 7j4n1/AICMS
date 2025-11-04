@@ -197,12 +197,12 @@
 
                         </ul>
                     </li>
-                    {{--<li>
+                    <li>
                         <a class="nav-link" href="{{route('backup.index')}}">
-                    <i class='bx bx-data' aria-hidden="true"></i>
-                    <span>Backup</span>
-                    </a>
-                    </li>--}}
+                            <i class='bx bx-data' aria-hidden="true"></i>
+                            <span>Backup</span>
+                        </a>
+                    </li>
                     <li>
                         <a class="nav-link" href="{{ route('logout') }}">
                             <i class="bx bx-power-off"></i> Logout

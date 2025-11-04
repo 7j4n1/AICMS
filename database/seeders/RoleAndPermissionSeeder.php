@@ -79,7 +79,7 @@ class RoleAndPermissionSeeder extends Seeder
                 'name' => 'Super Admin',
                 'username' => 'superadmin',
                 'email' => '',
-                'password' => Hash::make('cccoop24'),
+                'password' => Hash::make('password1234455'),
             ])->assignRole('super-admin');
         }
 

@@ -20,8 +20,8 @@ class IndividualLedger extends Component
         // check if the autentcated user is a member or an admin
         // if the authenticated user is an admin, get all the memberIds
         // else get only the authenticated user's coopId
-        
-        $memberIds = Member::orderBy("coopId","asc")->get(['coopId']);
+
+        // $memberIds = Member::orderBy("coopId","asc")->get(['coopId']);
         $ledgers = PaymentCapture::query()
             ->where('coopId', $this->coopId)
             ->whereBetween('paymentDate', [$this->beginning_date, $this->ending_date])
@@ -62,8 +62,10 @@ class IndividualLedger extends Component
         if($this->ending_date == null)
             $this->ending_date = date('Y-m-d');
 
-        
-        return view('livewire.admin.reports.individual-ledger')->with(['ledgers' => $ledgers, 'session' => session(), 'memberIds' => $memberIds,
+
+        return view('livewire.admin.reports.individual-ledger')->with([
+            'ledgers' => $ledgers,
+            'session' => session(),
         'total_loan' => $total_loan, 'total_saving' => $total_saving, 'total_total' => $total_total,
         'total_share' => $total_share, 'total_admin' => $total_admin, 'total_others' => $total_others,
         'csrf_token' => $this->csrf_token
