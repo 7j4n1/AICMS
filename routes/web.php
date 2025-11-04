@@ -214,6 +214,7 @@ Route::middleware(['auth:admin', 'check.admin.role'])->group(function () {
         Route::get('/new', [DatabaseController::class, 'backup'])->name('backup.new');
         Route::get('/download/{file}', [DatabaseController::class, 'download'])->name('backup.download');
         Route::get('/clear/{file}', [DatabaseController::class, 'delete'])->name('backup.delete');
+        Route::post('/restore', [DatabaseController::class, 'restore'])->name('backup.restore');
     });
 
     Route::group(['prefix' => 'admin/business'], function () {
