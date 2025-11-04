@@ -75,7 +75,7 @@ class MemberForm extends Form
             'userId' => auth('admin')->user()->name,
         ]);
 
-        if ($member) {
+        if (!$member) {
             return false;
         }
 

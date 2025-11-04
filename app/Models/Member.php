@@ -82,7 +82,7 @@ class Member extends Model
      */
     public static function calculateGroupId($coopId)
     {
-        return (int) ceil($coopId / 100);
+        return (int) ceil((int)$coopId / 100);
     }
 
     /**

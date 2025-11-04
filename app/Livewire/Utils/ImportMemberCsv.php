@@ -322,11 +322,32 @@ class ImportMemberCsv extends Component
 
     public function processCsvRow(array $row, int $userId): ?array
     {
-        $coopId = $row[0] ?? null;
-        if (!$coopId || strpos($coopId, 'COOP') !== false) return null; // Skip if coopId is missing or header row
+        $raw = isset($row[0]) ? trim((string)$row[0]) : '';
+        // remove non-digits and leading zeros, keep only digits
+        $raw = preg_replace('/\D/', '', $raw);
+        $raw = ltrim($raw, '0');
+
+        if ($raw === '' || stripos((string)$row[0], 'COOP') !== false) {
+            Log::info('Skipping header/empty coopId', ['raw' => $row[0], 'parsed' => $raw]);
+            return null;
+        }
+
+        if (!is_numeric($raw)) {
+            Log::warning('Skipping non-numeric coopId', ['raw' => $row[0], 'parsed' => $raw, 'row' => $row]);
+            return null;
+        }
+
+        $coopId = (int) $raw;
+        if ($coopId <= 0) {
+            Log::warning('Skipping non-positive coopId', ['coopId' => $coopId, 'row' => $row]);
+            return null;
+        }
+
+        $groupId = (int) Member::calculateGroupId($coopId);
 
         $recordData = [
             'coopId' => $coopId,
+            'groupId' => $groupId,
             'surname' => $this->setNullIfEmpty($row[1]),
             'otherNames' => $this->setNullIfEmpty($row[2]),
             'occupation' => $this->setNullIfEmpty($row[3]),
@@ -340,38 +361,34 @@ class ImportMemberCsv extends Component
             'yearJoined' => $this->setNullIfEmpty($row[11]),
             'userId' => $userId, // set admin id
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ];
 
-        try {
-            $affectedRows = DB::table('members')->upsert(
-                [$recordData],
-                ['coopId'], 
-                [ // Columns to update if record exists (exclude coopId and created_at)
-                    'surname', 'otherNames', 'occupation', 'gender', 'religion',
-                    'phoneNumber', 'accountNumber', 'bankName', 'nextOfKinName',
-                    'nextOfKinPhoneNumber', 'yearJoined', 'userId', 'updated_at'
-                ]
-            );
+        Log::debug('Upsert payload', $recordData);
 
-            Log::debug('Record upserted successfully', [
-                'coop_id' => $coopId,
-                'affected_rows' => $affectedRows
-            ]);
+        DB::table('members')->upsert(
+            [$recordData],
+            ['coopId'],
+            [
+                'groupId',
+                'surname',
+                'otherNames',
+                'occupation',
+                'gender',
+                'religion',
+                'phoneNumber',
+                'accountNumber',
+                'bankName',
+                'nextOfKinName',
+                'nextOfKinPhoneNumber',
+                'yearJoined',
+                'userId',
+                'updated_at'
+            ]
+        );
 
 
-            return $recordData;
-
-        } catch (\Exception $th) {
-            Log::error('Failed to upsert record', [
-                'coop_id' => $coopId,
-                'error' => $th->getMessage(),
-                'data' => $recordData
-            ]);
-            throw $th; // Rethrow the exception to be handled by the job
-        }
-
-        
+        return $recordData;
     }
 
     /**
@@ -394,6 +411,4 @@ class ImportMemberCsv extends Component
     {
         return view('livewire.utils.import-member-csv');
     }
-
-    
 }

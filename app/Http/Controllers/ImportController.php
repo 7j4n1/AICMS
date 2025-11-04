@@ -38,36 +38,55 @@ class ImportController extends Controller
             while (!$csv->eof()) {
               $row = $csv->fgetcsv();
               if ($row) {
-                // Assuming same number of columns in all rows
-                $uniqueId = $row[0]; // Replace with your actual unique field index
-      
-                // Check if record already exists
-                $existingRecord = Member::where('coopId', $uniqueId)->first();
+          $row = array_map('trim', $row); // Trim whitespace from each field
+
+          $rawCoop = $row[0] ?? null;
+          $coop = null;
+          $groupId = null;
+
+          if (!is_null($rawCoop) && $rawCoop !== '' && $rawCoop !== '-') {
+            // remove leading zeros and keep as string if you want to store them
+            $coop = ltrim($rawCoop, '0');
+            // compute numeric value for group calculation
+            $coopInt = is_numeric($coop) ? (int) $coop : 0;
+            if ($coopInt > 0) {
+              $groupId = (int) ceil($coopInt / 100);
+            }
+          }
+
+          // skip rows that have no meaningful data
+          if (empty($coop)) {
+            continue;
+          }
+
+          // Check if record already exists
+          $existingRecord = Member::where('coopId', $coop)->first();
       
                 if (!$existingRecord) {
-                  // Insert new record
-                    if((!is_null($row[0]) && !empty($row[0])) || (!is_null($row[1]) && !empty($row[1])))
-                    {
-                        $year = null;
-                        if (!empty($row[11])) {
-                            $year = $row[11];
-                        }
-                        $dataArray[] = [
-                        'coopId' => $row[0],
-                        'surname' => $row[1],
-                        'otherNames' => $row[2],
-                        'occupation' => $row[3],
-                        'gender' => $row[4],
-                        'religion' => $row[5],
-                        'phoneNumber' => $row[6],
-                        'accountNumber' => $row[7],
-                        'bankName' => $row[8],
-                        'nextOfKinName' => $row[9],
-                        'nextOfKinPhoneNumber' => $row[10],
-                        'yearJoined' => $year,
-                        'userId' => auth('admin')->user()->id, // Retrieve admin id
-                        ];
-                    }
+            // Insert new record
+            if ((!is_null($row[0]) && !empty($row[0])) || (!is_null($row[1]) && !empty($row[1]))) {
+              $year = null;
+              if (!empty($row[11])) {
+                $year = $row[11];
+              }
+
+              $dataArray[] = [
+                'coopId' => $coop,
+                'groupId' => $groupId,
+                'surname' => $row[1],
+                'otherNames' => $row[2],
+                'occupation' => $row[3],
+                'gender' => $row[4],
+                'religion' => $row[5],
+                'phoneNumber' => $row[6],
+                'accountNumber' => $row[7],
+                'bankName' => $row[8],
+                'nextOfKinName' => $row[9],
+                'nextOfKinPhoneNumber' => $row[10],
+                'yearJoined' => $year,
+                'userId' => auth('admin')->user()->id, // Retrieve admin id
+              ];
+            }
                 }else {
                   // Update existing record
                   $year = null;
@@ -76,6 +95,7 @@ class ImportController extends Controller
                   }
 
                   $existingRecord->update([
+              'groupId' => $groupId,
                     'surname' => $row[1],
                         'otherNames' => $row[2],
                         'occupation' => $row[3],
