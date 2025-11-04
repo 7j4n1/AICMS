@@ -117,3 +117,48 @@ the members details files(6) one after the other, they can be found in (\AICMS\d
 
 3. Import the Previous Ledger by selecting ledger_2003.csv
 ![alt text](step3.png)
+
+## Database Backup and Restore
+
+The application provides a robust backup and restore feature that allows you to:
+
+### Backup Database
+
+1. Navigate to the backup page:
+```bash
+http://localhost:8000/admin/backup
+```
+
+2. Click "Create Backup" button to create a new database backup
+   - The backup will be saved as a ZIP file containing the SQL dump
+   - All backups are stored in `storage/app/Laravel/` directory
+   - You can view all available backups with their file size and creation date
+
+3. Download any backup by clicking the "Download" button next to the backup file
+
+### Restore Database
+
+The restore feature allows you to upload a previously created backup and restore the entire database without foreign key constraint errors.
+
+1. Navigate to the backup page:
+```bash
+http://localhost:8000/admin/backup
+```
+
+2. Under "Restore Database from Backup" section:
+   - Click "Choose File" and select a backup ZIP file
+   - Click "Restore Database" button
+   - Confirm the action (this will replace all current data)
+
+3. The restore process will:
+   - Extract the SQL file from the backup ZIP
+   - Temporarily disable foreign key constraints
+   - Execute all SQL statements to restore the database
+   - Re-enable foreign key constraints
+   - Clean up temporary files
+
+**Important Notes:**
+- The restore process will replace ALL current data in the database
+- Make sure to create a backup before restoring to avoid data loss
+- Only upload backup files created by this application
+- Maximum file size for upload is 500MB
