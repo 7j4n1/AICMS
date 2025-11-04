@@ -33,7 +33,7 @@ class DatabaseController extends Controller
         // Backup database
         // $exit_code = Artisan::call('backup:run --only-db --disable-notifications');
 
-        $output = shell_exec('cd '.base_path().' && php artisan backup:run --only-db --disable-notifications 2>&1');
+        $output = shell_exec('cd ' . base_path() . ' && php artisan backup:run -n --only-db --disable-notifications 2>&1');
 
         // Check if the backup was successful
 
