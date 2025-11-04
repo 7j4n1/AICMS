@@ -152,12 +152,6 @@ class DatabaseController extends Controller
                 // Read SQL file content
                 $sql = file_get_contents($sqlFile);
 
-                // Get database connection config
-                $dbHost = config('database.connections.mysql.host');
-                $dbName = config('database.connections.mysql.database');
-                $dbUser = config('database.connections.mysql.username');
-                $dbPassword = config('database.connections.mysql.password');
-
                 // Execute SQL restore with foreign key checks disabled
                 DB::unprepared('SET FOREIGN_KEY_CHECKS=0;');
 
@@ -171,7 +165,8 @@ class DatabaseController extends Controller
 
                 foreach ($statements as $statement) {
                     if (! empty($statement)) {
-                        DB::unprepared($statement.';');
+                        // Statement already has semicolon from split, no need to add
+                        DB::unprepared($statement);
                     }
                 }
 
