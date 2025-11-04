@@ -246,12 +246,7 @@ class PaymentController extends Controller
         try {
             // If there was a loan payment, revert it
             if ($payment->loanAmount > 0) {
-                $activeLoan = ActiveLoans::where('coopId', $payment->coopId)->first();
-                if ($activeLoan) {
-                    $activeLoan->loanPaid -= $payment->loanAmount;
-                    $activeLoan->loanBalance = $activeLoan->loanAmount - $activeLoan->loanPaid;
-                    $activeLoan->save();
-                }
+                $this->revertLoanPayment($payment);
             }
 
             $payment->delete();
@@ -268,6 +263,22 @@ class PaymentController extends Controller
                 'status' => 'error',
                 'message' => 'Error deleting payment: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Revert loan payment when deleting a payment record
+     *
+     * @param PaymentCapture $payment
+     * @return void
+     */
+    private function revertLoanPayment(PaymentCapture $payment)
+    {
+        $activeLoan = ActiveLoans::where('coopId', $payment->coopId)->first();
+        if ($activeLoan) {
+            $activeLoan->loanPaid -= $payment->loanAmount;
+            $activeLoan->loanBalance = $activeLoan->loanAmount - $activeLoan->loanPaid;
+            $activeLoan->save();
         }
     }
 }

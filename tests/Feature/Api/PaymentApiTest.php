@@ -173,8 +173,8 @@ class PaymentApiTest extends TestCase
 
     public function test_can_filter_payments_by_coop_id()
     {
-        $member1 = Member::factory()->create(['coopId' => '100']);
-        $member2 = Member::factory()->create(['coopId' => '200']);
+        $member1 = Member::factory()->create();
+        $member2 = Member::factory()->create();
         
         PaymentCapture::factory()->count(3)->create(['coopId' => $member1->coopId]);
         PaymentCapture::factory()->count(2)->create(['coopId' => $member2->coopId]);
