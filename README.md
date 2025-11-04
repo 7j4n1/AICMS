@@ -118,6 +118,64 @@ the members details files(6) one after the other, they can be found in (\AICMS\d
 3. Import the Previous Ledger by selecting ledger_2003.csv
 ![alt text](step3.png)
 
+## RESTful API
+
+AICMS now includes a comprehensive RESTful API for client applications to interact with the system. The API provides full CRUD operations for all major resources.
+
+### API Features
+
+- **JWT Authentication** - Secure token-based authentication
+- **Versioned Endpoints** - All endpoints are under `/api/v1`
+- **RESTful Design** - Standard HTTP methods (GET, POST, PUT, DELETE)
+- **JSON Responses** - Consistent JSON response format
+- **Pagination** - Built-in pagination for list endpoints
+- **Filtering & Search** - Query parameters for filtering and searching
+- **Validation** - Comprehensive input validation
+- **Error Handling** - Detailed error responses
+
+### API Documentation
+
+Full API documentation is available in [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
+
+### Quick Start
+
+1. **Login to get JWT token:**
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"your_username","password":"your_password"}'
+```
+
+2. **Use the token in subsequent requests:**
+```bash
+curl -X GET http://localhost:8000/api/v1/members \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### Available Endpoints
+
+- **Authentication**: Login, Register, Password Reset
+- **Members**: CRUD operations for member management
+- **Loans**: Loan creation, updates, completion tracking
+- **Payments**: Payment capture and management
+- **Annual Fees**: Annual fee management
+- **Admins**: Admin user management
+- **Business Items**: Category and item management
+- **Account**: Profile, balance, and transaction history
+
+### Postman Collection
+
+Import the [AICMS_API.postman_collection.json](AICMS_API.postman_collection.json) file into Postman for easy API testing.
+
+### Testing
+
+Run the API tests:
+```bash
+php artisan test --filter Api
+```
+
+---
+
 ## Database Backup and Restore
 
 The application provides a robust backup and restore feature that allows you to:
