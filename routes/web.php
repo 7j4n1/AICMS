@@ -59,6 +59,7 @@ Route::middleware(['auth:admin', 'check.member.role'])->group(function () {
 
         Route::get('/report/individual_download/{id}/{beginning_date}/{ending_date}', [IndividualLedger::class, 'downloadLedger'])->name('individualReportDownload');
         Route::get('/report/general_download/{beginning_date}/{ending_date}/{from_number}/{to_number}', [GeneralLedger::class, 'downloadLedger'])->name('generalReportDownload');
+        Route::get('/report/group_download/{beginning_date}/{ending_date}/{group_from?}/{group_to?}', [\App\Livewire\Admin\Reports\GroupReport::class, 'downloadLedger'])->name('groupReportDownload');
 
         Route::get('/logout', function () {
             auth('admin')->logout();
@@ -118,12 +119,17 @@ Route::middleware(['auth:admin', 'check.admin.role'])->group(function () {
             return view('admin.reports.defaulterloans_report');
         })->name('defaulterLoansReport');
 
+        Route::get('/report/group-report', function() {
+            return view('admin.reports.group_report');
+        })->name('groupReport');
+
         Route::get('/report/purchase-history', function() {
             return view('business.reports.my-history');
         })->name('purchase.individualReport');
 
         Route::get('/report/individual_download/{id}/{beginning_date}/{ending_date}', [IndividualLedger::class, 'downloadLedger'])->name('individualReportDownloadAdmin');
         Route::get('/report/general_download/{beginning_date}/{ending_date}/{from_number}/{to_number}', [GeneralLedger::class, 'downloadLedger'])->name('generalReportDownload_Admin');
+        Route::get('/report/group_download/{beginning_date}/{ending_date}/{group_from?}/{group_to?}', [\App\Livewire\Admin\Reports\GroupReport::class, 'downloadLedger'])->name('groupReportDownload_Admin');
 
         Route::get('/import/members', [ImportController::class, 'index'])->name('importMembers');
 

@@ -2,42 +2,50 @@
 
 namespace App\Livewire\Members;
 
-use App\Models\Member;
-use Livewire\Component;
-use Livewire\Attributes\On;
-use Livewire\WithPagination;
 use App\Livewire\Forms\MemberForm;
+use App\Models\Member;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class ListMembers extends Component
 {
     use WithPagination;
 
-    protected $paginationTheme = "bootstrap";
+    protected $paginationTheme = 'bootstrap';
 
     protected $members;
+
     public MemberForm $memberForm;
+
     public $isModalOpen = false;
+
     public $editingMemberId = null;
 
     private $paginate = 10;
+
     public $search = '';
 
+    public $groupFilter = '';
 
     /**
      * Render the component.
      *
      * @return \Illuminate\View\View
      */
-  
     public function render()
     {
         $this->members = Member::query()
-        ->when($this->search, function ($query) {
-            $query->where('surname', 'like', "%{$this->search}%")
-                  ->orWhere('otherNames', 'like', "%{$this->search}%")
-                  ->orWhere('coopId', 'like', "%{$this->search}%");
-        })->orderBy('coopId', 'asc')
-        ->paginate($this->paginate);
+            ->when($this->search, function ($query) {
+                $query->where('surname', 'like', "%{$this->search}%")
+                    ->orWhere('otherNames', 'like', "%{$this->search}%")
+                    ->orWhere('coopId', 'like', "%{$this->search}%");
+            })
+            ->when($this->groupFilter, function ($query) {
+                $query->where('groupId', $this->groupFilter);
+            })
+            ->orderBy('coopId', 'asc')
+            ->paginate($this->paginate);
 
         return view('livewire.members.list-members', [
             'members' => $this->members,
@@ -74,27 +82,25 @@ class ListMembers extends Component
     {
         $this->validate();
 
-        if(!$this->getErrorBag()->isEmpty())
-        {
+        if (! $this->getErrorBag()->isEmpty()) {
             $this->isModalOpen = true;
+
             return;
         }
 
         $saved = $this->memberForm->save();
 
-        if(!$saved)
-        {
-            session()->flash('error','Member details not saved.');
+        if (! $saved) {
+            session()->flash('error', 'Member details not saved.');
             $this->isModalOpen = true;
+
             return;
         }
 
-        
-        session()->flash('success','Member details added successfully');
+        session()->flash('success', 'Member details added successfully');
         $this->memberForm->resetForm();
         $this->isModalOpen = false;
-    
-        
+
         $this->sendDispatchEvent();
     }
 
@@ -104,14 +110,13 @@ class ListMembers extends Component
         // $this->resetForm();
         $member = Member::find($id);
 
-        if(!$member){
+        if (! $member) {
 
-            session()->flash('error','Member not found.');
+            session()->flash('error', 'Member not found.');
             $this->toggleModalClose();
 
             return;
         }
-            
 
         $this->memberForm->fill($member->toArray());
 
@@ -124,22 +129,23 @@ class ListMembers extends Component
     public function updateMember()
     {
 
-        if(!$this->getErrorBag()->isEmpty())
-        {
+        if (! $this->getErrorBag()->isEmpty()) {
             $this->isModalOpen = true;
+
             return;
         }
 
         $member = Member::find($this->editingMemberId);
 
-        if($this->memberForm->yearJoined == '')
+        if ($this->memberForm->yearJoined == '') {
             $this->memberForm->yearJoined = null;
+        }
 
         $member->update($this->memberForm->toArray());
 
         $this->editingMemberId = null;
 
-        session()->flash('message','Member details updated successfully');
+        session()->flash('message', 'Member details updated successfully');
 
         $this->memberForm->resetForm();
 
@@ -149,10 +155,11 @@ class ListMembers extends Component
     }
 
     #[On('delete-members')]
-    public function deleteOldMember($id) {
+    public function deleteOldMember($id)
+    {
         Member::find($id)->delete();
 
-        session()->flash('message','Member details deleted successfully.');
+        session()->flash('message', 'Member details deleted successfully.');
 
         $this->sendDispatchEvent();
     }
@@ -161,5 +168,4 @@ class ListMembers extends Component
     {
         $this->dispatch('on-openModal');
     }
-
 }

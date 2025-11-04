@@ -15,6 +15,7 @@ class Member extends Model
 
     protected $fillable = [
         'coopId',
+        'groupId',
         'surname',
         'otherNames',
         'occupation',
@@ -26,13 +27,13 @@ class Member extends Model
         'nextOfKinName',
         'nextOfKinPhoneNumber',
         'yearJoined',
-        'userId','editDates',
-        'editedBy'
+        'userId', 'editDates',
+        'editedBy',
     ];
 
     protected $casts = [
         'editDates' => 'array',
-        'editedBy' => 'array'
+        'editedBy' => 'array',
     ];
 
     public function admin()
@@ -74,4 +75,33 @@ class Member extends Model
         $this->editedBy = array_slice($editedBy, 0, 3);
     }
 
+    /**
+     * Calculate group ID from coop ID
+     * Each group contains 100 sequential coopIds
+     * Group 1: coopId 1-100, Group 2: coopId 101-200, etc.
+     */
+    public static function calculateGroupId($coopId)
+    {
+        return (int) ceil($coopId / 100);
+    }
+
+    /**
+     * Automatically set groupId when coopId is set
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($member) {
+            if ($member->coopId && ! $member->groupId) {
+                $member->groupId = self::calculateGroupId($member->coopId);
+            }
+        });
+
+        static::updating(function ($member) {
+            if ($member->isDirty('coopId')) {
+                $member->groupId = self::calculateGroupId($member->coopId);
+            }
+        });
+    }
 }
