@@ -43,7 +43,8 @@ class GenerateExcelReportJob implements ShouldQueue, ShouldBeUnique
         public string $title,
     )
     {
-        $this->onQueue('excel-reports'.$this->batchKey.Str::uuid()); // Set the queue for this job
+        // Use a stable queue name so workers can be configured to listen to it
+        $this->onQueue('excel-reports');
     }
 
     /**
@@ -59,6 +60,7 @@ class GenerateExcelReportJob implements ShouldQueue, ShouldBeUnique
      */
     public function handle(): void
     {
+        Log::info('GenerateExcelReportJob started', ['type' => $this->type, 'batch' => $this->batchKey]);
         try {
             $filename = "csv_import_{$this->type}_{$this->batchKey}.xlsx";
             $path = "reports/{$filename}";
