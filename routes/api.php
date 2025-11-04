@@ -4,6 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MemberRecordsController;
+use App\Http\Controllers\Api\V1\MemberController;
+use App\Http\Controllers\Api\V1\LoanController;
+use App\Http\Controllers\Api\V1\PaymentController;
+use App\Http\Controllers\Api\V1\AnnualFeeController;
+use App\Http\Controllers\Api\V1\AdminController;
+use App\Http\Controllers\Api\V1\ItemCategoryController;
+use App\Http\Controllers\Api\V1\ItemCaptureController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,17 +30,46 @@ use App\Http\Controllers\Api\MemberRecordsController;
 Route::group(['prefix' => 'v1', 'middleware' => ['api', 'json.response']], function ($router) {
     // public route
     Route::get('/test', [AuthController::class, 'testOutput']);
+    
+    // Authentication routes
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/reset-password', [AuthController::class, 'resetPassword']);
     });
 
-    Route::group(['prefix' => 'account', 'middleware' => 'jwt.verify'], function () {
-        Route::get('profile', [AuthController::class, 'profile']);
-        Route::get('balance', [MemberRecordsController::class, 'getBalance']);
-        Route::get('savings', [MemberRecordsController::class, 'getSavingsRecords']);
-        Route::get('shares', [MemberRecordsController::class, 'getSharesRecords']);
-        Route::post('download-ledger', [MemberRecordsController::class, 'downloadLedger']);
+    // Protected routes requiring JWT authentication
+    Route::group(['middleware' => 'jwt.verify'], function () {
+        
+        // Account/Profile routes
+        Route::prefix('account')->group(function () {
+            Route::get('profile', [AuthController::class, 'profile']);
+            Route::get('balance', [MemberRecordsController::class, 'getBalance']);
+            Route::get('savings', [MemberRecordsController::class, 'getSavingsRecords']);
+            Route::get('shares', [MemberRecordsController::class, 'getSharesRecords']);
+            Route::post('download-ledger', [MemberRecordsController::class, 'downloadLedger']);
+        });
+
+        // Members Management
+        Route::apiResource('members', MemberController::class);
+        Route::get('members/coop/{coopId}', [MemberController::class, 'getByCoopId']);
+
+        // Loans Management
+        Route::apiResource('loans', LoanController::class);
+        Route::post('loans/{id}/complete', [LoanController::class, 'complete']);
+        Route::get('active-loans', [LoanController::class, 'activeLoans']);
+
+        // Payments Management
+        Route::apiResource('payments', PaymentController::class);
+
+        // Annual Fees Management
+        Route::apiResource('annual-fees', AnnualFeeController::class);
+
+        // Admin Management (requires admin role)
+        Route::apiResource('admins', AdminController::class);
+
+        // Business/Items Management
+        Route::apiResource('categories', ItemCategoryController::class);
+        Route::apiResource('items', ItemCaptureController::class);
     });
 });
