@@ -35,6 +35,18 @@ const protectedRoutes = {
             },
           ],
         },
+        // Account/Profile Routes
+        {
+          path: "account",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/account")).default,
+              }),
+            },
+          ],
+        },
         // Members Routes
         {
           path: "members",
