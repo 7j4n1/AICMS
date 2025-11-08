@@ -75,6 +75,24 @@ const protectedRoutes = {
                 Component: (await import("app/pages/loans")).default,
               }),
             },
+            {
+              path: "active",
+              lazy: async () => ({
+                Component: (await import("app/pages/loans/ActiveLoans")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/loans/LoanForm")).default,
+              }),
+            },
+            {
+              path: ":id/edit",
+              lazy: async () => ({
+                Component: (await import("app/pages/loans/LoanForm")).default,
+              }),
+            },
           ],
         },
         // Payments Routes
@@ -85,6 +103,36 @@ const protectedRoutes = {
               index: true,
               lazy: async () => ({
                 Component: (await import("app/pages/payments")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/payments/PaymentForm")).default,
+              }),
+            },
+          ],
+        },
+        // Annual Fees Routes
+        {
+          path: "annual-fees",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/annual-fees")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/annual-fees/AnnualFeeForm")).default,
+              }),
+            },
+            {
+              path: ":id/edit",
+              lazy: async () => ({
+                Component: (await import("app/pages/annual-fees/AnnualFeeForm")).default,
               }),
             },
           ],

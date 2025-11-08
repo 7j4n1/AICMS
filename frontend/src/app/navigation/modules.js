@@ -30,6 +30,15 @@ export const members = {
      transKey: 'nav.members.list',
      Icon: UsersIcon,
    },
+   {
+     id: 'members.create',
+     path: path(ROOT_PATH, 'members/create'),
+     type: NAV_TYPE_ITEM,
+     title: 'Add Member',
+     transKey: 'nav.members.create',
+     Icon: UsersIcon,
+   },
+
  ],
 };
 
