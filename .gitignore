@@ -32,3 +32,10 @@ yarn-error.log
 data/test_2023.csv
 data/prev_ledger_test.csv
 data/members_datacapture_full.csv
+
+# Frontend build artifacts and dependencies
+/frontend/dist
+/frontend/node_modules
+/frontend/.vite
+/frontend/yarn-error.log
+/frontend/npm-debug.log

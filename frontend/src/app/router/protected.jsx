@@ -137,6 +137,82 @@ const protectedRoutes = {
             },
           ],
         },
+        // Business Routes
+        {
+          path: "business",
+          children: [
+            {
+              path: "categories",
+              children: [
+                {
+                  index: true,
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/categories")).default,
+                  }),
+                },
+                {
+                  path: "create",
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/categories/CategoryForm")).default,
+                  }),
+                },
+                {
+                  path: ":id/edit",
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/categories/CategoryForm")).default,
+                  }),
+                },
+              ],
+            },
+            {
+              path: "items",
+              children: [
+                {
+                  index: true,
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/items")).default,
+                  }),
+                },
+                {
+                  path: "create",
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/items/ItemForm")).default,
+                  }),
+                },
+                {
+                  path: ":id/edit",
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/items/ItemForm")).default,
+                  }),
+                },
+              ],
+            },
+          ],
+        },
+        // Admins Routes
+        {
+          path: "admins",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/admins")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/admins/AdminForm")).default,
+              }),
+            },
+            {
+              path: ":id/edit",
+              lazy: async () => ({
+                Component: (await import("app/pages/admins/AdminForm")).default,
+              }),
+            },
+          ],
+        },
       ],
     },
     // The app layout supports only the main layout. Avoid using it for other layouts.
