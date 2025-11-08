@@ -18,6 +18,8 @@ export function Group({ data }) {
   const { t } = useTranslation();
   const { cardSkin } = useThemeContext();
 
+  const title = data.transKey ? (t(data.transKey) === data.transKey ? data.title : t(data.transKey)) : data.title;
+
   return (
     <div className="pt-3">
       <div
@@ -30,7 +32,7 @@ export function Group({ data }) {
           onClick={toggle}
           className="flex items-center gap-3 pt-2 mb-2 text-xs font-medium uppercase tracking-wider text-gray-500 outline-none hover:text-gray-900 focus:text-gray-900 dark:text-dark-300 dark:hover:text-dark-50 dark:focus:text-dark-50"
         >
-          <span>{t(data.transKey)}</span>
+          <span>{title}</span>
         </button>
         <div
           className={clsx(

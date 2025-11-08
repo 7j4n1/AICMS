@@ -17,7 +17,7 @@ export function MenuItem({ data }) {
   const { close } = useSidebarContext();
   const { t } = useTranslation();
 
-  const title = t(transKey) || data.title;
+  const title = transKey ? (t(transKey) === transKey ? data.title : t(transKey)) : data.title;
 
   const info = useRouteLoaderData("root")?.[id]?.info;
 
