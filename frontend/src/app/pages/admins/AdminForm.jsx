@@ -16,7 +16,7 @@ import { adminsAPI } from "services/api";
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
   username: yup.string().required("Username is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
+  email: yup.string().email("Invalid email").nullable(),
   password: yup.string().when("$isEdit", {
     is: false,
     then: (schema) => schema.required("Password is required").min(6, "Password must be at least 6 characters"),
