@@ -53,7 +53,7 @@ class MemberController extends Controller
         $validator = Validator::make($request->all(), [
             'coopId' => 'required|unique:members,coopId',
             'surname' => 'required|string|max:255',
-            'otherNames' => 'required|string|max:255',
+            'otherNames' => 'nullable|string|max:255',
             'occupation' => 'nullable|string|max:255',
             'gender' => 'nullable|string|max:10',
             'religion' => 'nullable|string|max:255',

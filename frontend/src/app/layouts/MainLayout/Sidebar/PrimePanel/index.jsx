@@ -19,7 +19,7 @@ export function PrimePanel({
   const { cardSkin } = useThemeContext();
   const { t } = useTranslation();
 
-  const title = t(currentSegment?.transKey) || currentSegment?.title;
+  const title = currentSegment?.transKey ? (t(currentSegment?.transKey) === currentSegment?.transKey ? currentSegment?.title : t(currentSegment?.transKey)) : currentSegment?.title;
 
   return (
     <div

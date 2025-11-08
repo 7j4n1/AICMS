@@ -17,7 +17,7 @@ export function MenuItem({ data }) {
   const { lgAndDown } = useBreakpointsContext();
   const { close } = useSidebarContext();
 
-  const title = t(transKey) || data.title;
+  const title = transKey ? (t(transKey) === transKey ? data.title : t(transKey)) : data.title;
   const info = useRouteLoaderData("root")?.[id]?.info;
 
   const handleMenuItemClick = () => lgAndDown && close();

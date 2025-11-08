@@ -1,6 +1,7 @@
 /**
- * This is simple JWT API for testing purposes.
- * https://github.com/pinia-studio/jwt-api-node
+ * AICMS Laravel API Configuration
+ * Update this URL to match your Laravel backend
 **/
 
-export const JWT_HOST_API = "https://jwt-api-node.vercel.app";
+// Use environment variable or fallback to localhost
+export const JWT_HOST_API = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";

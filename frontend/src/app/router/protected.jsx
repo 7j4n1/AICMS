@@ -35,6 +35,60 @@ const protectedRoutes = {
             },
           ],
         },
+        // Members Routes
+        {
+          path: "members",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/members")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/members/MemberForm")).default,
+              }),
+            },
+            {
+              path: ":id",
+              lazy: async () => ({
+                Component: (await import("app/pages/members/MemberDetail")).default,
+              }),
+            },
+            {
+              path: ":id/edit",
+              lazy: async () => ({
+                Component: (await import("app/pages/members/MemberForm")).default,
+              }),
+            },
+          ],
+        },
+        // Loans Routes
+        {
+          path: "loans",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/loans")).default,
+              }),
+            },
+          ],
+        },
+        // Payments Routes
+        {
+          path: "payments",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/payments")).default,
+              }),
+            },
+          ],
+        },
       ],
     },
     // The app layout supports only the main layout. Avoid using it for other layouts.

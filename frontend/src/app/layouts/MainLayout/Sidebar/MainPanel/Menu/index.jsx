@@ -30,7 +30,7 @@ export function Menu({ nav, setActiveSegment, activeSegment }) {
       ...(isLink && { to: path, ...linkProps }),
       onClick: !isLink ? () => handleSegmentSelect(path) : null,
       isActive: path === activeSegment,
-      title: t(transKey) || title,
+      title: transKey ? (t(transKey) === transKey ? title : t(transKey)) : title,
       path,
     };
   };
