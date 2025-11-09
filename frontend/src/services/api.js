@@ -96,3 +96,73 @@ export const itemsAPI = {
  update: (id, data) => axios.put(`/items/${id}`, data),
  delete: (id) => axios.delete(`/items/${id}`),
 };
+
+// ==================== System Configuration ====================
+
+export const configurationAPI = {
+ getAll: () => axios.get('/configurations'),
+ update: (configurations) => axios.post('/configurations', { configurations }),
+ uploadLogo: (formData) => axios.post('/configurations/logo', formData, {
+   headers: { 'Content-Type': 'multipart/form-data' }
+ }),
+ getLogo: () => axios.get('/configurations/logo'),
+};
+
+// ==================== Payment Gateways ====================
+
+export const paymentGatewaysAPI = {
+ getAll: (params) => axios.get('/payment-gateways', { params }),
+ getById: (id) => axios.get(`/payment-gateways/${id}`),
+ create: (data) => axios.post('/payment-gateways', data),
+ update: (id, data) => axios.put(`/payment-gateways/${id}`, data),
+ delete: (id) => axios.delete(`/payment-gateways/${id}`),
+};
+
+// ==================== Savings Types ====================
+
+export const savingsTypesAPI = {
+ getAll: (params) => axios.get('/savings-types', { params }),
+ getById: (id) => axios.get(`/savings-types/${id}`),
+ create: (data) => axios.post('/savings-types', data),
+ update: (id, data) => axios.put(`/savings-types/${id}`, data),
+ delete: (id) => axios.delete(`/savings-types/${id}`),
+};
+
+// ==================== Loan Eligibility ====================
+
+export const loanEligibilityAPI = {
+ getAll: () => axios.get('/loan-eligibility-settings'),
+ getActive: () => axios.get('/loan-eligibility/active'),
+ getById: (id) => axios.get(`/loan-eligibility-settings/${id}`),
+ create: (data) => axios.post('/loan-eligibility-settings', data),
+ update: (id, data) => axios.put(`/loan-eligibility-settings/${id}`, data),
+ delete: (id) => axios.delete(`/loan-eligibility-settings/${id}`),
+ calculate: (coopId) => axios.post('/loan-eligibility/calculate', { coopId }),
+};
+
+// ==================== Support Tickets ====================
+
+export const supportTicketsAPI = {
+ getAll: (params) => axios.get('/support-tickets', { params }),
+ getById: (id) => axios.get(`/support-tickets/${id}`),
+ create: (formData) => axios.post('/support-tickets', formData, {
+   headers: { 'Content-Type': 'multipart/form-data' }
+ }),
+ update: (id, data) => axios.put(`/support-tickets/${id}`, data),
+ delete: (id) => axios.delete(`/support-tickets/${id}`),
+ addMessage: (id, formData) => axios.post(`/support-tickets/${id}/messages`, formData, {
+   headers: { 'Content-Type': 'multipart/form-data' }
+ }),
+};
+
+// ==================== Payment Notifications ====================
+
+export const paymentNotificationsAPI = {
+ getAll: (params) => axios.get('/payment-notifications', { params }),
+ getById: (id) => axios.get(`/payment-notifications/${id}`),
+ create: (formData) => axios.post('/payment-notifications', formData, {
+   headers: { 'Content-Type': 'multipart/form-data' }
+ }),
+ approve: (id) => axios.post(`/payment-notifications/${id}/approve`),
+ reject: (id, reason) => axios.post(`/payment-notifications/${id}/reject`, { reason }),
+};
