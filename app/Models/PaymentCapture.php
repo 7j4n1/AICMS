@@ -27,6 +27,7 @@ class PaymentCapture extends Model
         'userId',
         'adminCharge',
         'otherSavingsType',
+        'savings_type_id',
         'editDates',
         'editedBy'
     ];
@@ -97,6 +98,11 @@ class PaymentCapture extends Model
     public function member()
     {
         return $this->belongsTo(Member::class, 'coopId', 'coopId');
+    }
+
+    public function savingsType()
+    {
+        return $this->belongsTo(SavingsType::class, 'savings_type_id');
     }
 
     public function loanCaptures()
