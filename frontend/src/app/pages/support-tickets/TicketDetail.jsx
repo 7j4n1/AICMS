@@ -13,6 +13,7 @@ import {
 // Local Imports
 import { Page } from "components/shared/Page";
 import { Button, Card, Badge } from "components/ui";
+import { PermissionGuard } from "components/shared/PermissionGuard";
 import { supportTicketsAPI } from "services/api";
 
 // ----------------------------------------------------------------------
@@ -153,11 +154,13 @@ export default function TicketDetail() {
               </p>
             </div>
           </div>
-          {ticket.status !== "closed" && (
-            <Button color="error" onClick={handleCloseTicket}>
-              Close Ticket
-            </Button>
-          )}
+          <PermissionGuard requireAdmin>
+            {ticket.status !== "closed" && (
+              <Button color="error" onClick={handleCloseTicket}>
+                Close Ticket
+              </Button>
+            )}
+          </PermissionGuard>
         </div>
 
         {/* Ticket Info */}

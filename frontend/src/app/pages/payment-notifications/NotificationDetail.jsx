@@ -12,6 +12,7 @@ import {
 // Local Imports
 import { Page } from "components/shared/Page";
 import { Button, Card, Badge } from "components/ui";
+import { PermissionGuard } from "components/shared/PermissionGuard";
 import { paymentNotificationsAPI } from "services/api";
 
 // ----------------------------------------------------------------------
@@ -38,8 +39,8 @@ export default function NotificationDetail() {
       setLoading(true);
       const response = await paymentNotificationsAPI.getById(id);
       setNotification(response.data?.data);
-    } catch (error) {
-      console.error("Error fetching notification:", error);
+    } catch (err) {
+      console.error("Error fetching notification:", err);
       toast.error("Failed to load notification details");
     } finally {
       setLoading(false);
@@ -126,28 +127,30 @@ export default function NotificationDetail() {
               </p>
             </div>
           </div>
-          {notification.status === "pending" && (
-            <div className="flex gap-2">
-              <Button
-                color="success"
-                onClick={handleApprove}
-                disabled={actionLoading}
-                className="gap-2"
-              >
-                <CheckCircleIcon className="size-5" />
-                Approve
-              </Button>
-              <Button
-                color="error"
-                onClick={handleReject}
-                disabled={actionLoading}
-                className="gap-2"
-              >
-                <XCircleIcon className="size-5" />
-                Reject
-              </Button>
-            </div>
-          )}
+          <PermissionGuard requireAdmin>
+            {notification.status === "pending" && (
+              <div className="flex gap-2">
+                <Button
+                  color="success"
+                  onClick={handleApprove}
+                  disabled={actionLoading}
+                  className="gap-2"
+                >
+                  <CheckCircleIcon className="size-5" />
+                  Approve
+                </Button>
+                <Button
+                  color="error"
+                  onClick={handleReject}
+                  disabled={actionLoading}
+                  className="gap-2"
+                >
+                  <XCircleIcon className="size-5" />
+                  Reject
+                </Button>
+              </div>
+            )}
+          </PermissionGuard>
         </div>
 
         {/* Status Badge */}
