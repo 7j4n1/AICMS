@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MemberRecordsController;
+use App\Http\Controllers\Api\PaymentNotificationController;
 use App\Http\Controllers\Api\V1\MemberController;
 use App\Http\Controllers\Api\V1\LoanController;
 use App\Http\Controllers\Api\V1\PaymentController;
@@ -11,6 +12,11 @@ use App\Http\Controllers\Api\V1\AnnualFeeController;
 use App\Http\Controllers\Api\V1\AdminController;
 use App\Http\Controllers\Api\V1\ItemCategoryController;
 use App\Http\Controllers\Api\V1\ItemCaptureController;
+use App\Http\Controllers\Api\V1\SystemConfigurationController;
+use App\Http\Controllers\Api\V1\PaymentGatewayController;
+use App\Http\Controllers\Api\V1\SupportTicketController;
+use App\Http\Controllers\Api\V1\SavingsTypeController;
+use App\Http\Controllers\Api\V1\LoanEligibilityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,5 +77,37 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'json.response']], funct
         // Business/Items Management
         Route::apiResource('categories', ItemCategoryController::class);
         Route::apiResource('items', ItemCaptureController::class);
+
+        // System Configuration (Admin only)
+        Route::prefix('configurations')->group(function () {
+            Route::get('/', [SystemConfigurationController::class, 'index']);
+            Route::post('/', [SystemConfigurationController::class, 'update']);
+            Route::post('/logo', [SystemConfigurationController::class, 'uploadLogo']);
+            Route::get('/logo', [SystemConfigurationController::class, 'getLogo']);
+        });
+
+        // Payment Gateways (Admin only)
+        Route::apiResource('payment-gateways', PaymentGatewayController::class);
+
+        // Savings Types
+        Route::apiResource('savings-types', SavingsTypeController::class);
+
+        // Loan Eligibility Settings
+        Route::apiResource('loan-eligibility-settings', LoanEligibilityController::class);
+        Route::get('loan-eligibility/active', [LoanEligibilityController::class, 'getActive']);
+        Route::post('loan-eligibility/calculate', [LoanEligibilityController::class, 'calculate']);
+
+        // Support Tickets
+        Route::apiResource('support-tickets', SupportTicketController::class);
+        Route::post('support-tickets/{id}/messages', [SupportTicketController::class, 'addMessage']);
+
+        // Payment Notifications
+        Route::prefix('payment-notifications')->group(function () {
+            Route::get('/', [PaymentNotificationController::class, 'index']);
+            Route::post('/', [PaymentNotificationController::class, 'store']);
+            Route::get('/{id}', [PaymentNotificationController::class, 'show']);
+            Route::post('/{id}/approve', [PaymentNotificationController::class, 'approve']);
+            Route::post('/{id}/reject', [PaymentNotificationController::class, 'reject']);
+        });
     });
 });
