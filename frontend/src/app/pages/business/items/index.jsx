@@ -72,7 +72,7 @@ export default function ItemsList() {
 
   return (
     <Page title="Items">
-      <div className="space-y-5">
+      <div className="space-y-5 mx-4 my-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>

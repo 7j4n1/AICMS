@@ -15,20 +15,30 @@ import { loansAPI } from "services/api";
 export default function ActiveLoans() {
  const [loans, setLoans] = useState([]);
  const [loading, setLoading] = useState(true);
+ const [currentPage, setCurrentPage] = useState(1);
+ const [pagination, setPagination] = useState({});
 
  const fetchActiveLoans = useCallback(async () => {
    try {
      setLoading(true);
-     const response = await loansAPI.getActive();
-     const data = response.data?.data || [];
+     const response = await loansAPI.getActive({
+       page: currentPage,
+       per_page: 25,
+     });
+     
+     // Handle Laravel API response format
+     const data = response.data?.data?.data || response.data?.data || [];
+     const meta = response.data?.data?.pagination || response.data?.meta || {};
+  
      setLoans(data);
+     setPagination(meta);
    } catch (error) {
      console.error("Error fetching active loans:", error);
      toast.error("Failed to load active loans");
    } finally {
      setLoading(false);
    }
- }, []);
+ }, [currentPage]);
 
  useEffect(() => {
    fetchActiveLoans();
@@ -58,7 +68,7 @@ export default function ActiveLoans() {
 
  return (
    <Page title="Active Loans">
-     <div className="space-y-5">
+     <div className="space-y-5 mx-4 my-4">
        {/* Header */}
        <div className="flex items-center justify-between">
          <div className="flex items-center gap-3">
@@ -164,6 +174,35 @@ export default function ActiveLoans() {
              </tbody>
            </table>
          </div>
+
+         {/* Pagination */}
+         {pagination.total > 0 && (
+           <div className="flex items-center justify-between border-t border-gray-200 bg-white px-6 py-3 dark:border-dark-500 dark:bg-dark-700">
+             <div className="text-sm text-gray-500 dark:text-dark-300">
+               Showing {((currentPage - 1) * pagination.per_page) + 1} to{" "}
+               {Math.min(currentPage * pagination.per_page, pagination.total)} of{" "}
+               {pagination.total} results
+             </div>
+             <div className="flex gap-2">
+               <Button
+                 size="sm"
+                 variant="outlined"
+                 disabled={currentPage === 1}
+                 onClick={() => setCurrentPage(currentPage - 1)}
+               >
+                 Previous
+               </Button>
+               <Button
+                 size="sm"
+                 variant="outlined"
+                 disabled={currentPage >= pagination.total_pages}
+                 onClick={() => setCurrentPage(currentPage + 1)}
+               >
+                 Next
+               </Button>
+             </div>
+           </div>
+         )}
        </Card>
      </div>
    </Page>

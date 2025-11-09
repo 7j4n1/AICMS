@@ -54,7 +54,7 @@ export default function MemberDetail() {
 
  return (
    <Page title="Member Details">
-     <div className="space-y-5">
+     <div className="space-y-5 mx-4 my-4">
        {/* Header */}
        <div className="flex items-center justify-between">
          <div className="flex items-center gap-3">
@@ -102,7 +102,7 @@ export default function MemberDetail() {
          </Card>
 
          {/* Bank & Next of Kin */}
-         <div className="space-y-5">
+         <div className="space-y-5 mx-4 my-4">
            <Card className="p-6">
              <h3 className="mb-4 text-lg font-semibold text-gray-700 dark:text-dark-100">
                Bank Information
