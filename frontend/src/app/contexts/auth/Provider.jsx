@@ -83,8 +83,8 @@ export function AuthProvider({ children }) {
         if (authToken && isTokenValid(authToken)) {
           setSession(authToken);
 
-          const response = await axios.get("/user/profile");
-          const { user } = response.data;
+          const response = await axios.get("/account/profile");
+          const user  = response.data?.data?.user || response.data?.user;
 
           dispatch({
             type: "INITIALIZE",
@@ -123,18 +123,19 @@ export function AuthProvider({ children }) {
     });
 
     try {
-      const response = await axios.post("/login", {
+      const response = await axios.post("/auth/login", {
         username,
         password,
       });
 
-      const { authToken, user } = response.data;
+      const { access_token, data } = response.data;
+      const user = data?.user;
 
-      if (!isString(authToken) && !isObject(user)) {
-        throw new Error("Response is not vallid");
+      if (!isString(access_token) && !isObject(user)) {
+        throw new Error("Invalid response format from server");
       }
 
-      setSession(authToken);
+      setSession(access_token);
 
       dispatch({
         type: "LOGIN_SUCCESS",

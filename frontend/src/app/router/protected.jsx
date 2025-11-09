@@ -35,6 +35,196 @@ const protectedRoutes = {
             },
           ],
         },
+        // Account/Profile Routes
+        {
+          path: "account",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/account")).default,
+              }),
+            },
+          ],
+        },
+        // Members Routes
+        {
+          path: "members",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/members")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/members/MemberForm")).default,
+              }),
+            },
+            {
+              path: ":id",
+              lazy: async () => ({
+                Component: (await import("app/pages/members/MemberDetail")).default,
+              }),
+            },
+            {
+              path: ":id/edit",
+              lazy: async () => ({
+                Component: (await import("app/pages/members/MemberForm")).default,
+              }),
+            },
+          ],
+        },
+        // Loans Routes
+        {
+          path: "loans",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/loans")).default,
+              }),
+            },
+            {
+              path: "active",
+              lazy: async () => ({
+                Component: (await import("app/pages/loans/ActiveLoans")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/loans/LoanForm")).default,
+              }),
+            },
+            {
+              path: ":id/edit",
+              lazy: async () => ({
+                Component: (await import("app/pages/loans/LoanForm")).default,
+              }),
+            },
+          ],
+        },
+        // Payments Routes
+        {
+          path: "payments",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/payments")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/payments/PaymentForm")).default,
+              }),
+            },
+          ],
+        },
+        // Annual Fees Routes
+        {
+          path: "annual-fees",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/annual-fees")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/annual-fees/AnnualFeeForm")).default,
+              }),
+            },
+            {
+              path: ":id/edit",
+              lazy: async () => ({
+                Component: (await import("app/pages/annual-fees/AnnualFeeForm")).default,
+              }),
+            },
+          ],
+        },
+        // Business Routes
+        {
+          path: "business",
+          children: [
+            {
+              path: "categories",
+              children: [
+                {
+                  index: true,
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/categories")).default,
+                  }),
+                },
+                {
+                  path: "create",
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/categories/CategoryForm")).default,
+                  }),
+                },
+                {
+                  path: ":id/edit",
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/categories/CategoryForm")).default,
+                  }),
+                },
+              ],
+            },
+            {
+              path: "items",
+              children: [
+                {
+                  index: true,
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/items")).default,
+                  }),
+                },
+                {
+                  path: "create",
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/items/ItemForm")).default,
+                  }),
+                },
+                {
+                  path: ":id/edit",
+                  lazy: async () => ({
+                    Component: (await import("app/pages/business/items/ItemForm")).default,
+                  }),
+                },
+              ],
+            },
+          ],
+        },
+        // Admins Routes
+        {
+          path: "admins",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/admins")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/admins/AdminForm")).default,
+              }),
+            },
+            {
+              path: ":id/edit",
+              lazy: async () => ({
+                Component: (await import("app/pages/admins/AdminForm")).default,
+              }),
+            },
+          ],
+        },
       ],
     },
     // The app layout supports only the main layout. Avoid using it for other layouts.
