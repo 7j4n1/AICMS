@@ -225,6 +225,84 @@ const protectedRoutes = {
             },
           ],
         },
+        // Support Tickets Routes
+        {
+          path: "support-tickets",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/support-tickets")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/support-tickets/CreateTicket")).default,
+              }),
+            },
+            {
+              path: ":id",
+              lazy: async () => ({
+                Component: (await import("app/pages/support-tickets/TicketDetail")).default,
+              }),
+            },
+          ],
+        },
+        // Payment Notifications Routes
+        {
+          path: "payment-notifications",
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("app/pages/payment-notifications")).default,
+              }),
+            },
+            {
+              path: "create",
+              lazy: async () => ({
+                Component: (await import("app/pages/payment-notifications/CreateNotification")).default,
+              }),
+            },
+            {
+              path: ":id",
+              lazy: async () => ({
+                Component: (await import("app/pages/payment-notifications/NotificationDetail")).default,
+              }),
+            },
+          ],
+        },
+        // Admin Configuration Routes
+        {
+          path: "admin-config",
+          children: [
+            {
+              path: "system",
+              lazy: async () => ({
+                Component: (await import("app/pages/admin-config/SystemSettings")).default,
+              }),
+            },
+            {
+              path: "payment-gateways",
+              lazy: async () => ({
+                Component: (await import("app/pages/admin-config/PaymentGateways")).default,
+              }),
+            },
+            {
+              path: "savings-types",
+              lazy: async () => ({
+                Component: (await import("app/pages/admin-config/SavingsTypes")).default,
+              }),
+            },
+            {
+              path: "loan-eligibility",
+              lazy: async () => ({
+                Component: (await import("app/pages/admin-config/LoanEligibility")).default,
+              }),
+            },
+          ],
+        },
       ],
     },
     // The app layout supports only the main layout. Avoid using it for other layouts.

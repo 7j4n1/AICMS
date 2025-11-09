@@ -5,7 +5,10 @@ import {
  CalendarIcon,
  TagIcon,
  ShoppingBagIcon,
- UserGroupIcon
+ UserGroupIcon,
+ LifebuoyIcon,
+ BellAlertIcon,
+ Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 import { NAV_TYPE_ROOT, NAV_TYPE_ITEM } from 'constants/app.constant';
 
@@ -154,6 +157,106 @@ export const admins = {
      title: 'All Admins',
      transKey: 'nav.admins.list',
      Icon: UserGroupIcon,
+   },
+ ],
+};
+
+// Support Tickets Navigation
+export const supportTickets = {
+ id: 'support-tickets',
+ type: NAV_TYPE_ROOT,
+ path: '/support-tickets',
+ title: 'Support',
+ transKey: 'nav.support.tickets',
+ Icon: LifebuoyIcon,
+ childs: [
+   {
+     id: 'support-tickets.list',
+     path: path(ROOT_PATH, 'support-tickets'),
+     type: NAV_TYPE_ITEM,
+     title: 'All Tickets',
+     transKey: 'nav.support.list',
+     Icon: LifebuoyIcon,
+   },
+   {
+     id: 'support-tickets.create',
+     path: path(ROOT_PATH, 'support-tickets/create'),
+     type: NAV_TYPE_ITEM,
+     title: 'Create Ticket',
+     transKey: 'nav.support.create',
+     Icon: LifebuoyIcon,
+   },
+ ],
+};
+
+// Payment Notifications Navigation
+export const paymentNotifications = {
+ id: 'payment-notifications',
+ type: NAV_TYPE_ROOT,
+ path: '/payment-notifications',
+ title: 'Payment Notifications',
+ transKey: 'nav.paymentNotifications.title',
+ Icon: BellAlertIcon,
+ childs: [
+   {
+     id: 'payment-notifications.list',
+     path: path(ROOT_PATH, 'payment-notifications'),
+     type: NAV_TYPE_ITEM,
+     title: 'All Notifications',
+     transKey: 'nav.paymentNotifications.list',
+     Icon: BellAlertIcon,
+   },
+   {
+     id: 'payment-notifications.create',
+     path: path(ROOT_PATH, 'payment-notifications/create'),
+     type: NAV_TYPE_ITEM,
+     title: 'Submit Notification',
+     transKey: 'nav.paymentNotifications.create',
+     Icon: BellAlertIcon,
+   },
+ ],
+};
+
+// Admin Configuration Navigation
+export const adminConfig = {
+ id: 'admin-config',
+ type: NAV_TYPE_ROOT,
+ path: '/admin-config',
+ title: 'Configuration',
+ transKey: 'nav.adminConfig.title',
+ Icon: Cog6ToothIcon,
+ childs: [
+   {
+     id: 'admin-config.system',
+     path: path(ROOT_PATH, 'admin-config/system'),
+     type: NAV_TYPE_ITEM,
+     title: 'System Settings',
+     transKey: 'nav.adminConfig.system',
+     Icon: Cog6ToothIcon,
+   },
+   {
+     id: 'admin-config.payment-gateways',
+     path: path(ROOT_PATH, 'admin-config/payment-gateways'),
+     type: NAV_TYPE_ITEM,
+     title: 'Payment Gateways',
+     transKey: 'nav.adminConfig.paymentGateways',
+     Icon: Cog6ToothIcon,
+   },
+   {
+     id: 'admin-config.savings-types',
+     path: path(ROOT_PATH, 'admin-config/savings-types'),
+     type: NAV_TYPE_ITEM,
+     title: 'Savings Types',
+     transKey: 'nav.adminConfig.savingsTypes',
+     Icon: Cog6ToothIcon,
+   },
+   {
+     id: 'admin-config.loan-eligibility',
+     path: path(ROOT_PATH, 'admin-config/loan-eligibility'),
+     type: NAV_TYPE_ITEM,
+     title: 'Loan Eligibility',
+     transKey: 'nav.adminConfig.loanEligibility',
+     Icon: Cog6ToothIcon,
    },
  ],
 };
