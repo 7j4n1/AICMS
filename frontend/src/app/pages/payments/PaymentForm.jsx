@@ -77,7 +77,7 @@ export default function PaymentForm() {
 
  return (
    <Page title="Record Payment">
-     <div className="space-y-5">
+     <div className="space-y-5 mx-4 my-4">
        {/* Header */}
        <div>
          <h2 className="text-2xl font-bold text-gray-800 dark:text-dark-100">
