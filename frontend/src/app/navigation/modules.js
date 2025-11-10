@@ -24,6 +24,7 @@ export const members = {
  title: 'Members',
  transKey: 'nav.members.members',
  Icon: UsersIcon,
+ requireAdmin: true, // Admin only
  childs: [
    {
      id: 'members.list',
@@ -53,6 +54,7 @@ export const loans = {
  title: 'Loans',
  transKey: 'nav.loans.loans',
  Icon: BanknotesIcon,
+ requireAdmin: true, // Admin only
  childs: [
    {
      id: 'loans.list',
@@ -81,6 +83,7 @@ export const payments = {
  title: 'Payments',
  transKey: 'nav.payments.payments',
  Icon: CurrencyDollarIcon,
+ requireAdmin: true, // Admin only
  childs: [
    {
      id: 'payments.list',
@@ -101,6 +104,7 @@ export const annualFees = {
  title: 'Annual Fees',
  transKey: 'nav.annualFees.annualFees',
  Icon: CalendarIcon,
+ requireAdmin: true, // Admin only
  childs: [
    {
      id: 'annual-fees.list',
@@ -121,6 +125,7 @@ export const business = {
  title: 'Business',
  transKey: 'nav.business.business',
  Icon: ShoppingBagIcon,
+ requireAdmin: true, // Admin only
  childs: [
    {
      id: 'business.categories',
@@ -149,6 +154,7 @@ export const admins = {
  title: 'Admins',
  transKey: 'nav.admins.admins',
  Icon: UserGroupIcon,
+ requireRole: 'super-admin', // Super admin only
  childs: [
    {
      id: 'admins.list',
@@ -169,6 +175,7 @@ export const supportTickets = {
  title: 'Support',
  transKey: 'nav.support.tickets',
  Icon: LifebuoyIcon,
+ // Visible to all authenticated users (both admin and member)
  childs: [
    {
      id: 'support-tickets.list',
@@ -197,6 +204,7 @@ export const paymentNotifications = {
  title: 'Payment Notifications',
  transKey: 'nav.paymentNotifications.title',
  Icon: BellAlertIcon,
+ // Visible to all authenticated users (both admin and member)
  childs: [
    {
      id: 'payment-notifications.list',
@@ -225,6 +233,7 @@ export const adminConfig = {
  title: 'System Configuration',
  transKey: 'nav.adminConfig.title',
  Icon: Cog6ToothIcon,
+ requireAdmin: true, // Admin only
  childs: [
    {
      id: 'admin-config.system',
@@ -241,6 +250,7 @@ export const adminConfig = {
      title: 'Payment Gateways',
      transKey: 'nav.adminConfig.paymentGateways',
      Icon: Cog6ToothIcon,
+     requireRole: 'super-admin', // Super admin only for gateways
    },
    {
      id: 'admin-config.savings-types',
