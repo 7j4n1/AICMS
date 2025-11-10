@@ -56,6 +56,8 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'json.response']], funct
             Route::post('download-ledger', [MemberRecordsController::class, 'downloadLedger']);
         });
 
+        Route::post('loan-eligibility/calculate', [LoanEligibilityController::class, 'calculate']);
+
         //Admin-only routes
         Route::middleware(['check.api.permission:can view,api'])->group(function () {
             Route::apiResource('members', MemberController::class);
@@ -76,7 +78,6 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'json.response']], funct
             Route::post('loans/{id}/complete', [LoanController::class, 'complete']);
 
             Route::get('loan-eligibility/active', [LoanEligibilityController::class, 'getActive']);
-            Route::post('loan-eligibility/calculate', [LoanEligibilityController::class, 'calculate']);
         });
 
         // Super Admin Routes protected by 'configure-system' permission

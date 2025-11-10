@@ -11,20 +11,22 @@ export function usePermission() {
     if (!user) return false;
     
     // Check if user has a role property (admin)
-    if (user.role) {
-      if (Array.isArray(role)) {
+    if (user.roles) {
+      // Both role and user.roles are arrays
+      if(Array.isArray(role) && Array.isArray(user.roles)) {
+        return role.some(r => user.roles.includes(r));
+      }
+      // role is string and user.roles is array
+      if(typeof role === 'string' && Array.isArray(user.roles)) {
+        return user.roles.includes(role);
+      }
+      // role is array and user.role is string
+      if(Array.isArray(role) && typeof user.role === 'string') {
         return role.includes(user.role);
       }
+
+      // Both are strings
       return user.role === role;
-    }
-    
-    // Check if user has roles from Spatie (array of role objects)
-    if (user.roles && Array.isArray(user.roles)) {
-      const userRoles = user.roles.map(r => r.name);
-      if (Array.isArray(role)) {
-        return role.some(r => userRoles.includes(r));
-      }
-      return userRoles.includes(role);
     }
     
     return false;
@@ -45,26 +47,27 @@ export function usePermission() {
     return false;
   };
 
-  const isAdmin = () => {
-    return hasRole(['admin', 'super-admin', 'manager']);
-  };
+  const isAdmin = () => hasRole(['admin', 'super-admin', 'manager']);
+  const isSuperAdmin = () => hasRole('super-admin');
+  const isManager = () => hasRole('manager');
+  const isMember = () => hasRole('member') || (user && user.coopId);
 
-  const isMember = () => {
-    // Members typically have coopId but no role
-    return hasRole('member') || (user && user.coopId);
-  };
+  // Permission checks for specific actions
+  const canCreate = () => hasPermission('can create');
+  const canEdit = () => hasPermission('can edit');
+  const canView = () => hasPermission('can view');
+  const canDelete = () => hasPermission('can delete');
+  const canOnlyView = () => hasPermission('can only view');
 
-  const canApprovePayments = () => {
-    return hasPermission('approve-payments') || isAdmin();
-  };
+  // Feature-specific permission checks
+  const canManageSystem = () => isSuperAdmin();
+  const canManageMembers = () => isAdmin();
+  const canApprovePayments = () => isAdmin();
+  const canManageTickets = () => isAdmin();
+  const canConfigureSystem = () => isSuperAdmin();
+  const canManagePaymentGateways = () => isSuperAdmin();
 
-  const canManageTickets = () => {
-    return hasPermission('manage-tickets') || isAdmin();
-  };
-
-  const canConfigureSystem = () => {
-    return hasPermission('configure-system') || hasRole(['admin', 'super-admin']);
-  };
+  
 
   return {
     user,
@@ -72,8 +75,18 @@ export function usePermission() {
     hasPermission,
     isAdmin,
     isMember,
+    isSuperAdmin,
+    isManager,
+    canCreate,
+    canEdit,
+    canView,
+    canDelete,
+    canOnlyView,
+    canManageSystem,
+    canManageMembers,
     canApprovePayments,
     canManageTickets,
+    canManagePaymentGateways,
     canConfigureSystem,
   };
 }

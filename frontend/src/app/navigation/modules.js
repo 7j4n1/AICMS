@@ -222,7 +222,7 @@ export const adminConfig = {
  id: 'admin-config',
  type: NAV_TYPE_ROOT,
  path: '/admin-config',
- title: 'Configuration',
+ title: 'System Configuration',
  transKey: 'nav.adminConfig.title',
  Icon: Cog6ToothIcon,
  childs: [
@@ -230,7 +230,7 @@ export const adminConfig = {
      id: 'admin-config.system',
      path: path(ROOT_PATH, 'admin-config/system'),
      type: NAV_TYPE_ITEM,
-     title: 'System Settings',
+     title: 'General Settings',
      transKey: 'nav.adminConfig.system',
      Icon: Cog6ToothIcon,
    },

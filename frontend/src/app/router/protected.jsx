@@ -37,7 +37,7 @@ const protectedRoutes = {
         },
         // Account/Profile Routes
         {
-          path: "account",
+          path: "dashboards/account",
           children: [
             {
               index: true,
@@ -303,12 +303,7 @@ const protectedRoutes = {
             },
           ],
         },
-      ],
-    },
-    // The app layout supports only the main layout. Avoid using it for other layouts.
-    {
-      Component: AppLayout,
-      children: [
+        // Settings Routes
         {
           path: "settings",
           lazy: async () => ({
@@ -335,7 +330,15 @@ const protectedRoutes = {
               }),
             },
           ],
-        },
+        }
+
+      ],
+    },
+    // The app layout supports only the main layout. Avoid using it for other layouts.
+    {
+      Component: AppLayout,
+      children: [
+        
       ],
     },
   ],

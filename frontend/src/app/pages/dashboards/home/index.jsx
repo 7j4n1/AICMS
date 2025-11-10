@@ -108,7 +108,7 @@ export default function Home() {
 
   return (
     <Page title="Dashboard">
-      <div className="transition-content w-full px-[--margin-x] pt-5 lg:pt-6 space-y-6">
+      <div className="transition-content w-full px-[--margin-x] pt-5 lg:pt-6 space-y-6 mb-5">
         {/* Header */}
         <div className="min-w-0">
           <h2 className="truncate text-2xl font-bold tracking-wide text-gray-800 dark:text-dark-50">
