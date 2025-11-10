@@ -27,7 +27,7 @@ export default function MemberDetail() {
    } catch (error) {
      console.error("Error fetching member:", error);
      toast.error("Failed to load member details");
-     navigate("/members");
+     navigate("/members/all");
    } finally {
      setLoading(false);
    }
@@ -61,7 +61,7 @@ export default function MemberDetail() {
            <Button
              variant="outlined"
              size="sm"
-             onClick={() => navigate("/members")}
+             onClick={() => navigate("/members/all")}
            >
              <ArrowLeftIcon className="size-4" />
            </Button>

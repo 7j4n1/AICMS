@@ -53,6 +53,7 @@ const protectedRoutes = {
           children: [
             {
               index: true,
+              path: "all",
               lazy: async () => ({
                 Component: (await import("app/pages/members")).default,
               }),
@@ -83,6 +84,7 @@ const protectedRoutes = {
           children: [
             {
               index: true,
+              path: "all",
               lazy: async () => ({
                 Component: (await import("app/pages/loans")).default,
               }),

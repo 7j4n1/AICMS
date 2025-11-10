@@ -28,7 +28,7 @@ export const members = {
  childs: [
    {
      id: 'members.list',
-     path: path(ROOT_PATH, 'members'),
+     path: path(ROOT_PATH, 'members/all'),
      type: NAV_TYPE_ITEM,
      title: 'All Members',
      transKey: 'nav.members.list',
@@ -58,7 +58,7 @@ export const loans = {
  childs: [
    {
      id: 'loans.list',
-     path: path(ROOT_PATH, 'loans'),
+     path: path(ROOT_PATH, 'loans/all'),
      type: NAV_TYPE_ITEM,
      title: 'All Loans',
      transKey: 'nav.loans.list',

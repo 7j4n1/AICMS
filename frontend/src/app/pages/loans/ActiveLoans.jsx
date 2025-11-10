@@ -72,7 +72,7 @@ export default function ActiveLoans() {
        {/* Header */}
        <div className="flex items-center justify-between">
          <div className="flex items-center gap-3">
-           <Link to="/loans">
+           <Link to="/loans/all">
              <Button variant="outlined" size="sm">
                <ArrowLeftIcon className="size-4" />
              </Button>
