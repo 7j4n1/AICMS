@@ -148,9 +148,9 @@ export default function AdminForm() {
                     className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm dark:border-dark-500 dark:bg-dark-700"
                   >
                     <option value="">Select a role</option>
-                    <option value="superadmin">Super Admin</option>
                     <option value="admin">Admin</option>
-                    <option value="user">User</option>
+                    <option value="manager">Manager</option>
+                    <option value="member">Member</option>
                   </select>
                   {errors?.role && (
                     <p className="mt-1 text-xs text-red-600">{errors.role.message}</p>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\AdminResource;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
@@ -55,10 +56,10 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:admins',
-            'email' => 'required|string|email|max:255|unique:admins',
+            'email' => 'nullable|string|email|max:255|unique:admins',
             'password' => 'required|string|min:6',
             'coopId' => 'nullable|exists:members,coopId',
-            'role' => 'required|string|in:admin,user,superadmin'
+            'role' => 'required|string|in:admin,member,super-admin,manager'
         ]);
 
         if ($validator->fails()) {
@@ -74,6 +75,20 @@ class AdminController extends Controller
         $data['userId'] = auth('api')->id();
 
         $admin = Admin::create($data);
+        if(!$admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create admin'
+            ], 500);
+        }
+
+        $admin->assignRole($data['role']);
+
+        $roleExists = Role::findByName($data['role'], 'api');
+        if ($roleExists) {
+            $admin->roles()->attach($roleExists->id);
+        }
+
 
         return response()->json([
             'status' => 'success',
@@ -127,10 +142,10 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
             'username' => 'sometimes|required|string|max:255|unique:admins,username,' . $id,
-            'email' => 'sometimes|required|string|email|max:255|unique:admins,email,' . $id,
+            'email' => 'nullable|string|email|max:255|unique:admins,email,' . $id,
             'password' => 'sometimes|required|string|min:6',
             'coopId' => 'nullable|exists:members,coopId',
-            'role' => 'sometimes|required|string|in:admin,user,superadmin'
+            'role' => 'sometimes|required|string|in:admin,super-admin,manager,member'
         ]);
 
         if ($validator->fails()) {
@@ -148,6 +163,10 @@ class AdminController extends Controller
         }
 
         $admin->update($data);
+
+        if (isset($data['role'])) {
+            $admin->syncRoles([$data['role']]);
+        }
 
         return response()->json([
             'status' => 'success',

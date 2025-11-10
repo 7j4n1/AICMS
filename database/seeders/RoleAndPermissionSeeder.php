@@ -18,70 +18,103 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // define all the guards
+        $guards = ['admin', 'user', 'web', 'api'];
 
-        // create permissions
-        // Create a permission for the superadmin role:
-            //check if permission exists
-        if(!Permission::where('name', 'can edit')->first())
-            Permission::create(['guard_name' => 'admin', 'name' => 'can edit']);
-        if(!Permission::where('name', 'can create')->first())
-            Permission::create(['guard_name' => 'admin', 'name' => 'can create']);
-        if(!Permission::where('name', 'can delete')->first())
-            Permission::create(['guard_name' => 'admin', 'name' => 'can delete']);
-        if(!Permission::where('name', 'can view')->first())
-            Permission::create(['guard_name' => 'admin', 'name' => 'can view']);
-        // if(!Permission::where('name', 'can view only')->first())
-        //     Permission::create(['guard_name' => 'admin', 'name' => 'can view only']);
-        if(!Permission::where('name', 'can only view')->first())
-            Permission::create(['guard_name' => 'user', 'name' => 'can only view']);
-        
-        // check if permission exists for the guard 'web'
-        if(!Permission::where('name', 'can only view')->where('guard_name', 'web')->exists())
-            Permission::create(['guard_name' => 'web', 'name' => 'can only view']);
+        // define permissions to be created
+        $permissions = [
+            'can edit',
+            'can create',
+            'can delete',
+            'can view',
+            'can only view',
+            'configure-system'
+        ];
 
-        // check if permission exists for the guard 'web'
-        if(!Permission::where('name', 'can only view')->where('guard_name', 'admin')->exists())
-            Permission::create(['guard_name' => 'admin', 'name' => 'can only view']);
-
-        // Create a superadmin role for users authenticating with the admin guard:
-        // check if role exists
-        if(!Role::where('name', 'super-admin')->first()){
-            $superadminRole = Role::create(['guard_name' => 'admin', 'name' => 'super-admin']);
-            $superadminRole->syncPermissions(['can edit', 'can create', 'can delete', 'can view']);
-        }
-        // $superadminRole = Role::create(['guard_name' => 'admin', 'name' => 'super-admin'])
-        //     ->syncPermissions(['can edit', 'can create', 'can delete', 'can view']);
-        if(!Role::where('name', 'manager')->first()){
-            $managerRole = Role::create(['guard_name' => 'admin', 'name' => 'manager']);
-            $managerRole->syncPermissions(['can create', 'can view', 'can edit']);
-        }
-        // member role
-        if(!Role::where('name', 'member')->first()){
-            $memberRole = Role::create(['guard_name' => 'user', 'name' => 'member']);
-            $memberRole->syncPermissions(['can only view']);
-        }
-
-        // check if role exists for the guard 'web'
-        if(!Role::where('name', 'member')->where('guard_name', 'web')->exists()){
-            $memberRole = Role::create(['guard_name' => 'web', 'name' => 'member']);
-            $memberRole->syncPermissions(['can only view']);
-        }
-
-        if(!Role::where('name', 'member')->where('guard_name', 'admin')->exists()){
-            $memberRole = Role::create(['guard_name' => 'admin', 'name' => 'member']);
-            $memberRole->syncPermissions(['can only view']);
+        // create permissions for all guards
+        foreach ($guards as $guard) {
+            foreach ($permissions as $permission) {
+                // check if permission exists
+                $this->createPermissionIfNotExists($permission, $guard);
+            }
         }
         
-        $user = \App\Models\Admin::where('username', 'superadmin')->first();
+        // Create roles and assign existing permissions
+        $this->createRoles();
+        // Create a default super admin user if not exists
+        $this->createDefaultAdminUser();
+    }
 
-        if(!$user){
-            \App\Models\Admin::create([
+    private function createDefaultAdminUser()
+    {
+        $admin = \App\Models\Admin::where('username', 'superadmin')->first();
+
+        if(!$admin){
+            $admin = \App\Models\Admin::create([
                 'name' => 'Super Admin',
                 'username' => 'superadmin',
                 'email' => '',
                 'password' => Hash::make('password1234455'),
-            ])->assignRole('super-admin');
-        }
+            ]);
+            // Assign role for admin guard
+            $admin->assignRole('super-admin');
 
+            $adminRoleApi = Role::where('name', 'super-admin')->where('guard_name', 'api')->first();
+            if ($adminRoleApi) {
+                $admin->roles()->attach($adminRoleApi->id);
+            }
+        }
+    }
+
+    private function createPermissionIfNotExists($name, $guard)
+    {
+        if (!Permission::where('name', $name)->where('guard_name', $guard)->exists()) {
+            Permission::create(['name' => $name, 'guard_name' => $guard]);
+        }
+    }
+
+    private function createRoles()
+    {
+        $roleConfigs = [
+            'super-admin' => [
+                'guard' => ['admin', 'api'],
+                'permissions' => ['can edit', 'can create', 'can delete', 'can view', 'configure-system'],
+            ],
+            'admin' => [
+                'guard' => ['admin', 'web', 'api'],
+                'permissions' => ['can edit', 'can create', 'can delete', 'can view'],
+            ],
+            'manager' => [
+                'guard' => ['admin', 'api'],
+                'permissions' => ['can create', 'can view', 'can edit'],
+            ],
+            'member' => [
+                'guard' => ['admin', 'web', 'api'],
+                'permissions' => ['can only view'],
+            ],
+        ];
+
+        foreach ($roleConfigs as $roleName => $config) {
+            foreach ($config['guard'] as $guard) {
+                $this->createRolesIfNotExists($roleName, $guard, $config['permissions']);
+            }
+        }
+        
+    }
+
+    private function createRolesIfNotExists(string $roleName, string $guard, array $permissions_config)
+    {
+        // check if role exists
+        if (!Role::where('name', $roleName)->where('guard_name', $guard)->exists()) {
+            $role = Role::create(['name' => $roleName, 'guard_name' => $guard]);
+
+            // Get permissions for the specified guard
+            $permissions = Permission::where('guard_name', $guard)
+                ->whereIn('name', $permissions_config)
+                ->get();
+
+            // Sync permissions with the role
+            $role->syncPermissions($permissions);
+        }
     }
 }

@@ -15,7 +15,7 @@ class Admin extends Authenticatable implements JWTSubject
     use HasApiTokens, HasFactory, Notifiable;
     use HasRoles;
 
-    protected $guard = 'admin';
+    // protected $guard = ['admin', 'api'];
 
     /**
      * The attributes that are mass assignable.
@@ -69,11 +69,32 @@ class Admin extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'guard' => 'admin',
+            'type' => 'admin',
+            'role' => $this->role,
+        ];
     }
 
     public function member()
     {
         return $this->belongsTo(Member::class, 'coopId', 'coopId');
+    }
+
+    /**
+     * Get permissions for specific guard
+     *
+     * @param string $guard
+     *
+     */
+    public function getPermissionsForGuard(string $guard = 'admin')
+    {
+        return $this->getPermissionsViaRoles()
+            ->where('guard_name', $guard)->pluck('name');
+    }
+
+    public function getRolesForGuard(string $guard = 'admin')
+    {
+        return $this->roles()->where('guard_name', $guard)->pluck('name');
     }
 }

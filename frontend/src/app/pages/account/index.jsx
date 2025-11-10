@@ -86,12 +86,12 @@ export default function Profile() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <BalanceCard
                 label="Savings"
-                amount={balance.savings}
+                amount={balance.savings ?? 0}
                 color="blue"
               />
               <BalanceCard
                 label="Shares"
-                amount={balance.shares}
+                amount={balance.shares ?? 0}
                 color="green"
               />
               <BalanceCard

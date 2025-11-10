@@ -18,12 +18,11 @@ class MemberRecordsController extends Controller
         $coopId = $user->coopId;
 
         // Get data using the user model
-        // $member = Member::where('coopId', $coopId)->first();
         $payments = PaymentCapture::where('coopId', $coopId)->latest()->get();
         $loans = ActiveLoans::where('coopId', $coopId)->first();
 
         // Calculate balances using the existing logic
-        $loanBalance = $loans->loanBalance;
+        $loanBalance = $loans->loanBalance ?? 0;
         $sharesBalance = $payments->sum('shareAmount');
         $savingsBalance = $payments->sum('savingAmount');
         $totalBalance = $savingsBalance + $sharesBalance + $loanBalance;
@@ -48,7 +47,7 @@ class MemberRecordsController extends Controller
         $payments = PaymentCapture::where('coopId', $coopId)
             ->where('savingAmount', '>', 0)
             ->orderByDesc('paymentDate')
-            ->get(['id', 'paymentDate', 'savingsAmount']);
+            ->get(['id', 'paymentDate', 'savingAmount']);
 
         return response()->json([
             'status' => 'success',
@@ -68,7 +67,7 @@ class MemberRecordsController extends Controller
         $payments = PaymentCapture::where('coopId', $coopId)
             ->where('shareAmount', '>', 0)
             ->orderByDesc('paymentDate')
-            ->get(['id', 'paymentDate', 'sharesAmount']);
+            ->get(['id', 'paymentDate', 'shareAmount']);
 
         return response()->json([
             'status' => 'success',

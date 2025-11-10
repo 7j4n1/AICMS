@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\AdminResource;
 
 class AuthController extends Controller
 {
@@ -45,14 +46,17 @@ class AuthController extends Controller
             ], 401);
         }
 
+        $admin = auth('api')->user();
+
+        if($admin->coopId) {
+            $admin->load('member');
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'You have successfully logged in',
             'access_token' => $token,
-            'data' => [
-                'user' => auth('api')->user(),
-                ''
-            ]
+            'data' => new AdminResource($admin)
         ]);
     }
 
@@ -64,10 +68,15 @@ class AuthController extends Controller
      */
     public function profile()
     {
+        $user = auth('api')->user();
+        if($user->coopId) {
+            $user->load('member');
+        }
+
         return response()->json([
             'status' => 'success',
             'data' => [
-                'user' => auth('api')->user()
+                'user' => new AdminResource($user)
             ]
         ]);
     }

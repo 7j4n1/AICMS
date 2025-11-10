@@ -46,12 +46,12 @@ export function usePermission() {
   };
 
   const isAdmin = () => {
-    return hasRole(['admin', 'superadmin', 'manager']);
+    return hasRole(['admin', 'super-admin', 'manager']);
   };
 
   const isMember = () => {
     // Members typically have coopId but no role
-    return user && user.coopId && !user.role;
+    return hasRole('member') || (user && user.coopId);
   };
 
   const canApprovePayments = () => {
@@ -63,7 +63,7 @@ export function usePermission() {
   };
 
   const canConfigureSystem = () => {
-    return hasPermission('configure-system') || hasRole(['admin', 'superadmin']);
+    return hasPermission('configure-system') || hasRole(['admin', 'super-admin']);
   };
 
   return {

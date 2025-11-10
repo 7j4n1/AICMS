@@ -35,7 +35,7 @@ export default function LoanEligibility() {
       await loanEligibilityAPI.update(setting.id, { active: true });
       toast.success("Formula activated successfully");
       fetchSettings();
-    } catch (error) {
+    } catch  {
       toast.error("Failed to activate formula");
     }
   };

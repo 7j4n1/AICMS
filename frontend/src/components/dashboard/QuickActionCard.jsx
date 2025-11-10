@@ -8,13 +8,13 @@ import { Card } from "components/ui";
  * Quick action card widget
  */
 export function QuickActionCard({ title, description, icon: Icon, to, color = "primary" }) {
-  const colorClasses = {
-    primary: "bg-blue-500 text-white hover:bg-blue-600",
-    success: "bg-green-500 text-white hover:bg-green-600",
-    warning: "bg-yellow-500 text-white hover:bg-yellow-600",
-    error: "bg-red-500 text-white hover:bg-red-600",
-    info: "bg-indigo-500 text-white hover:bg-indigo-600",
-  };
+  // const colorClasses = {
+  //   primary: "bg-blue-500 text-white hover:bg-blue-600",
+  //   success: "bg-green-500 text-white hover:bg-green-600",
+  //   warning: "bg-yellow-500 text-white hover:bg-yellow-600",
+  //   error: "bg-red-500 text-white hover:bg-red-600",
+  //   info: "bg-indigo-500 text-white hover:bg-indigo-600",
+  // };
 
   const iconColorClasses = {
     primary: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",

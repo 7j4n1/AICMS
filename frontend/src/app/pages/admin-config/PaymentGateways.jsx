@@ -37,7 +37,7 @@ export default function PaymentGateways() {
       });
       toast.success("Gateway updated successfully");
       fetchGateways();
-    } catch (error) {
+    } catch {
       toast.error("Failed to update gateway");
     }
   };
@@ -65,7 +65,7 @@ export default function PaymentGateways() {
                     <h3 className="text-lg font-semibold capitalize">
                       {gateway.name}
                     </h3>
-                    <Badge color={gateway.enabled ? "success" : "default"} className="mt-2">
+                    <Badge color={gateway.enabled ? "success" : "primary"} className="mt-2">
                       {gateway.enabled ? "Enabled" : "Disabled"}
                     </Badge>
                   </div>

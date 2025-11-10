@@ -45,7 +45,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'json.response']], funct
     });
 
     // Protected routes requiring JWT authentication
-    Route::group(['middleware' => 'jwt.verify'], function () {
+    Route::group(['middleware' => ['jwt.verify']], function () {
         
         // Account/Profile routes
         Route::prefix('account')->group(function () {
@@ -56,58 +56,65 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'json.response']], funct
             Route::post('download-ledger', [MemberRecordsController::class, 'downloadLedger']);
         });
 
-        // Members Management
-        Route::apiResource('members', MemberController::class);
-        Route::get('members/coop/{coopId}', [MemberController::class, 'getByCoopId']);
+        //Admin-only routes
+        Route::middleware(['check.api.permission:can view,api'])->group(function () {
+            Route::apiResource('members', MemberController::class);
+            Route::get('members/coop/{coopId}', [MemberController::class, 'getByCoopId']);
 
-        // Loans Management
-        Route::apiResource('loans', LoanController::class);
-        Route::post('loans/{id}/complete', [LoanController::class, 'complete']);
-        Route::get('active-loans', [LoanController::class, 'activeLoans']);
+            Route::apiResource('loans', LoanController::class);
+            Route::get('active-loans', [LoanController::class, 'activeLoans']);
 
-        // Payments Management
-        Route::apiResource('payments', PaymentController::class);
+            Route::apiResource('payments', PaymentController::class);
+            Route::apiResource('annual-fees', AnnualFeeController::class);
 
-        // Annual Fees Management
-        Route::apiResource('annual-fees', AnnualFeeController::class);
+            // Business/Items Management
+            Route::apiResource('categories', ItemCategoryController::class);
+            Route::apiResource('items', ItemCaptureController::class);
+        });
+        // Routes requiring 'can edit' permission
+        Route::middleware(['check.api.permission:can edit,api'])->group(function () {
+            Route::post('loans/{id}/complete', [LoanController::class, 'complete']);
 
-        // Admin Management (requires admin role)
-        Route::apiResource('admins', AdminController::class);
-
-        // Business/Items Management
-        Route::apiResource('categories', ItemCategoryController::class);
-        Route::apiResource('items', ItemCaptureController::class);
-
-        // System Configuration (Admin only)
-        Route::prefix('configurations')->group(function () {
-            Route::get('/', [SystemConfigurationController::class, 'index']);
-            Route::post('/', [SystemConfigurationController::class, 'update']);
-            Route::post('/logo', [SystemConfigurationController::class, 'uploadLogo']);
-            Route::get('/logo', [SystemConfigurationController::class, 'getLogo']);
+            Route::get('loan-eligibility/active', [LoanEligibilityController::class, 'getActive']);
+            Route::post('loan-eligibility/calculate', [LoanEligibilityController::class, 'calculate']);
         });
 
-        // Payment Gateways (Admin only)
-        Route::apiResource('payment-gateways', PaymentGatewayController::class);
+        // Super Admin Routes protected by 'configure-system' permission
+        Route::middleware(['check.api.permission:configure-system,api'])->group(function () {
+            // Admin Management
+            Route::apiResource('admins', AdminController::class);
+            
+            // System Configurations
+            Route::prefix('configurations')->group(function () {
+                Route::get('/', [SystemConfigurationController::class, 'index']);
+                Route::post('/', [SystemConfigurationController::class, 'update']);
+                Route::post('/logo', [SystemConfigurationController::class, 'uploadLogo']);
+                Route::get('/logo', [SystemConfigurationController::class, 'getLogo']);
+            });
 
-        // Savings Types
-        Route::apiResource('savings-types', SavingsTypeController::class);
-
-        // Loan Eligibility Settings
-        Route::apiResource('loan-eligibility-settings', LoanEligibilityController::class);
-        Route::get('loan-eligibility/active', [LoanEligibilityController::class, 'getActive']);
-        Route::post('loan-eligibility/calculate', [LoanEligibilityController::class, 'calculate']);
-
-        // Support Tickets
+            // Payment Gateways
+            Route::apiResource('payment-gateways', PaymentGatewayController::class);
+            // Savings Types
+            Route::apiResource('savings-types', SavingsTypeController::class);
+            // Loan Eligibility Settings
+            Route::apiResource('loan-eligibility-settings', LoanEligibilityController::class);
+        });
+        
+        // Support Tickets (All authenticated users)
         Route::apiResource('support-tickets', SupportTicketController::class);
         Route::post('support-tickets/{id}/messages', [SupportTicketController::class, 'addMessage']);
 
-        // Payment Notifications
+        // Payment Notifications (Members can create, Admins can approve/reject)
         Route::prefix('payment-notifications')->group(function () {
             Route::get('/', [PaymentNotificationController::class, 'index']);
             Route::post('/', [PaymentNotificationController::class, 'store']);
             Route::get('/{id}', [PaymentNotificationController::class, 'show']);
-            Route::post('/{id}/approve', [PaymentNotificationController::class, 'approve']);
-            Route::post('/{id}/reject', [PaymentNotificationController::class, 'reject']);
+            
+            // Admin-only routes
+            Route::middleware(['check.api.permission:can edit,api'])->group(function () {
+                Route::post('/{id}/approve', [PaymentNotificationController::class, 'approve']);
+                Route::post('/{id}/reject', [PaymentNotificationController::class, 'reject']);
+            });
         });
     });
 });
