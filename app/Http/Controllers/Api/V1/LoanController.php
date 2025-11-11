@@ -280,13 +280,19 @@ class LoanController extends Controller
         $perPage = $request->input('per_page', 25);
 
         $activeLoans = ActiveLoans::with('member')
-            ->orderBy('coopId', 'asc')
+            ->orderBy('lastPaymentDate', 'desc')
             ->paginate($perPage);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Active loans retrieved successfully',
-            'data' => $activeLoans
+            'data' => $activeLoans,
+            'meta' => [
+                'current_page' => $activeLoans->currentPage(),
+                'per_page' => $activeLoans->perPage(),
+                'total' => $activeLoans->total(),
+                'last_page' => $activeLoans->lastPage()
+            ]
         ]);
     }
 }

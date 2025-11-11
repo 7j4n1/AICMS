@@ -25,7 +25,8 @@ import {
   paymentNotificationsAPI,
   loanEligibilityAPI 
 } from "services/api";
-import { Card } from "components/ui";
+import { TbCurrencyNaira } from "react-icons/tb";
+// import { Card } from "components/ui";
 
 // ----------------------------------------------------------------------
 
@@ -66,8 +67,17 @@ export default function Home() {
           paymentNotificationsAPI.getAll({ status: 'pending', per_page: 1 })
         ]);
 
+        console.log("Admin Dashboard Data:", {
+          members: membersRes,
+          loans: loansRes,
+          payments: paymentsRes,
+          tickets: ticketsRes,
+          notifications: notificationsRes
+        });
+        const membersMetaData = membersRes.value?.data?.data?.pagination || membersRes.value?.data?.meta || {};
+
         setStats({
-          members: membersRes.value?.data?.meta?.total || 0,
+          members: membersMetaData?.total || 0,
           activeLoans: loansRes.value?.data?.meta?.total || 0,
           totalPayments: paymentsRes.value?.data?.meta?.total || 0,
           openTickets: ticketsRes.value?.data?.meta?.total || 0,
@@ -75,6 +85,7 @@ export default function Home() {
         });
       } else if (isMember() && user?.coopId) {
         // Fetch member dashboard data
+
         const [eligibilityRes, ticketsRes, notificationsRes] = await Promise.allSettled([
           loanEligibilityAPI.calculate(user.coopId),
           supportTicketsAPI.getAll({ per_page: 1 }),
@@ -86,6 +97,7 @@ export default function Home() {
           myTickets: ticketsRes.value?.data?.meta?.total || 0,
           myNotifications: notificationsRes.value?.data?.meta?.total || 0,
         });
+
       }
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
@@ -224,52 +236,34 @@ export default function Home() {
           <>
             {/* Loan Eligibility Widget */}
             {memberData.loanEligibility && (
-              <Card className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-dark-100">
-                      Loan Eligibility
-                    </h3>
-                    <div className="mt-4 space-y-2">
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-dark-300">
-                          Total Savings
-                        </p>
-                        <p className="text-xl font-bold text-gray-900 dark:text-dark-100">
-                          ₦{Number(memberData.loanEligibility.total_savings || 0).toLocaleString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-dark-300">
-                          Total Shares
-                        </p>
-                        <p className="text-xl font-bold text-gray-900 dark:text-dark-100">
-                          ₦{Number(memberData.loanEligibility.total_shares || 0).toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="pt-2 border-t border-gray-200 dark:border-dark-500">
-                        <p className="text-sm text-gray-600 dark:text-dark-300">
-                          Available for New Loan
-                        </p>
-                        <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                          ₦{Number(memberData.loanEligibility.available_amount || 0).toLocaleString()}
-                        </p>
-                      </div>
-                      {memberData.loanEligibility.active_loan_balance > 0 && (
-                        <div>
-                          <p className="text-sm text-gray-600 dark:text-dark-300">
-                            Active Loan Balance
-                          </p>
-                          <p className="text-lg font-semibold text-orange-600 dark:text-orange-400">
-                            ₦{Number(memberData.loanEligibility.active_loan_balance).toLocaleString()}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <BanknotesIcon className="size-12 text-blue-500" />
-                </div>
-              </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard
+                  title="Total Savings"
+                  value={Number(memberData.loanEligibility.total_savings || 0).toLocaleString()}
+                  icon={TbCurrencyNaira}
+                  color="primary"
+                />
+                <StatCard
+                  title="Total Shares"
+                  value={Number(memberData.loanEligibility.total_shares || 0).toLocaleString()}
+                  icon={TbCurrencyNaira}
+                  color="primary"
+                />
+                <StatCard
+                  title="Available for New Loan"
+                  value={Number(memberData.loanEligibility.available_amount || 0).toLocaleString()}
+                  icon={TbCurrencyNaira}
+                  color="primary"
+                />
+                {memberData.loanEligibility.active_loan_balance > 0 && (
+                  <StatCard
+                    title="Active Loan Balance"
+                    value={Number(memberData.loanEligibility.active_loan_balance).toLocaleString()}
+                    icon={TbCurrencyNaira}
+                    color="primary"
+                  />     
+                )}
+              </div>
             )}
 
             {/* Member Stats */}

@@ -130,7 +130,7 @@ export default function Profile() {
                       {new Date(saving.paymentDate).toLocaleDateString()}
                     </span>
                     <span className="text-sm font-semibold text-gray-900 dark:text-dark-100">
-                      {formatCurrency(saving.savingsAmount)}
+                      {formatCurrency(saving.savingAmount)}
                     </span>
                   </div>
                 ))}

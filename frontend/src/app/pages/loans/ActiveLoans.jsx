@@ -28,7 +28,7 @@ export default function ActiveLoans() {
      
      // Handle Laravel API response format
      const data = response.data?.data?.data || response.data?.data || [];
-     const meta = response.data?.data?.pagination || response.data?.meta || {};
+     const meta = response.data?.meta || response.data?.data?.pagination || {};
   
      setLoans(data);
      setPagination(meta);
@@ -195,7 +195,7 @@ export default function ActiveLoans() {
                <Button
                  size="sm"
                  variant="outlined"
-                 disabled={currentPage >= pagination.total_pages}
+                 disabled={(currentPage * pagination.per_page) >= pagination.total}
                  onClick={() => setCurrentPage(currentPage + 1)}
                >
                  Next
