@@ -66,7 +66,7 @@ export default function LoanForm() {
        await loansAPI.create(data);
        toast.success("Loan created successfully");
      }
-     navigate("/loans");
+     navigate("/loans/all");
    } catch (error) {
      console.error("Error saving loan:", error);
      const errorMsg = error.response?.data?.message || error.message || "Failed to save loan";
@@ -166,7 +166,7 @@ export default function LoanForm() {
              <Button
                type="button"
                variant="outlined"
-               onClick={() => navigate("/loans")}
+               onClick={() => navigate("/loans/all")}
              >
                Cancel
              </Button>

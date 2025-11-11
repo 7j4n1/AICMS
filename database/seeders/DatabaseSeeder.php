@@ -16,6 +16,10 @@ class DatabaseSeeder extends Seeder
         
         $this->call(RoleAndPermissionSeeder::class);
         $this->call(DefaultCategorySeeder::class);
+        $this->call(SystemConfigurationsSeeder::class);
+        $this->call(SavingsTypesSeeder::class);
+        $this->call(LoanEligibilitySettingsSeeder::class);
+        $this->call(PaymentGatewaysSeeder::class);
 
         // \App\Models\Admin::factory()->create()->assignRole('manager');
 

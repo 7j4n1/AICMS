@@ -7,7 +7,9 @@ import { useBreakpointsContext } from "app/contexts/breakpoint/context";
 import { useSidebarContext } from "app/contexts/sidebar/context";
 import { navigation } from "app/navigation";
 import { useDidUpdate } from "hooks";
+import { usePermission } from "hooks/usePermission";
 import { isRouteActive } from "utils/isRouteActive";
+import { filterNavigationByPermission } from "utils/filterNavigationByPermission";
 import { MainPanel } from "./MainPanel";
 import { PrimePanel } from "./PrimePanel";
 
@@ -17,9 +19,17 @@ export function Sidebar() {
   const { pathname } = useLocation();
   const { name, lgAndDown } = useBreakpointsContext();
   const { isExpanded, close } = useSidebarContext();
+  const permissionHook = usePermission();
+
+  // Filter navigation based on user permissions
+  const filteredNavigation = useMemo(
+    () => filterNavigationByPermission(navigation, permissionHook),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [permissionHook.user],
+  );
 
   const initialSegment = useMemo(
-    () => navigation.find((item) => isRouteActive(item.path, pathname)),
+    () => filteredNavigation.find((item) => isRouteActive(item.path, pathname)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
@@ -29,11 +39,11 @@ export function Sidebar() {
   );
 
   const currentSegment = useMemo(() => {
-    return navigation.find((item) => item.path === activeSegmentPath);
-  }, [activeSegmentPath]);
+    return filteredNavigation.find((item) => item.path === activeSegmentPath);
+  }, [filteredNavigation, activeSegmentPath]);
 
   useDidUpdate(() => {
-    const activePath = navigation.find((item) =>
+    const activePath = filteredNavigation.find((item) =>
       isRouteActive(item.path, pathname),
     )?.path;
 
@@ -49,7 +59,7 @@ export function Sidebar() {
   return (
     <>
       <MainPanel
-        nav={navigation}
+        nav={filteredNavigation}
         activeSegment={activeSegmentPath}
         setActiveSegment={setActiveSegmentPath}
       />

@@ -9,7 +9,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
-class JwtMiddleware extends BaseMiddleware
+class JwtMiddleware
 {
     /**
      * Handle an incoming request.

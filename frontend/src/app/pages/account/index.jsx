@@ -86,12 +86,12 @@ export default function Profile() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <BalanceCard
                 label="Savings"
-                amount={balance.savings}
+                amount={balance.savings ?? 0}
                 color="blue"
               />
               <BalanceCard
                 label="Shares"
-                amount={balance.shares}
+                amount={balance.shares ?? 0}
                 color="green"
               />
               <BalanceCard
@@ -130,7 +130,7 @@ export default function Profile() {
                       {new Date(saving.paymentDate).toLocaleDateString()}
                     </span>
                     <span className="text-sm font-semibold text-gray-900 dark:text-dark-100">
-                      {formatCurrency(saving.savingsAmount)}
+                      {formatCurrency(saving.savingAmount)}
                     </span>
                   </div>
                 ))}

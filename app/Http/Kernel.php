@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
         'json.response' => \App\Http\Middleware\ForceJsonResponse::class,
+        'check.api.permission' => \App\Http\Middleware\PermissionMiddleware::class,
     ];
 }

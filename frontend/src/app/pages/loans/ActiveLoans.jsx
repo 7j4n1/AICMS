@@ -28,7 +28,7 @@ export default function ActiveLoans() {
      
      // Handle Laravel API response format
      const data = response.data?.data?.data || response.data?.data || [];
-     const meta = response.data?.data?.pagination || response.data?.meta || {};
+     const meta = response.data?.meta || response.data?.data?.pagination || {};
   
      setLoans(data);
      setPagination(meta);
@@ -72,7 +72,7 @@ export default function ActiveLoans() {
        {/* Header */}
        <div className="flex items-center justify-between">
          <div className="flex items-center gap-3">
-           <Link to="/loans">
+           <Link to="/loans/all">
              <Button variant="outlined" size="sm">
                <ArrowLeftIcon className="size-4" />
              </Button>
@@ -195,7 +195,7 @@ export default function ActiveLoans() {
                <Button
                  size="sm"
                  variant="outlined"
-                 disabled={currentPage >= pagination.total_pages}
+                 disabled={(currentPage * pagination.per_page) >= pagination.total}
                  onClick={() => setCurrentPage(currentPage + 1)}
                >
                  Next

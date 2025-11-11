@@ -130,6 +130,7 @@ export function AuthProvider({ children }) {
 
       const { access_token, data } = response.data;
       const user = data?.user;
+      console.log({access_token, data});
 
       if (!isString(access_token) && !isObject(user)) {
         throw new Error("Invalid response format from server");

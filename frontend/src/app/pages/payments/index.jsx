@@ -16,24 +16,29 @@ export default function PaymentsList() {
  const [payments, setPayments] = useState([]);
  const [loading, setLoading] = useState(true);
  const [search, setSearch] = useState("");
+ const [currentPage, setCurrentPage] = useState(1);
+ const [pagination, setPagination] = useState({});
 
  const fetchPayments = useCallback(async () => {
    try {
      setLoading(true);
      const response = await paymentsAPI.getAll({
        coop_id: search,
+       page: currentPage,
        per_page: 25,
      });
      
      const data = response.data?.data || [];
+     const metadata = response.data?.meta || response.data?.data?.pagination || {};
      setPayments(data);
+     setPagination(metadata);
    } catch (error) {
      console.error("Error fetching payments:", error);
      toast.error("Failed to load payments");
    } finally {
      setLoading(false);
    }
- }, [search]);
+ }, [search, currentPage]);
 
  useEffect(() => {
    fetchPayments();
@@ -145,6 +150,36 @@ export default function PaymentsList() {
              </tbody>
            </table>
          </div>
+         
+         {/* Pagination */}
+         {pagination.total > 0 && (
+           <div className="flex items-center justify-between border-t border-gray-200 bg-white px-6 py-3 dark:border-dark-500 dark:bg-dark-700">
+             <div className="text-sm text-gray-500 dark:text-dark-300">
+               Showing {((currentPage - 1) * pagination.per_page) + 1} to{" "}
+               {Math.min(currentPage * pagination.per_page, pagination.total)} of{" "}
+               {pagination.total} results
+             </div>
+             <div className="flex gap-2">
+               <Button
+                 size="sm"
+                 variant="outlined"
+                 disabled={currentPage === 1}
+                 onClick={() => setCurrentPage(currentPage - 1)}
+               >
+                 Previous
+               </Button>
+               <Button
+                 size="sm"
+                 variant="outlined"
+                 disabled={currentPage >= pagination.total_pages}
+                 onClick={() => setCurrentPage(currentPage + 1)}
+               >
+                 Next
+               </Button>
+             </div>
+           </div>
+         )}
+  
        </Card>
      </div>
    </Page>

@@ -74,7 +74,7 @@ export default function MemberForm() {
        await membersAPI.create(data);
        toast.success("Member created successfully");
      }
-     navigate("/members");
+     navigate("/members/all");
    } catch (error) {
      console.error("Error saving member:", error);
      const errorMsg = error.response?.data?.message || error.message || "Failed to save member";
